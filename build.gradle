@@ -1,0 +1,104 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.9.+'
+	}
+}
+
+subprojects {
+	apply plugin: "eclipse"
+	apply plugin: "idea"
+
+	apply plugin: "maven"
+
+	group = "de.ncoder.sensorsystem"
+	version = "0.1.0-SNAPSHOT"
+
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+}
+
+project(":core") {
+	apply plugin: "java"
+
+	sourceCompatibility = JavaVersion.VERSION_1_7
+	targetCompatibility = JavaVersion.VERSION_1_7
+
+	dependencies {
+		compile "org.slf4j:slf4j-api:1.7.5"
+
+		testCompile "junit:junit:4.11"
+	}
+}
+
+project(":android.core") {
+	apply plugin: 'android-library'
+
+	android {
+		compileSdkVersion 20
+		buildToolsVersion "20.0.0"
+
+        defaultConfig {
+            minSdkVersion 14
+            targetSdkVersion 20
+        }
+
+		compileOptions {
+			sourceCompatibility JavaVersion.VERSION_1_7
+			targetCompatibility JavaVersion.VERSION_1_7
+		}
+	}
+
+    dependencies {
+        compile project(":core")
+    }
+}
+
+project(":android.app") {
+	apply plugin: 'android'
+
+	android {
+		compileSdkVersion 20
+		buildToolsVersion "20.0.0"
+
+        defaultConfig {
+            minSdkVersion 14
+            targetSdkVersion 20
+			versionCode 1
+			versionName version
+		}
+
+		compileOptions {
+			sourceCompatibility JavaVersion.VERSION_1_7
+			targetCompatibility JavaVersion.VERSION_1_7
+		}
+
+		buildTypes {
+			release {
+				runProguard false
+				proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+			}
+		}
+	}
+
+	repositories {
+		flatDir {
+			dirs "/mnt/data/Sync/Android/SensorSystem/android.core/build/libs/"
+		}
+	}
+
+	dependencies {
+		compile fileTree(dir: 'libs', include: ['*.jar'])
+
+        compile project(":android.core")
+        //compile "de.ncoder.sensorsystem:android.core:0.1.0-SNAPSHOT@aar"
+
+        compile 'com.android.support:appcompat-v7:20.+'
+		compile 'com.android.support:support-v13:20.+'
+	}
+}

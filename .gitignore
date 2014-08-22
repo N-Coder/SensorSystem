@@ -1,0 +1,20 @@
+# Gradle
+.gradle
+/local.properties
+
+# IntelliJ IDEA
+/.idea
+*.iml
+
+# Build
+out
+.out
+target
+.target
+build
+.build
+*.class
+*~
+
+# Android
+.DS_Store
