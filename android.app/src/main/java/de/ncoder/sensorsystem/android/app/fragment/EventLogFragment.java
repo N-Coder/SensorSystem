@@ -56,7 +56,7 @@ public class EventLogFragment extends BoundFragment {
     private final EventsAdapter eventsAdapter = new EventsAdapter();
 
     private class EventsAdapter extends BaseAdapter implements EventManager.Listener {
-        private List<Event> events = new LinkedList<>();
+        private final List<Event> events = new LinkedList<>();
 
         private final DateFormat whenFormat = new SimpleDateFormat("HH:mm:ss");
 

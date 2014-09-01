@@ -62,16 +62,16 @@ public class ComponentsFragment extends BoundFragment {
     private final ComponentsAdapter componentsAdapter = new ComponentsAdapter();
 
     private class ComponentsAdapter extends BaseAdapter implements EventManager.Listener {
-        private List<Container.Key> index = new ArrayList<>();
+        private final List<Container.Key> index = new ArrayList<>();
 
         @Override
         public int getCount() {
-            return index.size();
+            return getContainer() != null ? index.size() : 0;
         }
 
         @Override
         public Component getItem(int position) {
-            return getContainer().get(index.get(position));
+            return getContainer() != null ? getContainer().get(index.get(position)) : null;
         }
 
         @Override
@@ -99,12 +99,14 @@ public class ComponentsFragment extends BoundFragment {
         }
 
         private void updateIndex() {
-            index.clear();
-            for (Map.Entry<Container.Key<? extends Component>, Component> entry : getContainer().entrySet()) {
-                index.add(entry.getKey());
+            if (getContainer() != null) {
+                index.clear();
+                for (Map.Entry<Container.Key<? extends Component>, Component> entry : getContainer().entrySet()) {
+                    index.add(entry.getKey());
+                }
+                sort();
+                notifyDataSetChanged();
             }
-            sort();
-            notifyDataSetChanged();
         }
 
         private void sort() {

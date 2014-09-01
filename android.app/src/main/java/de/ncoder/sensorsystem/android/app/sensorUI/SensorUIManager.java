@@ -36,6 +36,7 @@ public class SensorUIManager {
     private static final String ATTR_IDENTIFIER = "name";
     private static final String ATTR_UI = "ui";
 
+    @SuppressWarnings("unchecked")
     public static void parseResources(XmlPullParser parser) throws XmlPullParserException, IOException {
         for (int event = parser.getEventType(); event != XmlPullParser.END_DOCUMENT; event = parser.next()) {
             if (event == XmlPullParser.START_TAG && TAG_COMPONENT.equals(parser.getName())) {

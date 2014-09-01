@@ -22,8 +22,8 @@ public class AndroidScheduleManager extends ScheduleManager {
     private final Context context;
     private final AlarmManager alarmManager;
 
-    private AtomicInteger counter = new AtomicInteger(0);
-    private Map<Integer, Runnable> runnables = new HashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
+    private final Map<Integer, Runnable> runnables = new HashMap<>();
 
     public AndroidScheduleManager(Context context) {
         this.context = context;

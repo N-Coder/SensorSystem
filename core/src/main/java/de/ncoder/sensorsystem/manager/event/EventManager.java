@@ -17,7 +17,7 @@ public class EventManager extends AbstractComponent {
 
     // ------------------------------------------------------------------------
 
-    private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<>();
 
     public void subscribe(Listener listener) {
         listeners.add(listener);

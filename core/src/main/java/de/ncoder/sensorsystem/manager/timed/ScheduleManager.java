@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ScheduleManager extends AbstractComponent {
-    public static final Container.Key<ScheduleManager> KEY = new Container.Key<ScheduleManager>(ScheduleManager.class);
+    public static final Container.Key<ScheduleManager> KEY = new Container.Key<>(ScheduleManager.class);
 
     public ScheduleManager() {
         this(0);

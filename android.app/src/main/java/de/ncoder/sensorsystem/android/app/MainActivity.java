@@ -138,6 +138,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private void onCreateTabs() {
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Create the adapter that will return tab fragments
