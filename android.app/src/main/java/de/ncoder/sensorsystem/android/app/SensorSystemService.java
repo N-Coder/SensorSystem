@@ -10,7 +10,7 @@ import android.util.Log;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.SimpleContainer;
-import de.ncoder.sensorsystem.android.app.sensorUI.SensorUIManager;
+import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.android.logging.DBLogger;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.android.manager.timed.AndroidScheduleManager;
@@ -39,9 +39,9 @@ public class SensorSystemService extends Service {
         super.onCreate();
         addComponents();
         try {
-            SensorUIManager.parseResources(getResources().getXml(R.xml.component_uis));
+            ComponentInfoManager.parseResources(getResources().getXml(R.xml.info_activities));
         } catch (XmlPullParserException | IOException e) {
-            Log.w(SensorUIManager.class.getSimpleName(), "Can't parse resources, detail views won't be available", e);
+            Log.w(ComponentInfoManager.class.getSimpleName(), "Can't parse resources, detail views won't be available", e);
         }
     }
 

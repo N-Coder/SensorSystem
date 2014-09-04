@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.app.sensorUI;
+package de.ncoder.sensorsystem.android.app.componentInfo;
 
 import android.content.ComponentName;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class AndroidSensorUI extends SensorUIActivity implements EventManager.Listener {
+public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
     @Nullable
     private AndroidSensor<?> sensor;
 

@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.app.sensorUI;
+package de.ncoder.sensorsystem.android.app.componentInfo;
 
 import android.app.Activity;
 import android.util.Log;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SensorUIManager {
+public class ComponentInfoManager {
     private static final Map<Key<?>, Class<? extends Activity>> componentUIs = new HashMap<>();
 
     public static Class<? extends Activity> getActivity(Key<?> key) {
@@ -54,10 +54,10 @@ public class SensorUIManager {
                     try {
                         setActivity(Key.findKey(clazz, name), (Class<? extends Activity>) Class.forName(ui));
                     } catch (ClassCastException | ClassNotFoundException e) {
-                        Log.w(SensorUIManager.class.getSimpleName(), "Illegal class or ui attribute at " + parser.getPositionDescription());
+                        Log.w(ComponentInfoManager.class.getSimpleName(), "Illegal class or ui attribute at " + parser.getPositionDescription());
                     }
                 } else {
-                    Log.w(SensorUIManager.class.getSimpleName(), "Tag at " + parser.getPositionDescription() + " missing class or ui attribute");
+                    Log.w(ComponentInfoManager.class.getSimpleName(), "Tag at " + parser.getPositionDescription() + " missing class or ui attribute");
                 }
             }
         }

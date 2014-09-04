@@ -30,6 +30,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
+
         <!-- <uses-library android:name="de.ncoder.sensorsystem.android.core"/> -->
 
         <service android:name="de.ncoder.sensorsystem.android.app.SensorSystemService"/>
@@ -44,17 +45,17 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="de.ncoder.sensorsystem.android.app.sensorUI.DBLoggerActivity"
+                android:name=".componentInfo.DBLoggerInfoActivity"
                 android:label="@string/title_activity_dblogger"
-                android:parentActivityName=".MainActivity">
+                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".MainActivity"/>
         </activity>
         <activity
-                android:name="de.ncoder.sensorsystem.android.app.sensorUI.AndroidSensorUI"
+                android:name=".componentInfo.AndroidSensorInfoActivity"
                 android:label="@string/title_activity_sensor_ui"
-                android:parentActivityName=".MainActivity">
+                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".MainActivity"/>

@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.app.sensorUI;
+package de.ncoder.sensorsystem.android.app.componentInfo;
 
 import android.content.ComponentName;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import de.ncoder.sensorsystem.android.logging.DBLogger;
 import de.ncoder.sensorsystem.manager.event.Event;
 import de.ncoder.sensorsystem.manager.event.EventManager;
 
-public class DBLoggerActivity extends SensorUIActivity implements EventManager.Listener {
+public class DBLoggerInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

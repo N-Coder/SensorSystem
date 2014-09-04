@@ -13,8 +13,8 @@ import android.widget.*;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.R;
-import de.ncoder.sensorsystem.android.app.sensorUI.SensorUIActivity;
-import de.ncoder.sensorsystem.android.app.sensorUI.SensorUIManager;
+import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
+import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.manager.event.ContainerEvent;
 import de.ncoder.sensorsystem.manager.event.Event;
 import de.ncoder.sensorsystem.manager.event.EventManager;
@@ -42,11 +42,11 @@ public class ComponentsFragment extends BoundFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Container.Key key = componentsAdapter.index.get(position);
-                Class<?> uiClass = SensorUIManager.getActivity(key);
+                Class<?> uiClass = ComponentInfoManager.getActivity(key);
                 if (uiClass != null) {
                     Intent intent = new Intent(getActivity(), uiClass);
-                    intent.putExtra(SensorUIActivity.EXTRA_KEY_CLASS, key.getValueClass().getName());
-                    intent.putExtra(SensorUIActivity.EXTRA_KEY_IDENTIFIER, key.getIdentifier());
+                    intent.putExtra(ComponentInfoActivity.EXTRA_KEY_CLASS, key.getValueClass().getName());
+                    intent.putExtra(ComponentInfoActivity.EXTRA_KEY_IDENTIFIER, key.getIdentifier());
                     startActivity(intent);
                 } else {
                     Toast.makeText(getActivity(), "No DetailActivity for this Component available",

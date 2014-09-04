@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <component class="de.ncoder.sensorsystem.android.logging.DBLogger"
+            ui="de.ncoder.sensorsystem.android.app.componentInfo.DBLoggerInfoActivity" />
+    <component class="de.ncoder.sensorsystem.android.sensor.AccelerationSensor"
+               ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
+    <component class="de.ncoder.sensorsystem.android.sensor.BrightnessSensor"
+               ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
+    <component class="de.ncoder.sensorsystem.android.sensor.MagneticSensor"
+               ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
+    <component class="de.ncoder.sensorsystem.android.sensor.ProximitySensor"
+               ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
+</resources>

@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.app.sensorUI;
+package de.ncoder.sensorsystem.android.app.componentInfo;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -15,13 +15,13 @@ import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.SensorSystemService;
 
-public class SensorUIActivity extends Activity implements ServiceConnection {
+public class ComponentInfoActivity extends Activity implements ServiceConnection {
     public static final String EXTRA_KEY_CLASS = Container.Key.class.getName() + ".class";
     public static final String EXTRA_KEY_IDENTIFIER = Container.Key.class.getName() + ".identifier";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.sensor_ui, menu);
+        getMenuInflater().inflate(R.menu.component_info, menu);
         return true;
     }
 
