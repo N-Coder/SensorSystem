@@ -26,14 +26,19 @@ public class AndroidThreadPoolManager extends ThreadPoolManager {
     @Override
     public void destroy() {
         super.destroy();
-        while(wakelock.isHeld()) {
+        while (wakelock.isHeld()) {
             wakelock.release();
         }
     }
 
     @Override
-    public Future<?> executeAwake(Runnable command) {
-        return super.executeAwake(new AwakeRunnable(command));
+    public Runnable awakeWrapper(Runnable runnable) {
+        return new AwakeRunnable(runnable);
+    }
+
+    @Override
+    public <T> Callable<T> awakeWrapper(Callable<T> callable) {
+        return new AwakeCallable<>(callable);
     }
 
     private class AwakeRunnable implements Runnable {
@@ -48,6 +53,24 @@ public class AndroidThreadPoolManager extends ThreadPoolManager {
             wakelock.acquire();
             try {
                 runnable.run();
+            } finally {
+                wakelock.release();
+            }
+        }
+    }
+
+    private class AwakeCallable<T> implements Callable<T> {
+        private final Callable<T> callable;
+
+        private AwakeCallable(Callable<T> callable) {
+            this.callable = callable;
+        }
+
+        @Override
+        public T call() throws Exception {
+            wakelock.acquire();
+            try {
+                return callable.call();
             } finally {
                 wakelock.release();
             }
