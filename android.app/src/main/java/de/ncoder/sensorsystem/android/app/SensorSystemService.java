@@ -11,6 +11,7 @@ import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.SimpleContainer;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
+import de.ncoder.sensorsystem.android.app.data.UserManager;
 import de.ncoder.sensorsystem.android.logging.DBLogger;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.android.manager.timed.AndroidScheduleManager;
@@ -60,6 +61,8 @@ public class SensorSystemService extends Service {
                 new SystemLooper());
         container.register(DBLogger.KEY,
                 new DBLogger(this));
+        container.register(UserManager.KEY,
+                new UserManager());
 
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         container.register(AccelerationSensor.KEY,
