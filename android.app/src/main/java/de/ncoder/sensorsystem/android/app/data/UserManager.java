@@ -1,30 +1,20 @@
 package de.ncoder.sensorsystem.android.app.data;
 
-import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.event.SimpleEvent;
-import de.ncoder.sensorsystem.manager.event.SimpleFutureDoneEvent;
-import de.ncoder.sensorsystem.manager.timed.FutureCallback;
-import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class UserManager extends AbstractComponent {
+public class UserManager extends DataManager {
     public static final Container.Key<UserManager> KEY = new Container.Key<>(UserManager.class);
 
     private String currentUserName;
     private boolean isLoggedIn;
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public String getUserName() {
         return currentUserName;
@@ -34,14 +24,10 @@ public class UserManager extends AbstractComponent {
         return isLoggedIn;
     }
 
-    public Lock getStatusLock() {
-        return lock.readLock();
-    }
-
     // ------------------------------------------------------------------------
 
     public Future<UserManager> login(final String userName, char[] password) {
-        return execute(new LoginTask(userName, password), defaultCallback);
+        return execute(new LoginTask(userName, password));
     }
 
     private class LoginTask implements Callable<UserManager> {
@@ -100,7 +86,7 @@ public class UserManager extends AbstractComponent {
     }
 
     public Future<UserManager> logout() {
-        return execute(new LogoutTask(), defaultCallback);
+        return execute(new LogoutTask());
     }
 
     private class LogoutTask implements Callable<UserManager> {
@@ -125,43 +111,6 @@ public class UserManager extends AbstractComponent {
             currentUserName = null;
             isLoggedIn = false;
             publishEvent(new UserStatusChangedEvent());
-        }
-    }
-
-    // ------------------------------------------------------------------------
-
-    private final FutureCallback<UserManager> defaultCallback = new FutureCallback<UserManager>() {
-        @Override
-        public void onDone(FutureTask<UserManager> task) {
-            publishEvent(new SimpleFutureDoneEvent<>(task, UserManager.this));
-        }
-    };
-
-    private <T> FutureTask<T> execute(final Callable<T> callable, final FutureCallback<T> callback) {
-        FutureTask<T> futureTask = new FutureTask<T>(callable) {
-            @Override
-            public void run() {
-                lock.writeLock().lock();
-                try {
-                    super.run();
-                } finally {
-                    lock.writeLock().unlock();
-                }
-            }
-
-            @Override
-            protected void done() {
-                callback.onDone(this);
-            }
-        };
-        getOtherComponent(ThreadPoolManager.KEY).execute(futureTask);
-        return futureTask;
-    }
-
-    private void publishEvent(Event event) {
-        EventManager manager = getOtherComponent(EventManager.KEY);
-        if (manager != null) {
-            manager.publish(event);
         }
     }
 
