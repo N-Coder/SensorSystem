@@ -1,13 +1,13 @@
 package de.ncoder.sensorsystem.manager.event;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventManager extends AbstractComponent {
-    public static final Container.Key<EventManager> KEY = new Container.Key<>(EventManager.class);
+    public static final Key<EventManager> KEY = new Key<>(EventManager.class);
 
     @Override
     public void destroy() {

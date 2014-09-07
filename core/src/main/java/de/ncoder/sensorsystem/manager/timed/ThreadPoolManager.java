@@ -1,14 +1,14 @@
 package de.ncoder.sensorsystem.manager.timed;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class ThreadPoolManager extends AbstractComponent  {
-    public static final Container.Key<ThreadPoolManager> KEY = new Container.Key<>(ThreadPoolManager.class);
+    public static final Key<ThreadPoolManager> KEY = new Key<>(ThreadPoolManager.class);
 
     private final ExecutorService executor;
 

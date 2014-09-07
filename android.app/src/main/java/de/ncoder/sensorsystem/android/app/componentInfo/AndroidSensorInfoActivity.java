@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
@@ -35,7 +35,7 @@ public class AndroidSensorInfoActivity extends ComponentInfoActivity implements 
         String clazz = getIntent().getStringExtra(EXTRA_KEY_CLASS);
         String identifier = getIntent().getStringExtra(EXTRA_KEY_IDENTIFIER);
         try {
-            Container.Key key = Container.Key.findKey(clazz, identifier);
+            Key key = Key.forName(clazz, identifier);
             Component component = getComponent(key);
             sensor = (AndroidSensor<?>) component;
         } catch (ClassNotFoundException | ClassCastException e) {

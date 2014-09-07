@@ -12,12 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.SensorSystemService;
 
 public class ComponentInfoActivity extends Activity implements ServiceConnection {
-    public static final String EXTRA_KEY_CLASS = Container.Key.class.getName() + ".class";
-    public static final String EXTRA_KEY_IDENTIFIER = Container.Key.class.getName() + ".identifier";
+    public static final String EXTRA_KEY_CLASS = Key.class.getName() + ".class";
+    public static final String EXTRA_KEY_IDENTIFIER = Key.class.getName() + ".identifier";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,7 +46,7 @@ public class ComponentInfoActivity extends Activity implements ServiceConnection
     }
 
     @Nullable
-    protected  <T extends Component> T getComponent(Container.Key<T> key) {
+    protected  <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {

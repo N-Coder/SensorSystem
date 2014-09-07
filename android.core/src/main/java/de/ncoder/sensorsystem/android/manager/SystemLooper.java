@@ -3,9 +3,10 @@ package de.ncoder.sensorsystem.android.manager;
 import android.os.Looper;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 
 public class SystemLooper extends Thread implements Component {
-    public static final Container.Key<SystemLooper> KEY = new Container.Key<>(SystemLooper.class);
+    public static final Key<SystemLooper> KEY = new Key<>(SystemLooper.class);
 
     private Container container;
     private Looper looper;

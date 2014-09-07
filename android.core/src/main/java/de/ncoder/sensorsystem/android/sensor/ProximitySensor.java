@@ -3,11 +3,11 @@ package de.ncoder.sensorsystem.android.sensor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
 
 public class ProximitySensor extends AndroidSensor<Float> {
-    public static final Container.Key<ProximitySensor> KEY = new Container.Key<>(ProximitySensor.class);
+    public static final Key<ProximitySensor> KEY = new Key<>(ProximitySensor.class);
 
     public ProximitySensor(SensorManager sensorManager) {
         super(sensorManager, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY));

@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.util.Log;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.SimpleContainer;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.android.app.data.UserManager;
@@ -86,19 +87,19 @@ public class SensorSystemService extends Service {
     private final Binder theBinder = new Binder();
 
     public class Binder extends android.os.Binder implements Container {
-        public <T extends Component> void register(Container.Key<T> key, T actor) {
+        public <T extends Component> void register(Key<T> key, T actor) {
             container.register(key, actor);
         }
 
-        public <T extends Component> T get(Container.Key<T> key) {
+        public <T extends Component> T get(Key<T> key) {
             return container.get(key);
         }
 
-        public void unregister(Container.Key<? extends Component> key) {
+        public void unregister(Key<? extends Component> key) {
             container.unregister(key);
         }
 
-        public boolean isRegistered(Container.Key<? extends Component> key) {
+        public boolean isRegistered(Key<? extends Component> key) {
             return container.isRegistered(key);
         }
 

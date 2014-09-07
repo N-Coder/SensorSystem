@@ -1,12 +1,12 @@
 package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.manager.event.SimpleValueChangedEvent;
 
 public class AccuracyManager extends AbstractComponent {
-    public static final Container.Key<AccuracyManager> KEY = new Container.Key<>(AccuracyManager.class);
+    public static final Key<AccuracyManager> KEY = new Key<>(AccuracyManager.class);
 
     public static final int ACCURACY_MIN = 0;
     public static final int ACCURACY_LOW = 25;

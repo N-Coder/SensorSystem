@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.fragment.ComponentsFragment;
 import de.ncoder.sensorsystem.android.app.fragment.EventLogFragment;
 import de.ncoder.sensorsystem.android.app.fragment.PlaceholderFragment;
@@ -76,7 +77,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     }
 
     @Nullable
-    protected <T extends Component> T getComponent(Container.Key<T> key) {
+    protected <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {

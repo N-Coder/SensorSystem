@@ -1,6 +1,6 @@
 package de.ncoder.sensorsystem.android.app.data;
 
-import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.event.SimpleEvent;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 public class UserManager extends DataManager {
-    public static final Container.Key<UserManager> KEY = new Container.Key<>(UserManager.class);
+    public static final Key<UserManager> KEY = new Key<>(UserManager.class);
 
     private String currentUserName;
     private boolean isLoggedIn;

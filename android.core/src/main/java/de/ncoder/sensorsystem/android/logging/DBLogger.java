@@ -6,12 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.manager.event.Event;
 import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
 
 public class DBLogger extends AbstractComponent implements EventManager.Listener {
-    public static final Container.Key<DBLogger> KEY = new Container.Key<>(DBLogger.class);
+    public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
 
     private final DBHelper dbHelper;
     private SQLiteDatabase database;

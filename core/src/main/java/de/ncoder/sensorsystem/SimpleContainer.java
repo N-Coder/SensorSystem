@@ -10,8 +10,17 @@ public class SimpleContainer implements Container {
 
     @Override
     public <T extends Component> void register(Key<T> key, T component) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
+        if (component == null) {
+            throw new NullPointerException("component");
+        }
         if (isRegistered(key)) {
             throw new IllegalArgumentException("Component for " + key + " already registered");
+        }
+        if (!key.isPossibleValue(component)) {
+            throw new IllegalArgumentException("Component " + component + " is not assignable to key " + key);
         }
         components.put(key, component);
         component.init(this);

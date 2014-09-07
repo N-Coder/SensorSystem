@@ -2,6 +2,7 @@ package de.ncoder.sensorsystem.manager.event;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Key;
 
 public class ContainerEvent extends SimpleEvent<Component> {
     protected ContainerEvent(String name) {
@@ -11,16 +12,16 @@ public class ContainerEvent extends SimpleEvent<Component> {
     public static class ComponentAdded extends ContainerEvent {
         public static final String NAME = Container.class.getName()+".COMPONENT_ADDED";
 
-        private final Container.Key<?> key;
+        private final Key<?> key;
         private final Component component;
 
-        public ComponentAdded(Container.Key<?> key, Component component) {
+        public ComponentAdded(Key<?> key, Component component) {
             super(NAME);
             this.key = key;
             this.component = component;
         }
 
-        public Container.Key<?> getKey() {
+        public Key<?> getKey() {
             return key;
         }
 
@@ -32,16 +33,16 @@ public class ContainerEvent extends SimpleEvent<Component> {
     public static class ComponentRemoved extends ContainerEvent {
         public static final String NAME = Container.class.getName()+".COMPONENT_REMOVED";
 
-        private final Container.Key<?> key;
+        private final Key<?> key;
         private final Component component;
 
-        public ComponentRemoved(Container.Key<?> key, Component component) {
+        public ComponentRemoved(Key<?> key, Component component) {
             super(NAME);
             this.key = key;
             this.component = component;
         }
 
-        public Container.Key<?> getKey() {
+        public Key<?> getKey() {
             return key;
         }
 
