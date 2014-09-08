@@ -6,7 +6,7 @@ import de.ncoder.sensorsystem.manager.event.EventManager;
 import java.util.*;
 
 public class SimpleContainer implements Container {
-    private final Map<Key<? extends Component>, Component> components = new HashMap<>();
+    private final TypedMap<Component> components = new TypedMap<>();
 
     @Override
     public <T extends Component> void register(Key<T> key, T component) {
@@ -19,10 +19,7 @@ public class SimpleContainer implements Container {
         if (isRegistered(key)) {
             throw new IllegalArgumentException("Component for " + key + " already registered");
         }
-        if (!key.isPossibleValue(component)) {
-            throw new IllegalArgumentException("Component " + component + " is not assignable to key " + key);
-        }
-        components.put(key, component);
+        components.putTyped(key, component);
         component.init(this);
         publish(new ContainerEvent.ComponentAdded(key, component));
     }
@@ -37,9 +34,8 @@ public class SimpleContainer implements Container {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T extends Component> T get(Key<T> key) {
-        return (T) components.get(key);
+        return components.get(key);
     }
 
     @Override
