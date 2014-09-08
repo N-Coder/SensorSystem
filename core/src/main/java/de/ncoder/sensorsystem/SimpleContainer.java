@@ -5,10 +5,7 @@ import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class SimpleContainer implements Container {
     private final TypedMap<Component> components = new TypedMap<>();
@@ -48,13 +45,13 @@ public class SimpleContainer implements Container {
         return components.containsKey(key);
     }
 
-    private Set<Map.Entry<Key<? extends Component>, Component>> entriesView;
+    private TypedMap<Component> componentsUnmodifiable;
 
-    public Set<Map.Entry<Key<? extends Component>, Component>> entrySet() {
-        if (entriesView == null) {
-            entriesView = Collections.unmodifiableSet(components.entrySet());
+    public TypedMap<Component> getData() {
+        if (componentsUnmodifiable == null) {
+            componentsUnmodifiable = components.unmodifiableView();
         }
-        return entriesView;
+        return componentsUnmodifiable;
     }
 
     // ------------------------------------------------------------------------

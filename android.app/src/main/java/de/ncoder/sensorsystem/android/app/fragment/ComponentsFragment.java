@@ -101,7 +101,7 @@ public class ComponentsFragment extends BoundFragment {
         private void updateIndex() {
             if (getContainer() != null) {
                 index.clear();
-                for (Map.Entry<Key<? extends Component>, Component> entry : getContainer().entrySet()) {
+                for (Map.Entry<Key<? extends Component>, Component> entry : getContainer().getData().entrySet()) {
                     index.add(entry.getKey());
                 }
                 sort();

@@ -24,11 +24,10 @@ import de.ncoder.sensorsystem.manager.timed.ScheduleManager;
 import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
 import de.ncoder.sensorsystem.manager.timed.TimingManager;
 import de.ncoder.typedmap.Key;
+import de.ncoder.typedmap.TypedMap;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 public class SensorSystemService extends Service {
     private final Container container = new SimpleContainer();
@@ -107,8 +106,8 @@ public class SensorSystemService extends Service {
             container.shutdown();
         }
 
-        public Set<Map.Entry<Key<? extends Component>, Component>> entrySet() {
-            return container.entrySet();
+        public TypedMap<Component> getData() {
+            return container.getData();
         }
     }
 
