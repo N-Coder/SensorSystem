@@ -1,5 +1,7 @@
 package de.ncoder.sensorsystem;
 
+import de.ncoder.typedmap.Key;
+
 public class AbstractComponent implements Component {
     private Container container;
 

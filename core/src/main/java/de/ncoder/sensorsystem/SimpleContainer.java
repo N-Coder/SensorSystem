@@ -2,8 +2,13 @@ package de.ncoder.sensorsystem;
 
 import de.ncoder.sensorsystem.manager.event.ContainerEvent;
 import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.typedmap.Key;
+import de.ncoder.typedmap.TypedMap;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class SimpleContainer implements Container {
     private final TypedMap<Component> components = new TypedMap<>();

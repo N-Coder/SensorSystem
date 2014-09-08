@@ -1,5 +1,7 @@
 package de.ncoder.sensorsystem;
 
+import de.ncoder.typedmap.Key;
+
 import java.util.Map;
 import java.util.Set;
 

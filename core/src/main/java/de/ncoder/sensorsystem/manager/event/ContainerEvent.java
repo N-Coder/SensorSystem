@@ -2,7 +2,7 @@ package de.ncoder.sensorsystem.manager.event;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.Key;
+import de.ncoder.typedmap.Key;
 
 public class ContainerEvent extends SimpleEvent<Component> {
     protected ContainerEvent(String name) {

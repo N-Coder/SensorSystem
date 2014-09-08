@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.manager.event.ContainerEvent;
 import de.ncoder.sensorsystem.manager.event.Event;
 import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.typedmap.Key;
 
 import java.util.*;
 

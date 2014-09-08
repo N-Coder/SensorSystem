@@ -1,8 +1,8 @@
 package de.ncoder.sensorsystem.manager.timed;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
+import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

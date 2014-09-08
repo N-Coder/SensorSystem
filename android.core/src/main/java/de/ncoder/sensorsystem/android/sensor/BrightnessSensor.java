@@ -3,8 +3,8 @@ package de.ncoder.sensorsystem.android.sensor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
+import de.ncoder.typedmap.Key;
 
 public class BrightnessSensor extends AndroidSensor<Float> {
     public static final Key<BrightnessSensor> KEY = new Key<>(BrightnessSensor.class);

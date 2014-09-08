@@ -1,9 +1,9 @@
 package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.manager.event.SimpleValueChangedEvent;
+import de.ncoder.typedmap.Key;
 
 public class AccuracyManager extends AbstractComponent {
     public static final Key<AccuracyManager> KEY = new Key<>(AccuracyManager.class);

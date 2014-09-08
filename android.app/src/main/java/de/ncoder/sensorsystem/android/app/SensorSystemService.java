@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.util.Log;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.SimpleContainer;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.android.app.data.UserManager;
@@ -24,6 +23,7 @@ import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.manager.timed.ScheduleManager;
 import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
 import de.ncoder.sensorsystem.manager.timed.TimingManager;
+import de.ncoder.typedmap.Key;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;

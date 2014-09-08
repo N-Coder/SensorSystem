@@ -1,7 +1,7 @@
 package de.ncoder.sensorsystem.manager.timed;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Key;
+import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.*;
 

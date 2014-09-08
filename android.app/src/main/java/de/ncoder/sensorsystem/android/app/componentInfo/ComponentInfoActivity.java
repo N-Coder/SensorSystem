@@ -12,9 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.SensorSystemService;
+import de.ncoder.typedmap.Key;
 
 public class ComponentInfoActivity extends Activity implements ServiceConnection {
     public static final String EXTRA_KEY_CLASS = Key.class.getName() + ".class";

@@ -10,8 +10,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.SensorSystemService;
+import de.ncoder.typedmap.Key;
 
 public class BoundFragment extends Fragment implements ServiceConnection {
     // CONTAINER --------------------------------------------------------------

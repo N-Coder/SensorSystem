@@ -1,7 +1,7 @@
 package de.ncoder.sensorsystem.manager.event;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Key;
+import de.ncoder.typedmap.Key;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

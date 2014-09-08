@@ -15,11 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.Key;
 import de.ncoder.sensorsystem.android.app.fragment.ComponentsFragment;
 import de.ncoder.sensorsystem.android.app.fragment.EventLogFragment;
 import de.ncoder.sensorsystem.android.app.fragment.PlaceholderFragment;
 import de.ncoder.sensorsystem.android.app.fragment.SensorsFragment;
+import de.ncoder.typedmap.Key;
 
 import java.util.Locale;
 
