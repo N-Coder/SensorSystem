@@ -3,6 +3,8 @@ package de.ncoder.sensorsystem;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
+import java.util.Collection;
+
 public interface Container {
     <T extends Component> void register(Key<T> key, T actor);
 
@@ -12,8 +14,9 @@ public interface Container {
 
     boolean isRegistered(Key<? extends Component> key);
 
-    TypedMap<Component> getData();
+    TypedMap<? extends Component> getData();
+
+    Collection<Key<? extends Component>> getKeys();
 
     void shutdown();
-
 }

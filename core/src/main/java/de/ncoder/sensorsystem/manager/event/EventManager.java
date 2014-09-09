@@ -1,13 +1,33 @@
 package de.ncoder.sensorsystem.manager.event;
 
 import de.ncoder.sensorsystem.AbstractComponent;
+import de.ncoder.sensorsystem.Container;
 import de.ncoder.typedmap.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EventManager extends AbstractComponent {
+public class EventManager extends AbstractComponent implements RemoteEventManager {
+    private static final Logger log = LoggerFactory.getLogger(EventManager.class);
+
     public static final Key<EventManager> KEY = new Key<>(EventManager.class);
+
+    @Override
+    public void init(Container container) {
+        super.init(container);
+        if (log.isTraceEnabled()) {
+            subscribe(new Listener() {
+                @Override
+                public void handle(Event event) throws RemoteException {
+                    log.trace(event.toString());
+                }
+            });
+        }
+    }
 
     @Override
     public void destroy() {
@@ -29,13 +49,17 @@ public class EventManager extends AbstractComponent {
 
     public void publish(Event event) {
         for (Listener listener : listeners) {
-            listener.handle(event);
+            try {
+                listener.handle(event);
+            } catch (RemoteException e) {
+                log.warn("Could not send event to RemoteListener " + listener, e);
+            }
         }
     }
 
     // ------------------------------------------------------------------------
 
-    public static interface Listener {
-        public void handle(Event event);
+    public static interface Listener extends Remote {
+        void handle(Event event) throws RemoteException;
     }
 }
