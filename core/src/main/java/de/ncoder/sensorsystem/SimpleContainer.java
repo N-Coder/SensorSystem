@@ -10,12 +10,23 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class SimpleContainer implements Container, RemoteContainer {
+    public static boolean defaultCheckDependencies;
+
+    static {
+        defaultCheckDependencies = true;
+        try {
+            assert false;
+            defaultCheckDependencies = false;
+        } catch (AssertionError ignore) {
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    private boolean checkDependencies = defaultCheckDependencies;
     private final TypedMap<Component> components = new TypedMap<>();
 
     @Override
@@ -29,6 +40,13 @@ public class SimpleContainer implements Container, RemoteContainer {
         if (isRegistered(key)) {
             throw new IllegalArgumentException("Component for " + key + " already registered");
         }
+        if (checkDependencies && component instanceof DependantComponent) {
+            for (Key<? extends Component> dep : ((DependantComponent) component).dependencies()) {
+                if (!isRegistered(dep)) {
+                    throw new DependencyException(key, component, dep);
+                }
+            }
+        }
         components.putTyped(key, component);
         component.init(this);
         publish(new ContainerEvent.ComponentAdded(key, component));
@@ -36,6 +54,14 @@ public class SimpleContainer implements Container, RemoteContainer {
 
     @Override
     public void unregister(Key<? extends Component> key) {
+        if (checkDependencies) {
+            for (Map.Entry<Key<? extends Component>, Component> entry : components.entrySet()) {
+                if (entry.getValue() instanceof DependantComponent
+                        && ((DependantComponent) entry.getValue()).dependencies().contains(key)) {
+                    throw new DependencyException(entry.getKey(), key);
+                }
+            }
+        }
         Component component = components.remove(key);
         if (component != null) {
             component.destroy();
@@ -72,6 +98,14 @@ public class SimpleContainer implements Container, RemoteContainer {
         return keysUnmodifiable;
     }
 
+    public boolean isCheckingDependencies() {
+        return checkDependencies;
+    }
+
+    public void setCheckDependencies(boolean checkDependencies) {
+        this.checkDependencies = checkDependencies;
+    }
+
     // ------------------------------------------------------------------------
 
     @Override
@@ -93,6 +127,29 @@ public class SimpleContainer implements Container, RemoteContainer {
     }
 
     // ------------------------------------------------------------------------
+
+    public static class DependencyException extends IllegalStateException {
+        private final Key<? extends Component> dependant, dependency;
+
+        public DependencyException(Key<? extends Component> dependant, Key<? extends Component> dependency) {
+            this(dependant, null, dependency);
+        }
+
+        public DependencyException(Key<? extends Component> dependant, Component component, Key<? extends Component> dependency) {
+            super("Component " + (component != null ? component + " " : "")
+                    + "for key " + dependant + " is missing dependency " + dependency);
+            this.dependant = dependant;
+            this.dependency = dependency;
+        }
+
+        public Key<? extends Component> getDependant() {
+            return dependant;
+        }
+
+        public Key<? extends Component> getDependency() {
+            return dependency;
+        }
+    }
 
     private static class UnmodifiableSet<E> implements Set<E>, Serializable {
         private transient Set<E> s;
