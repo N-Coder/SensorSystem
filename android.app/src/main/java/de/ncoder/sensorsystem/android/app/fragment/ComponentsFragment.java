@@ -19,7 +19,10 @@ import de.ncoder.sensorsystem.events.event.ContainerEvent;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class ComponentsFragment extends BoundFragment {
@@ -101,8 +104,8 @@ public class ComponentsFragment extends BoundFragment {
         private void updateIndex() {
             if (getContainer() != null) {
                 index.clear();
-                for (Map.Entry<Key<? extends Component>, Component> entry : getContainer().getData().entrySet()) {
-                    index.add(entry.getKey());
+                for (Key<? extends Component> key : getContainer().getKeys()) {
+                    index.add(key);
                 }
                 sort();
                 notifyDataSetChanged();

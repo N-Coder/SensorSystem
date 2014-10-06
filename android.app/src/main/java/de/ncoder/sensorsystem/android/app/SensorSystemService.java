@@ -28,6 +28,7 @@ import de.ncoder.typedmap.TypedMap;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class SensorSystemService extends Service {
     private final Container container = new SimpleContainer();
@@ -106,8 +107,13 @@ public class SensorSystemService extends Service {
             container.shutdown();
         }
 
-        public TypedMap<Component> getData() {
+        public TypedMap<? extends Component> getData() {
             return container.getData();
+        }
+
+        @Override
+        public Collection<Key<? extends Component>> getKeys() {
+            return container.getKeys();
         }
     }
 
