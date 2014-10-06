@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.manager.timed;
+package de.ncoder.sensorsystem.android.manager;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.manager.timed.ScheduleManager;
+import de.ncoder.sensorsystem.manager.ScheduleManager;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,8 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events;
 
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

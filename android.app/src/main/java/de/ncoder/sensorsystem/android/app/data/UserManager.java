@@ -1,7 +1,7 @@
 package de.ncoder.sensorsystem.android.app.data;
 
+import de.ncoder.sensorsystem.events.event.SimpleEvent;
 import de.ncoder.sensorsystem.manager.DataManager;
-import de.ncoder.sensorsystem.manager.event.SimpleEvent;
 import de.ncoder.typedmap.Key;
 
 import javax.security.auth.login.LoginException;

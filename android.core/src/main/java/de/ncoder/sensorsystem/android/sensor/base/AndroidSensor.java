@@ -7,9 +7,9 @@ import android.os.Handler;
 import android.util.Log;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 
 import java.util.concurrent.TimeUnit;

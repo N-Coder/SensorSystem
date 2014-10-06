@@ -12,10 +12,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.android.app.R;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.EventUtils;
-import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.sensorsystem.sensor.Sensor;
 
 import java.text.DateFormat;

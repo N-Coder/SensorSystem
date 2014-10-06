@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events.event;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;

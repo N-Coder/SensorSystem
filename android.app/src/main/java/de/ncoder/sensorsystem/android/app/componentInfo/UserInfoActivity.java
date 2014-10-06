@@ -12,9 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.data.UserManager;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.FutureDoneEvent;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.FutureDoneEvent;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;

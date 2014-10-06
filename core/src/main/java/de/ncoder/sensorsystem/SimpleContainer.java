@@ -1,7 +1,7 @@
 package de.ncoder.sensorsystem;
 
-import de.ncoder.sensorsystem.manager.event.ContainerEvent;
-import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.ContainerEvent;
 import de.ncoder.sensorsystem.remote.RemoteContainer;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;

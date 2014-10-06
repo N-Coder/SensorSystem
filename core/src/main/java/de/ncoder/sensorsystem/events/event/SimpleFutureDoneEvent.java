@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
 

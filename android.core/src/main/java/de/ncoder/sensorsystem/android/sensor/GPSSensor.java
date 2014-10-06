@@ -6,7 +6,7 @@ import android.os.Looper;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.timed.TimingManager;
+import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 import de.ncoder.typedmap.Key;
 

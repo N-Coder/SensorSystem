@@ -3,11 +3,10 @@ package de.ncoder.sensorsystem.manager;
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.DependantComponent;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.SimpleFutureDoneEvent;
-import de.ncoder.sensorsystem.manager.timed.FutureCallback;
-import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.FutureCallback;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
 import de.ncoder.typedmap.Key;
 
 import java.util.Collections;

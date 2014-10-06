@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.android.manager.timed;
+package de.ncoder.sensorsystem.android.manager;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.manager.timed.TimingManager;
+import de.ncoder.sensorsystem.manager.TimingManager;
 
 import java.util.PriorityQueue;
 import java.util.concurrent.*;

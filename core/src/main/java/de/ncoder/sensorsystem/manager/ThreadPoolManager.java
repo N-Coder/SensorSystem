@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.timed;
+package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.typedmap.Key;
