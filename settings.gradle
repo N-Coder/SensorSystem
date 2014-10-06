@@ -1,1 +1,1 @@
-include "core", "android.core", "android.app"
+include "core", "android.core", "android.app", "remote"

@@ -7,8 +7,7 @@ import de.ncoder.typedmap.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -21,9 +20,9 @@ public class EventManager extends AbstractComponent implements RemoteEventManage
     public void init(Container container) {
         super.init(container);
         if (log.isTraceEnabled()) {
-            subscribe(new Listener() {
+            subscribe(new EventListener() {
                 @Override
-                public void handle(Event event) throws RemoteException {
+                public void handle(Event event) {
                     log.trace(event.toString());
                 }
             });
@@ -38,29 +37,26 @@ public class EventManager extends AbstractComponent implements RemoteEventManage
 
     // ------------------------------------------------------------------------
 
-    private final List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
-    public void subscribe(Listener listener) {
+    public void subscribe(EventListener listener) {
         listeners.add(listener);
     }
 
-    public void unsubscribe(Listener listener) {
+    public void unsubscribe(EventListener listener) {
         listeners.remove(listener);
     }
 
     public void publish(Event event) {
-        for (Listener listener : listeners) {
+        for (EventListener listener : listeners) {
             try {
                 listener.handle(event);
-            } catch (RemoteException e) {
+
+                // Dear compiler, please trust me, I know what I'm doing
+                if (false) throw new IOException();
+            } catch (IOException e) {
                 log.warn("Could not send event to RemoteListener " + listener, e);
             }
         }
-    }
-
-    // ------------------------------------------------------------------------
-
-    public static interface Listener extends Remote {
-        void handle(Event event) throws RemoteException;
     }
 }

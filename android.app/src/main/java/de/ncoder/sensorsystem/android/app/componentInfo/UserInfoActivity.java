@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.data.UserManager;
+import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.FutureDoneEvent;
@@ -22,7 +23,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class UserInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
+public class UserInfoActivity extends ComponentInfoActivity implements EventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

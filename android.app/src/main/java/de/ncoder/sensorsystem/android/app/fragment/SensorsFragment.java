@@ -45,7 +45,7 @@ public class SensorsFragment extends BoundFragment {
 
     private final EventsAdapter eventsAdapter = new EventsAdapter();
 
-    private class EventsAdapter extends BaseAdapter implements EventManager.Listener {
+    private class EventsAdapter extends BaseAdapter implements de.ncoder.sensorsystem.events.EventListener {
         private final List<String> index = new ArrayList<>();
         private final Map<String, Event> eventSet = new HashMap<>();
 

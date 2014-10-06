@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import de.ncoder.sensorsystem.android.app.R;
+import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -55,7 +56,7 @@ public class EventLogFragment extends BoundFragment {
 
     private final EventsAdapter eventsAdapter = new EventsAdapter();
 
-    private class EventsAdapter extends BaseAdapter implements EventManager.Listener {
+    private class EventsAdapter extends BaseAdapter implements EventListener {
         private final List<Event> events = new LinkedList<>();
 
         private final DateFormat whenFormat = new SimpleDateFormat("HH:mm:ss");

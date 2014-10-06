@@ -14,6 +14,7 @@ import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
+import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.ContainerEvent;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -64,7 +65,7 @@ public class ComponentsFragment extends BoundFragment {
 
     private final ComponentsAdapter componentsAdapter = new ComponentsAdapter();
 
-    private class ComponentsAdapter extends BaseAdapter implements EventManager.Listener {
+    private class ComponentsAdapter extends BaseAdapter implements EventListener {
         private final List<Key> index = new ArrayList<>();
 
         @Override

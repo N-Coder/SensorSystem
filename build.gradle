@@ -4,8 +4,8 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:0.9.+'
-	}
+        classpath 'com.android.tools.build:gradle:0.12.2'
+    }
 }
 
 subprojects {
@@ -15,9 +15,9 @@ subprojects {
 	apply plugin: "maven"
 
 	group = "de.ncoder.sensorsystem"
-	version = "0.1.0-SNAPSHOT"
+    version = "0.1.1-SNAPSHOT"
 
-	repositories {
+    repositories {
 		mavenCentral()
 		mavenLocal()
 	}
@@ -35,6 +35,17 @@ project(":core") {
 
 		testCompile "junit:junit:4.11"
 	}
+}
+
+project(":remote") {
+    apply plugin: "java"
+
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    dependencies {
+        compile project(":core")
+    }
 }
 
 project(":android.core") {

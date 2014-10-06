@@ -9,6 +9,7 @@ import android.widget.TextView;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
+import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -18,7 +19,7 @@ import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.TimeUnit;
 
-public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
+public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventListener {
     @Nullable
     private AndroidSensor<?> sensor;
 
