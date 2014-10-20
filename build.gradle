@@ -20,7 +20,10 @@ subprojects {
     repositories {
 		mavenCentral()
 		mavenLocal()
-	}
+        maven {
+            url "http://students.fim.uni-passau.de/~finksim/maven/"
+        }
+    }
 }
 
 project(":core") {
@@ -95,12 +98,6 @@ project(":android.app") {
 				runProguard false
 				proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 			}
-		}
-	}
-
-	repositories {
-		flatDir {
-			dirs "/mnt/data/Sync/Android/SensorSystem/android.core/build/libs/"
 		}
 	}
 
