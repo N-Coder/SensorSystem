@@ -77,6 +77,7 @@ public class AndroidTimingManager extends TimingManager {
         return scheduled;
     }
 
+    //TODO This should be split up for repeating and one-time alarms
     private class Scheduled implements Comparable<Scheduled>, Future<Void> {
         private final Runnable runnable;
         private final boolean repeat;
@@ -110,7 +111,7 @@ public class AndroidTimingManager extends TimingManager {
 
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            if (!cancelled) {
+            if (!cancelled && !isDone()) {
                 queue.remove(this);
                 cancelled = true;
                 return true;
@@ -125,7 +126,7 @@ public class AndroidTimingManager extends TimingManager {
 
         @Override
         public boolean isDone() {
-            return queue.contains(this);
+            return !queue.contains(this);
         }
 
         @Override
@@ -133,6 +134,7 @@ public class AndroidTimingManager extends TimingManager {
             if (isCancelled()) {
                 throw new CancellationException();
             }
+            //TODO block
             return null;
         }
 
@@ -141,6 +143,7 @@ public class AndroidTimingManager extends TimingManager {
             if (isCancelled()) {
                 throw new CancellationException();
             }
+            //TODO block
             return null;
         }
 

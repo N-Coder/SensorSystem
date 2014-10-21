@@ -86,6 +86,7 @@ public class AndroidScheduleManager extends ScheduleManager {
         return new AlarmFuture(id, alarmIntent);
     }
 
+    //TODO Could be combined with AlarmFuture and effectively replaced with AndroidTimingManager.Scheduled(-Runnable)
     private class OneTimeRunnable implements Runnable {
         private final int id;
         private final Runnable runnable;
@@ -105,6 +106,7 @@ public class AndroidScheduleManager extends ScheduleManager {
         }
     }
 
+    //TODO This should be split up for repeating and one-time alarms
     private class AlarmFuture implements Future<Void> {
         private final int id;
         private final PendingIntent alarmIntent;
@@ -118,7 +120,7 @@ public class AndroidScheduleManager extends ScheduleManager {
 
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            if (!cancelled) {
+            if (!cancelled && !isDone()) {
                 alarmManager.cancel(alarmIntent);
                 runnables.remove(id);
                 cancelled = true;
@@ -134,7 +136,7 @@ public class AndroidScheduleManager extends ScheduleManager {
 
         @Override
         public boolean isDone() {
-            return runnables.containsKey(id);
+            return !runnables.containsKey(id);
         }
 
         @Override
@@ -142,6 +144,7 @@ public class AndroidScheduleManager extends ScheduleManager {
             if (isCancelled()) {
                 throw new CancellationException();
             }
+            //TODO block
             return null;
         }
 
@@ -150,6 +153,7 @@ public class AndroidScheduleManager extends ScheduleManager {
             if (isCancelled()) {
                 throw new CancellationException();
             }
+            //TODO block
             return null;
         }
     }
