@@ -1,7 +1,8 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -50,7 +51,7 @@ public class SimpleFutureDoneEvent<Result, Source extends Component>
         try {
             future.get();
             return true;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException | CancellationException e) {
             return false;
         }
     }
@@ -60,10 +61,19 @@ public class SimpleFutureDoneEvent<Result, Source extends Component>
         try {
             future.get();
             return null;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | CancellationException e) {
             return e;
         } catch (ExecutionException e) {
             return e.getCause();
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return "[Future " + future + " done: " + future.get() + "]";
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
+            return "[Future " + future + " failed: " + e + "]";
         }
     }
 }

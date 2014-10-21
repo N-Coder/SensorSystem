@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events;
 
 import java.util.Arrays;
 

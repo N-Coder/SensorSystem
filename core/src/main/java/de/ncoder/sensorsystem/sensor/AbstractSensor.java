@@ -1,8 +1,8 @@
 package de.ncoder.sensorsystem.sensor;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.SimpleValueChangedEvent;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.SimpleValueChangedEvent;
 
 public abstract class AbstractSensor<T> extends AbstractComponent implements Sensor<T> {
     private long lastChanged;

@@ -1,5 +1,7 @@
 package de.ncoder.sensorsystem;
 
+import de.ncoder.typedmap.Key;
+
 public class AbstractComponent implements Component {
     private Container container;
 
@@ -21,7 +23,7 @@ public class AbstractComponent implements Component {
         return container;
     }
 
-    protected <T extends Component> T getOtherComponent(Container.Key<T> key) {
+    protected <T extends Component> T getOtherComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {

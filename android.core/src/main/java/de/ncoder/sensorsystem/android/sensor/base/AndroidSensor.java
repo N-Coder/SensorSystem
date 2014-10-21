@@ -8,9 +8,10 @@ import android.os.Handler;
 import android.util.Log;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
+import de.ncoder.sensorsystem.events.EventListener;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 
 import java.util.concurrent.TimeUnit;
@@ -111,7 +112,7 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
         }
     }
 
-    private final EventManager.Listener accuracyListener = new EventManager.Listener() {
+    private final EventListener accuracyListener = new EventListener() {
         @Override
         public void handle(Event event) {
             if (event instanceof AccuracyManager.AccuracyChangedEvent) {

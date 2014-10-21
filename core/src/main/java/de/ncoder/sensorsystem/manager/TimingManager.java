@@ -1,14 +1,13 @@
-package de.ncoder.sensorsystem.manager.timed;
+package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
+import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TimingManager extends AbstractComponent {
-    public static final Container.Key<TimingManager> KEY = new Container.Key<>(TimingManager.class);
+    public static final Key<TimingManager> KEY = new Key<>(TimingManager.class);
     public static final FrameLength DEFAULT_FRAME_LENGTH = new FrameLength(15, 60, TimeUnit.SECONDS); //TODO define timing frames
 
     public TimingManager(FrameLength frameLength) {

@@ -3,13 +3,13 @@ package de.ncoder.sensorsystem.android.sensor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.sensor.base.BufferedAndroidSensor;
+import de.ncoder.typedmap.Key;
 
 import java.util.Arrays;
 
 public class AccelerationSensor extends BufferedAndroidSensor<float[]> {
-    public static final Container.Key<AccelerationSensor> KEY = new Container.Key<>(AccelerationSensor.class);
+    public static final Key<AccelerationSensor> KEY = new Key<>(AccelerationSensor.class);
 
     public AccelerationSensor(SensorManager sensorManager) {
         super(sensorManager,

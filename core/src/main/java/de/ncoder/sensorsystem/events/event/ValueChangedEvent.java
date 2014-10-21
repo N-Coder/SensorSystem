@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.event;
+package de.ncoder.sensorsystem.events.event;
 
 public interface ValueChangedEvent<T> extends Event {
     public T getOldValue();

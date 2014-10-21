@@ -10,10 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import de.ncoder.sensorsystem.android.app.R;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.EventUtils;
-import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
+import de.ncoder.sensorsystem.events.EventListener;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,7 @@ public class EventLogFragment extends BoundFragment {
 
     private final EventsAdapter eventsAdapter = new EventsAdapter();
 
-    private class EventsAdapter extends BaseAdapter implements EventManager.Listener {
+    private class EventsAdapter extends BaseAdapter implements EventListener {
         private final List<Event> events = new LinkedList<>();
 
         private final DateFormat whenFormat = new SimpleDateFormat("HH:mm:ss");

@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager.timed;
+package de.ncoder.sensorsystem.events;
 
 import java.util.concurrent.FutureTask;
 

@@ -12,10 +12,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.android.app.R;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.EventUtils;
-import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.sensorsystem.sensor.Sensor;
 
 import java.text.DateFormat;
@@ -45,7 +45,7 @@ public class SensorsFragment extends BoundFragment {
 
     private final EventsAdapter eventsAdapter = new EventsAdapter();
 
-    private class EventsAdapter extends BaseAdapter implements EventManager.Listener {
+    private class EventsAdapter extends BaseAdapter implements de.ncoder.sensorsystem.events.EventListener {
         private final List<String> index = new ArrayList<>();
         private final Map<String, Event> eventSet = new HashMap<>();
 

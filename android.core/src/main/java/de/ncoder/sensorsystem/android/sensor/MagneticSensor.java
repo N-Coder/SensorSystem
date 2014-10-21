@@ -3,13 +3,13 @@ package de.ncoder.sensorsystem.android.sensor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.sensor.base.BufferedAndroidSensor;
+import de.ncoder.typedmap.Key;
 
 import java.util.Arrays;
 
 public class MagneticSensor extends BufferedAndroidSensor<float[]> {
-    public static final Container.Key<MagneticSensor> KEY = new Container.Key<>(MagneticSensor.class);
+    public static final Key<MagneticSensor> KEY = new Key<>(MagneticSensor.class);
 
     public MagneticSensor(SensorManager sensorManager) {
         super(sensorManager,

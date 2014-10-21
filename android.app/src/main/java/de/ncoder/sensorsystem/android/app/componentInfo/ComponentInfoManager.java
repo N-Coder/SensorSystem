@@ -2,7 +2,7 @@ package de.ncoder.sensorsystem.android.app.componentInfo;
 
 import android.app.Activity;
 import android.util.Log;
-import de.ncoder.sensorsystem.Container.Key;
+import de.ncoder.typedmap.Key;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -52,7 +52,7 @@ public class ComponentInfoManager {
                     }
 
                     try {
-                        setActivity(Key.findKey(clazz, name), (Class<? extends Activity>) Class.forName(ui));
+                        setActivity(Key.forName(clazz, name), (Class<? extends Activity>) Class.forName(ui));
                     } catch (ClassCastException | ClassNotFoundException e) {
                         Log.w(ComponentInfoManager.class.getSimpleName(), "Illegal class or ui attribute at " + parser.getPositionDescription());
                     }

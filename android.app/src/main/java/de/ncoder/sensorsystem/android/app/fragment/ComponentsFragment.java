@@ -11,15 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
-import de.ncoder.sensorsystem.manager.event.ContainerEvent;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.sensorsystem.events.EventListener;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.ContainerEvent;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.typedmap.Key;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class ComponentsFragment extends BoundFragment {
@@ -41,7 +45,7 @@ public class ComponentsFragment extends BoundFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Container.Key key = componentsAdapter.index.get(position);
+                Key key = componentsAdapter.index.get(position);
                 Class<?> uiClass = ComponentInfoManager.getActivity(key);
                 if (uiClass != null) {
                     Intent intent = new Intent(getActivity(), uiClass);
@@ -61,8 +65,8 @@ public class ComponentsFragment extends BoundFragment {
 
     private final ComponentsAdapter componentsAdapter = new ComponentsAdapter();
 
-    private class ComponentsAdapter extends BaseAdapter implements EventManager.Listener {
-        private final List<Container.Key> index = new ArrayList<>();
+    private class ComponentsAdapter extends BaseAdapter implements EventListener {
+        private final List<Key> index = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -101,8 +105,8 @@ public class ComponentsFragment extends BoundFragment {
         private void updateIndex() {
             if (getContainer() != null) {
                 index.clear();
-                for (Map.Entry<Container.Key<? extends Component>, Component> entry : getContainer().entrySet()) {
-                    index.add(entry.getKey());
+                for (Key<? extends Component> key : getContainer().getKeys()) {
+                    index.add(key);
                 }
                 sort();
                 notifyDataSetChanged();
@@ -110,9 +114,9 @@ public class ComponentsFragment extends BoundFragment {
         }
 
         private void sort() {
-            Collections.sort(index, new Comparator<Container.Key>() {
+            Collections.sort(index, new Comparator<Key>() {
                 @Override
-                public int compare(Container.Key lhs, Container.Key rhs) {
+                public int compare(Key lhs, Key rhs) {
                     int val = lhs.getValueClass().getName().compareTo(rhs.getValueClass().getName());
                     if (val == 0) {
                         val = lhs.getIdentifier().compareTo(rhs.getIdentifier());

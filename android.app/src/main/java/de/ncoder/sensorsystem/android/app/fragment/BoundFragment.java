@@ -11,6 +11,7 @@ import android.util.Log;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.SensorSystemService;
+import de.ncoder.typedmap.Key;
 
 public class BoundFragment extends Fragment implements ServiceConnection {
     // CONTAINER --------------------------------------------------------------
@@ -24,7 +25,7 @@ public class BoundFragment extends Fragment implements ServiceConnection {
     }
 
     @Nullable
-    protected  <T extends Component> T getComponent(Container.Key<T> key) {
+    protected  <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {

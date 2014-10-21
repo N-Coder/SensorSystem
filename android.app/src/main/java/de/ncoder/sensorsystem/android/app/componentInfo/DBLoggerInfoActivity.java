@@ -8,10 +8,11 @@ import android.util.Log;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.logging.DBLogger;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
+import de.ncoder.sensorsystem.events.EventListener;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
 
-public class DBLoggerInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
+public class DBLoggerInfoActivity extends ComponentInfoActivity implements EventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

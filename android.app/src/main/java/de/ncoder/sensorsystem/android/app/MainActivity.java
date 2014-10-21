@@ -19,6 +19,7 @@ import de.ncoder.sensorsystem.android.app.fragment.ComponentsFragment;
 import de.ncoder.sensorsystem.android.app.fragment.EventLogFragment;
 import de.ncoder.sensorsystem.android.app.fragment.PlaceholderFragment;
 import de.ncoder.sensorsystem.android.app.fragment.SensorsFragment;
+import de.ncoder.typedmap.Key;
 
 import java.util.Locale;
 
@@ -76,7 +77,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     }
 
     @Nullable
-    protected <T extends Component> T getComponent(Container.Key<T> key) {
+    protected <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {

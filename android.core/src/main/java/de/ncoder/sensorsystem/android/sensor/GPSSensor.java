@@ -6,15 +6,16 @@ import android.os.Looper;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.timed.TimingManager;
+import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
+import de.ncoder.typedmap.Key;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
 public class GPSSensor extends AbstractSensor<Location> {
-    public static final Container.Key<GPSSensor> KEY = new Container.Key<>(GPSSensor.class);
+    public static final Key<GPSSensor> KEY = new Key<>(GPSSensor.class);
 
     private static final int DELAY_FRAMES = 4;
     private static final int MAX_SNRS = 30;

@@ -7,18 +7,19 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
+import de.ncoder.sensorsystem.events.EventListener;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.event.Event;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.event.EventUtils;
-import de.ncoder.sensorsystem.manager.event.ValueChangedEvent;
+import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.TimeUnit;
 
-public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventManager.Listener {
+public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventListener {
     @Nullable
     private AndroidSensor<?> sensor;
 
@@ -35,7 +36,7 @@ public class AndroidSensorInfoActivity extends ComponentInfoActivity implements 
         String clazz = getIntent().getStringExtra(EXTRA_KEY_CLASS);
         String identifier = getIntent().getStringExtra(EXTRA_KEY_IDENTIFIER);
         try {
-            Container.Key key = Container.Key.findKey(clazz, identifier);
+            Key key = Key.forName(clazz, identifier);
             Component component = getComponent(key);
             sensor = (AndroidSensor<?>) component;
         } catch (ClassNotFoundException | ClassCastException e) {

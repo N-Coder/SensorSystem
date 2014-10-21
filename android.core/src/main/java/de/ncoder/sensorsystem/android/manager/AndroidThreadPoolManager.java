@@ -1,8 +1,8 @@
-package de.ncoder.sensorsystem.android.manager.timed;
+package de.ncoder.sensorsystem.android.manager;
 
 import android.content.Context;
 import android.os.PowerManager;
-import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
+import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 
 import java.util.concurrent.*;
 

@@ -11,22 +11,24 @@ import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.SimpleContainer;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
+import de.ncoder.sensorsystem.android.app.data.UserManager;
 import de.ncoder.sensorsystem.android.logging.DBLogger;
+import de.ncoder.sensorsystem.android.manager.AndroidScheduleManager;
+import de.ncoder.sensorsystem.android.manager.AndroidThreadPoolManager;
+import de.ncoder.sensorsystem.android.manager.AndroidTimingManager;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
-import de.ncoder.sensorsystem.android.manager.timed.AndroidScheduleManager;
-import de.ncoder.sensorsystem.android.manager.timed.AndroidThreadPoolManager;
-import de.ncoder.sensorsystem.android.manager.timed.AndroidTimingManager;
 import de.ncoder.sensorsystem.android.sensor.*;
+import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.manager.AccuracyManager;
-import de.ncoder.sensorsystem.manager.event.EventManager;
-import de.ncoder.sensorsystem.manager.timed.ScheduleManager;
-import de.ncoder.sensorsystem.manager.timed.ThreadPoolManager;
-import de.ncoder.sensorsystem.manager.timed.TimingManager;
+import de.ncoder.sensorsystem.manager.ScheduleManager;
+import de.ncoder.sensorsystem.manager.ThreadPoolManager;
+import de.ncoder.sensorsystem.manager.TimingManager;
+import de.ncoder.typedmap.Key;
+import de.ncoder.typedmap.TypedMap;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 
 public class SensorSystemService extends Service {
     private final Container container = new SimpleContainer();
@@ -60,6 +62,8 @@ public class SensorSystemService extends Service {
                 new SystemLooper());
         container.register(DBLogger.KEY,
                 new DBLogger(this));
+        container.register(UserManager.KEY,
+                new UserManager());
 
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         container.register(AccelerationSensor.KEY,
@@ -83,19 +87,19 @@ public class SensorSystemService extends Service {
     private final Binder theBinder = new Binder();
 
     public class Binder extends android.os.Binder implements Container {
-        public <T extends Component> void register(Container.Key<T> key, T actor) {
+        public <T extends Component> void register(Key<T> key, T actor) {
             container.register(key, actor);
         }
 
-        public <T extends Component> T get(Container.Key<T> key) {
+        public <T extends Component> T get(Key<T> key) {
             return container.get(key);
         }
 
-        public void unregister(Container.Key<? extends Component> key) {
+        public void unregister(Key<? extends Component> key) {
             container.unregister(key);
         }
 
-        public boolean isRegistered(Container.Key<? extends Component> key) {
+        public boolean isRegistered(Key<? extends Component> key) {
             return container.isRegistered(key);
         }
 
@@ -103,8 +107,13 @@ public class SensorSystemService extends Service {
             container.shutdown();
         }
 
-        public Set<Map.Entry<Key<? extends Component>, Component>> entrySet() {
-            return container.entrySet();
+        public TypedMap<? extends Component> getData() {
+            return container.getData();
+        }
+
+        @Override
+        public Collection<Key<? extends Component>> getKeys() {
+            return container.getKeys();
         }
     }
 

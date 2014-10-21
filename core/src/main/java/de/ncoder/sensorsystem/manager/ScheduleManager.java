@@ -1,14 +1,13 @@
-package de.ncoder.sensorsystem.manager.timed;
+package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
+import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ScheduleManager extends AbstractComponent {
-    public static final Container.Key<ScheduleManager> KEY = new Container.Key<>(ScheduleManager.class);
+    public static final Key<ScheduleManager> KEY = new Key<>(ScheduleManager.class);
 
     public ScheduleManager() {
         this(0);

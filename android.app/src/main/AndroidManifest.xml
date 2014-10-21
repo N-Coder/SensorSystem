@@ -46,7 +46,7 @@
         </activity>
         <activity
                 android:name=".componentInfo.DBLoggerInfoActivity"
-                android:label="@string/title_activity_dblogger"
+                android:label="@string/title_component_info_dblogger"
                 android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -54,7 +54,15 @@
         </activity>
         <activity
                 android:name=".componentInfo.AndroidSensorInfoActivity"
-                android:label="@string/title_activity_sensor_ui"
+                android:label="@string/title_component_info_sensor"
+                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity"/>
+        </activity>
+        <activity
+                android:name=".componentInfo.UserInfoActivity"
+                android:label="@string/title_component_info_user"
                 android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"

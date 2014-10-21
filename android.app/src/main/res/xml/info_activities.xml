@@ -10,4 +10,6 @@
                ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
     <component class="de.ncoder.sensorsystem.android.sensor.ProximitySensor"
                ui="de.ncoder.sensorsystem.android.app.componentInfo.AndroidSensorInfoActivity" />
+    <component class="de.ncoder.sensorsystem.android.app.data.UserManager"
+               ui="de.ncoder.sensorsystem.android.app.componentInfo.UserInfoActivity" />
 </resources>
