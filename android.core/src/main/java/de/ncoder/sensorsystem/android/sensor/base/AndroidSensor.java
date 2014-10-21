@@ -3,6 +3,7 @@ package de.ncoder.sensorsystem.android.sensor.base;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import de.ncoder.sensorsystem.Container;
@@ -58,8 +59,13 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
         if (looper != null) {
             handler = new Handler(looper.getLooper());
         }
-
-        if (!sensorManager.registerListener(this, sensor, accuracy, getMaxBatchReportLatency(), handler)) {
+        boolean success;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            success = sensorManager.registerListener(this, sensor, accuracy, getMaxBatchReportLatency(), handler);
+        } else {
+            success = sensorManager.registerListener(this, sensor, accuracy, handler);
+        }
+        if (!success) {
             Log.w(getClass().getSimpleName(), "Could not register sensor listener");
         }
     }
