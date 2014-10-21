@@ -11,7 +11,8 @@ import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
+import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 
 import java.util.concurrent.TimeUnit;
@@ -52,8 +53,10 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
     protected void updateSensorListener() {
         sensorManager.unregisterListener(AndroidSensor.this, sensor);
 
-        int accuracy = getAccuracy();
-        Log.d(getClass().getSimpleName(), "Accuracy: " + accuracy + "µs = " + TimeUnit.MICROSECONDS.toMillis(accuracy) + "ms");
+        long accuracy = getAccuracy().scale(getOtherComponent(AccuracyManager.KEY));
+        long batchLatency = getBatchReportLatency().scale(getOtherComponent(AccuracyManager.KEY));
+        Log.d(getClass().getSimpleName(), "Accuracy: " + getAccuracy().getAdditional().toMillis(accuracy) + "ms, " +
+                "BatchLatency: " + getBatchReportLatency().getAdditional().toMillis(batchLatency) + "ms");
 
         Handler handler = null;
         SystemLooper looper = getContainer().get(SystemLooper.KEY);
@@ -62,9 +65,14 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
         }
         boolean success;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            success = sensorManager.registerListener(this, sensor, accuracy, getMaxBatchReportLatency(), handler);
+            success = sensorManager.registerListener(this, sensor,
+                    (int) getAccuracy().getAdditional().toMicros(accuracy),
+                    (int) getBatchReportLatency().getAdditional().toMicros(batchLatency),
+                    handler);
         } else {
-            success = sensorManager.registerListener(this, sensor, accuracy, handler);
+            success = sensorManager.registerListener(this, sensor,
+                    (int) getAccuracy().getAdditional().toMicros(accuracy),
+                    handler);
         }
         if (!success) {
             Log.w(getClass().getSimpleName(), "Could not register sensor listener");
@@ -86,30 +94,20 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
         super.changed(oldValue, newValue);
     }
 
-    public static final TimeUnit TIME_UNIT = TimeUnit.MICROSECONDS;
+    private final LongAccuracyRange<TimeUnit> accuracy = new LongAccuracyRange<>(
+            25_000_000L, 5_000_000L, TimeUnit.MICROSECONDS
+    );
 
-    private static final int RATE_LEAST_ACC = (int) TIME_UNIT.convert(25, TimeUnit.SECONDS);
-    private static final int RATE_MOST_ACC = (int) TIME_UNIT.convert(5, TimeUnit.SECONDS);
-
-    public int getAccuracy() {
-        AccuracyManager accuracyManager = getOtherComponent(AccuracyManager.KEY);
-        if (accuracyManager != null) {
-            return accuracyManager.scale(RATE_LEAST_ACC, RATE_MOST_ACC);
-        } else {
-            return RATE_LEAST_ACC;
-        }
+    public LongAccuracyRange<TimeUnit> getAccuracy() {
+        return accuracy;
     }
 
-    private static final int BATCH_LEAST_ACC = (int) TIME_UNIT.convert(10, TimeUnit.SECONDS);
-    private static final int BATCH_MOST_ACC = (int) TIME_UNIT.convert(200, TimeUnit.MILLISECONDS);
+    private final LongAccuracyRange<TimeUnit> batchReportLatency = new LongAccuracyRange<>(
+            10_000_000L, 200_000L, TimeUnit.MICROSECONDS
+    );
 
-    public int getMaxBatchReportLatency() {
-        AccuracyManager accuracyManager = getOtherComponent(AccuracyManager.KEY);
-        if (accuracyManager != null) {
-            return accuracyManager.scale(BATCH_LEAST_ACC, BATCH_MOST_ACC);
-        } else {
-            return BATCH_LEAST_ACC;
-        }
+    public LongAccuracyRange<TimeUnit> getBatchReportLatency() {
+        return batchReportLatency;
     }
 
     private final EventListener accuracyListener = new EventListener() {

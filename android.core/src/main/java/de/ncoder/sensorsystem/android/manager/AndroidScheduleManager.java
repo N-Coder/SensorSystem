@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,8 +70,11 @@ public class AndroidScheduleManager extends ScheduleManager {
 
         runnables.put(id, runnable);
 
-        final PendingIntent alarmIntent = makePendingIntent(id);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, delayMillis, initialDelayMillis, alarmIntent);
+        int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
+                AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+        PendingIntent alarmIntent = makePendingIntent(id);
+        //TODO use repeated batch window scheduling (as described in AlarmManager#setRepeating(...))
+        alarmManager.setRepeating(alarmType, delayMillis, initialDelayMillis, alarmIntent);
 
         return new AlarmFuture(id, alarmIntent);
     }
@@ -80,8 +85,15 @@ public class AndroidScheduleManager extends ScheduleManager {
 
         runnables.put(id, new OneTimeRunnable(id, runnable));
 
-        final PendingIntent alarmIntent = makePendingIntent(id);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, delayMillis, alarmIntent);
+        int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
+                AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+        PendingIntent alarmIntent = makePendingIntent(id);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setWindow(alarmType, delayMillis,
+                    getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
+        } else {
+            alarmManager.set(alarmType, delayMillis, alarmIntent);
+        }
 
         return new AlarmFuture(id, alarmIntent);
     }

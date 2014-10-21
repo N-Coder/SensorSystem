@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
 import de.ncoder.sensorsystem.manager.TimingManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
+import de.ncoder.sensorsystem.manager.accuracy.IntAccuracyRange;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 import de.ncoder.typedmap.Key;
 
@@ -52,14 +53,10 @@ public class GPSSensor extends AbstractSensor<Location> {
     // --------------------------------
 
     private final Criteria criteria = new Criteria();
+    private final IntAccuracyRange<Void> accuracyRange = new IntAccuracyRange<>(Criteria.ACCURACY_LOW, Criteria.ACCURACY_HIGH);
 
     private Criteria getGpsCriteria() {
-        AccuracyManager accuracyManager = getOtherComponent(AccuracyManager.KEY);
-        if (accuracyManager != null) {
-            criteria.setAccuracy(accuracyManager.scale(Criteria.ACCURACY_LOW, Criteria.ACCURACY_HIGH));
-        } else {
-            criteria.setAccuracy(Criteria.ACCURACY_MEDIUM);
-        }
+        criteria.setAccuracy(accuracyRange.scale(getOtherComponent(AccuracyManager.KEY)));
         //criteria.setPowerRequirement(level);
         criteria.setAltitudeRequired(false);
         criteria.setBearingRequired(false);

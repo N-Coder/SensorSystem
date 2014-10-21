@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
 import de.ncoder.sensorsystem.Component;
+import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
 import de.ncoder.sensorsystem.events.EventListener;
@@ -14,7 +15,7 @@ import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.typedmap.Key;
 
 import java.util.concurrent.TimeUnit;
@@ -96,11 +97,17 @@ public class AndroidSensorInfoActivity extends ComponentInfoActivity implements 
     private final Runnable updateAccuracy = new Runnable() {
         @Override
         public void run() {
-            if (sensor != null) {
-                ((TextView) findViewById(R.id.sensor_accuracy)).setText(
-                        formatDuration(sensor.getAccuracy(), AndroidSensor.TIME_UNIT));
-                ((TextView) findViewById(R.id.sensor_batch)).setText(
-                        formatDuration(sensor.getMaxBatchReportLatency(), AndroidSensor.TIME_UNIT));
+            Container container = getContainer();
+            if (sensor != null && container != null) {
+                AccuracyManager accuracyManager = container.get(AccuracyManager.KEY);
+                ((TextView) findViewById(R.id.sensor_accuracy)).setText(formatDuration(
+                        sensor.getAccuracy().scale(accuracyManager),
+                        sensor.getAccuracy().getAdditional()
+                ));
+                ((TextView) findViewById(R.id.sensor_batch)).setText(formatDuration(
+                        sensor.getBatchReportLatency().scale(accuracyManager),
+                        sensor.getBatchReportLatency().getAdditional()
+                ));
             } else {
                 ((TextView) findViewById(R.id.sensor_accuracy)).setText(R.string.sensor_value_unknown);
                 ((TextView) findViewById(R.id.sensor_batch)).setText(R.string.sensor_value_unknown);

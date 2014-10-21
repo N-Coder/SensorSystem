@@ -1,4 +1,4 @@
-package de.ncoder.sensorsystem.manager;
+package de.ncoder.sensorsystem.manager.accuracy;
 
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.events.EventManager;
@@ -13,6 +13,8 @@ public class AccuracyManager extends AbstractComponent {
     public static final int ACCURACY_MED = 50;
     public static final int ACCURACY_HIGH = 75;
     public static final int ACCURACY_MAX = 100;
+
+    public static final int DEFAULT_ACCURACY = ACCURACY_MED;
 
     private int accuracy;
 
@@ -42,25 +44,11 @@ public class AccuracyManager extends AbstractComponent {
         return accuracy;
     }
 
-    public int scale(int leastAccurate, int mostAccurate) {
-        return Math.round((mostAccurate - leastAccurate) * (accuracy / (float) ACCURACY_MAX)) + leastAccurate;
-    }
-
-    public long scale(long leastAccurate, long mostAccurate) {
-        return Math.round((mostAccurate - leastAccurate) * (accuracy / (double) ACCURACY_MAX)) + leastAccurate;
-    }
-
-    public float scale(float leastAccurate, float mostAccurate) {
-        return (mostAccurate - leastAccurate) * (accuracy / (float) ACCURACY_MAX) + leastAccurate;
-    }
-
-    public double scale(double leastAccurate, double mostAccurate) {
-        return (mostAccurate - leastAccurate) * (accuracy / (double) ACCURACY_MAX) + leastAccurate;
-    }
-
     // ------------------------------------------------------------------------
 
     public class AccuracyChangedEvent extends SimpleValueChangedEvent<Integer, AccuracyManager> {
+        //TODO check if serializable
+
         private AccuracyChangedEvent(int oldValue, int newValue) {
             super(AccuracyChangedEvent.class.getName(), AccuracyManager.this, oldValue, newValue);
         }

@@ -19,10 +19,10 @@ import de.ncoder.sensorsystem.android.manager.AndroidTimingManager;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.android.sensor.*;
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.manager.AccuracyManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.sensorsystem.manager.TimingManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 import org.xmlpull.v1.XmlPullParserException;
@@ -57,7 +57,7 @@ public class SensorSystemService extends Service {
         container.register(ScheduleManager.KEY,
                 new AndroidScheduleManager(this));
         container.register(TimingManager.KEY,
-                new AndroidTimingManager(this, TimingManager.DEFAULT_FRAME_LENGTH));
+                new AndroidTimingManager(this));
         container.register(SystemLooper.KEY,
                 new SystemLooper());
         container.register(DBLogger.KEY,

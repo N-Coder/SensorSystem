@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.manager.TimingManager;
+import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
@@ -19,9 +20,7 @@ public class AndroidTimingManager extends TimingManager {
     private final AlarmManager alarmManager;
     private final PendingIntent alarmIntent;
 
-
-    public AndroidTimingManager(Context context, FrameLength frameLength) {
-        super(frameLength);
+    public AndroidTimingManager(Context context) {
         this.context = context;
         alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
         alarmIntent = PendingIntent.getBroadcast(context, 0, new Intent(INTENT_ACTION), PendingIntent.FLAG_CANCEL_CURRENT);
@@ -31,7 +30,7 @@ public class AndroidTimingManager extends TimingManager {
     public void init(Container container) {
         super.init(container);
         context.registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION));
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, getCurrentFrameLength(), alarmIntent);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, getFrameLength().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class AndroidTimingManager extends TimingManager {
                 }
             } finally {
                 frameCount++;
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, getCurrentFrameLength(), alarmIntent);
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, getFrameLength().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
             }
         }
     };
