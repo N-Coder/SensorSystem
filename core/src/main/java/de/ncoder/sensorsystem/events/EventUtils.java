@@ -8,7 +8,7 @@ public class EventUtils {
 
     public static String toString(Object o) {
         if (o instanceof Object[])
-            return Arrays.toString((Object[]) o);
+            return Arrays.deepToString((Object[]) o);
         else if (o instanceof byte[])
             return Arrays.toString((byte[]) o);
         else if (o instanceof short[])

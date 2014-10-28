@@ -8,6 +8,7 @@ import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.typedmap.Key;
@@ -51,7 +52,7 @@ public class DBLogger extends AbstractComponent implements EventListener {
             values.put(DBHelper.COLUMN_SOURCE, String.valueOf(event.getSource()));
             values.put(DBHelper.COLUMN_KEY, event.getName());
             values.put(DBHelper.COLUMN_TIMESTAMP, event.getWhen());
-            values.put(DBHelper.COLUMN_VALUE, String.valueOf(((ValueChangedEvent) event).getNewValue()));
+            values.put(DBHelper.COLUMN_VALUE, EventUtils.toString(((ValueChangedEvent) event).getNewValue()));
             long insertId = database.insert(DBHelper.TABLE_LOG, null, values);
             if (insertId < 0) {
                 Log.w(getClass().getSimpleName(), "Logging event failed: " + insertId);
