@@ -32,7 +32,7 @@ public class SimpleContainer implements Container, RemoteContainer {
     private final TypedMap<Component> components = new TypedMap<>();
 
     @Override
-    public <T extends Component> void register(Key<T> key, T component) {
+    public synchronized <T extends Component> void register(Key<T> key, T component) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -55,7 +55,34 @@ public class SimpleContainer implements Container, RemoteContainer {
     }
 
     @Override
-    public void unregister(Key<? extends Component> key) {
+    public synchronized void unregister(Key<? extends Component> key) {
+        checkRemove(key);
+        Component component = components.remove(key);
+        if (component != null) {
+            component.destroy();
+            publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+        }
+    }
+
+    @Override
+    public synchronized void unregister(Component component) {
+        boolean removed = false;
+        Iterator<Map.Entry<Key<? extends Component>, Component>> it = components.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Key<? extends Component>, Component> entry = it.next();
+            if (entry.getValue() == component) {
+                checkRemove(entry.getKey());
+                it.remove();
+                publish(new ComponentEvent(entry.getKey(), component, ComponentEvent.Type.REMOVED));
+                removed = true;
+            }
+        }
+        if (removed) {
+            component.destroy();
+        }
+    }
+
+    private void checkRemove(Key<? extends Component> key) {
         if (checkDependencies) {
             for (Map.Entry<Key<? extends Component>, Component> entry : components.entrySet()) {
                 if (entry.getValue() instanceof DependantComponent
@@ -63,11 +90,6 @@ public class SimpleContainer implements Container, RemoteContainer {
                     throw new DependencyException(entry.getKey(), key);
                 }
             }
-        }
-        Component component = components.remove(key);
-        if (component != null) {
-            component.destroy();
-            publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
         }
     }
 

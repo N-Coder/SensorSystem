@@ -10,6 +10,8 @@ public interface Container {
 
     void unregister(Key<? extends Component> key);
 
+    void unregister(Component component);
+
     <T extends Component> T get(Key<T> key);
 
     boolean isRegistered(Key<? extends Component> key);
