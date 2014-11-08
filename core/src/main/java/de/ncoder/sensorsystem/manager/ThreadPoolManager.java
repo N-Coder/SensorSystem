@@ -1,8 +1,10 @@
 package de.ncoder.sensorsystem.manager;
 
 import de.ncoder.sensorsystem.AbstractComponent;
+import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.typedmap.Key;
 
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ThreadPoolManager extends AbstractComponent implements Executor {
@@ -29,6 +31,13 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 
     public Future<?> submit(Runnable task) {
         return executor.submit(task);
+    }
+
+    @Override
+    public void destroy() {
+        List<Runnable> disposed = executor.shutdownNow();
+        publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
+        super.destroy();
     }
 
     @Override

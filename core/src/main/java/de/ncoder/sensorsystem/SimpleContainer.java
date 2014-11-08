@@ -4,6 +4,7 @@ import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.SimpleEvent;
+import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.sensorsystem.remote.RemoteContainer;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
@@ -135,11 +136,31 @@ public class SimpleContainer implements Container, RemoteContainer {
     @Override
     public void shutdown() {
         publish(new PreShutdownEvent());
-        Iterator<Component> it = components.values().iterator();
-        while (it.hasNext()) {
-            Component component = it.next();
-            component.destroy();
-            it.remove();
+        List<Map.Entry<Key<? extends Component>, Component>> entries = new ArrayList<>(components.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<Key<? extends Component>, Component>>() {
+            @Override
+            public int compare(Map.Entry<Key<? extends Component>, Component> o1, Map.Entry<Key<? extends Component>, Component> o2) {
+                Key<? extends Component> k1 = o1.getKey();
+                Key<? extends Component> k2 = o2.getKey();
+                return Integer.signum(importance(k1) - importance(k2));
+            }
+
+            private int importance(Key<? extends Component> key) {
+                if (key == EventManager.KEY) {
+                    return 100;
+                } else if (key == ThreadPoolManager.KEY) {
+                    return 90;
+                } else if (key.getValueClass().getName().startsWith(SimpleContainer.class.getPackage().getName())) {
+                    return 10;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        for (Map.Entry<Key<? extends Component>, Component> entry : entries) {
+            components.remove(entry.getKey());
+            entry.getValue().destroy();
+            publish(new ComponentEvent(entry.getKey(), entry.getValue(), ComponentEvent.Type.REMOVED));
         }
     }
 
