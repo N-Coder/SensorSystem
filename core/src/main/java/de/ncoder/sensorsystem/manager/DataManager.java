@@ -3,9 +3,7 @@ package de.ncoder.sensorsystem.manager;
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.DependantComponent;
-import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.FutureCallback;
-import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
 import de.ncoder.typedmap.Key;
 
@@ -39,18 +37,11 @@ public abstract class DataManager extends AbstractComponent implements Dependant
         return dependencies;
     }
 
-    protected void publishEvent(Event event) {
-        EventManager manager = getOtherComponent(EventManager.KEY);
-        if (manager != null) {
-            manager.publish(event);
-        }
-    }
-
     protected <T> FutureCallback<T> defaultCallback() {
         return new FutureCallback<T>() {
             @Override
             public void onDone(FutureTask<T> task) {
-                publishEvent(new SimpleFutureDoneEvent<>(task, DataManager.this));
+                publish(new SimpleFutureDoneEvent<>(task, DataManager.this));
             }
         };
     }

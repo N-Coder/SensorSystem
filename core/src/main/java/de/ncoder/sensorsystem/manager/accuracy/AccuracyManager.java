@@ -1,7 +1,6 @@
 package de.ncoder.sensorsystem.manager.accuracy;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.SimpleValueChangedEvent;
 import de.ncoder.typedmap.Key;
 
@@ -31,13 +30,8 @@ public class AccuracyManager extends AbstractComponent {
             throw new IllegalArgumentException("Accuracy " + accuracy + " is out of bounds");
         }
         AccuracyChangedEvent event = new AccuracyChangedEvent(this.accuracy, accuracy);
-
         this.accuracy = accuracy;
-
-        EventManager eventManager = getOtherComponent(EventManager.KEY);
-        if (eventManager != null) {
-            eventManager.publish(event);
-        }
+        publish(event);
     }
 
     public int getAccuracy() {

@@ -1,5 +1,7 @@
 package de.ncoder.sensorsystem;
 
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
 public class AbstractComponent implements Component {
@@ -28,6 +30,13 @@ public class AbstractComponent implements Component {
             return getContainer().get(key);
         } else {
             return null;
+        }
+    }
+
+    protected void publish(Event event) {
+        EventManager eventManager = getOtherComponent(EventManager.KEY);
+        if (eventManager != null) {
+            eventManager.publish(event);
         }
     }
 
