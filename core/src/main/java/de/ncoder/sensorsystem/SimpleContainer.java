@@ -1,7 +1,9 @@
 package de.ncoder.sensorsystem;
 
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.event.ContainerEvent;
+import de.ncoder.sensorsystem.events.event.ComponentEvent;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.sensorsystem.events.event.SimpleEvent;
 import de.ncoder.sensorsystem.remote.RemoteContainer;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
@@ -49,7 +51,7 @@ public class SimpleContainer implements Container, RemoteContainer {
         }
         components.putTyped(key, component);
         component.init(this);
-        publish(new ContainerEvent.ComponentAdded(key, component));
+        publish(new ComponentEvent(key, component, ComponentEvent.Type.ADDED));
     }
 
     @Override
@@ -65,7 +67,7 @@ public class SimpleContainer implements Container, RemoteContainer {
         Component component = components.remove(key);
         if (component != null) {
             component.destroy();
-            publish(new ContainerEvent.ComponentRemoved(key, component));
+            publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
         }
     }
 
@@ -110,7 +112,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 
     @Override
     public void shutdown() {
-        publish(new ContainerEvent.ShutdownRequested());
+        publish(new PreShutdownEvent());
         Iterator<Component> it = components.values().iterator();
         while (it.hasNext()) {
             Component component = it.next();
@@ -119,7 +121,7 @@ public class SimpleContainer implements Container, RemoteContainer {
         }
     }
 
-    private void publish(ContainerEvent event) {
+    private void publish(Event event) {
         EventManager manager = get(EventManager.KEY);
         if (manager != null) {
             manager.publish(event);
@@ -127,6 +129,14 @@ public class SimpleContainer implements Container, RemoteContainer {
     }
 
     // ------------------------------------------------------------------------
+
+    public static class PreShutdownEvent extends SimpleEvent<Component> {
+        public static final String NAME = Container.class.getName() + ".PRE_SHUTDOWN";
+
+        public PreShutdownEvent() {
+            super(NAME, null);
+        }
+    }
 
     public static class DependencyException extends IllegalStateException {
         private final Key<? extends Component> dependant, dependency;

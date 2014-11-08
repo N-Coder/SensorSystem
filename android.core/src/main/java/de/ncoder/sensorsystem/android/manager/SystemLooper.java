@@ -3,6 +3,9 @@ package de.ncoder.sensorsystem.android.manager;
 import android.os.Looper;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.ComponentEvent;
+import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
 public class SystemLooper extends Thread implements Component {
@@ -21,7 +24,16 @@ public class SystemLooper extends Thread implements Component {
     public void run() {
         Looper.prepare();
         looper = Looper.myLooper();
+        publish(new ComponentEvent(this, ComponentEvent.Type.STARTED));
         Looper.loop();
+        publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED));
+    }
+
+    private void publish(Event event) {
+        EventManager eventManager = container.get(EventManager.KEY);
+        if (container != null && eventManager != null) {
+            eventManager.publish(event);
+        }
     }
 
     public Looper getLooper() {
@@ -31,6 +43,9 @@ public class SystemLooper extends Thread implements Component {
     @Override
     @SuppressWarnings("deprecation")
     public void destroy() {
+        if (looper != null) {
+            looper.quit();
+        }
         container = null;
     }
 

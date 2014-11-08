@@ -16,7 +16,7 @@ import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.event.ContainerEvent;
+import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
@@ -128,23 +128,25 @@ public class ComponentsFragment extends BoundFragment {
 
         @Override
         public void handle(final Event event) {
-            if (event instanceof ContainerEvent.ComponentAdded) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        index.add(((ContainerEvent.ComponentAdded) event).getKey());
-                        sort();
-                        notifyDataSetChanged();
-                    }
-                });
-            } else if (event instanceof ContainerEvent.ComponentRemoved) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        index.remove(((ContainerEvent.ComponentRemoved) event).getKey());
-                        notifyDataSetChanged();
-                    }
-                });
+            if (event instanceof ComponentEvent) {
+                if (((ComponentEvent) event).getType() == ComponentEvent.Type.ADDED) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            index.add(((ComponentEvent) event).getKey());
+                            sort();
+                            notifyDataSetChanged();
+                        }
+                    });
+                } else if (((ComponentEvent) event).getType() == ComponentEvent.Type.REMOVED) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            index.remove(((ComponentEvent) event).getKey());
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         }
     }
