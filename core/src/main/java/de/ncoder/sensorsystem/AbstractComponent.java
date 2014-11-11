@@ -31,8 +31,9 @@ public class AbstractComponent implements Component {
     }
 
     protected <T extends Component> T getOtherComponent(Key<T> key) {
-        if (getContainer() != null) {
-            return getContainer().get(key);
+        Container container = getContainer();
+        if (container != null) {
+            return container.get(key);
         } else {
             return null;
         }

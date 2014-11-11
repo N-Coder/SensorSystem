@@ -26,13 +26,19 @@ public class SystemLooper extends Thread implements Component {
         looper = Looper.myLooper();
         publish(new ComponentEvent(this, ComponentEvent.Type.STARTED));
         Looper.loop();
+        looper = null;
         publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED));
+        if (container != null) {
+            container.unregister(this);
+        }
     }
 
     private void publish(Event event) {
-        EventManager eventManager = container.get(EventManager.KEY);
-        if (container != null && eventManager != null) {
-            eventManager.publish(event);
+        if (container != null) {
+            EventManager eventManager = container.get(EventManager.KEY);
+            if (eventManager != null) {
+                eventManager.publish(event);
+            }
         }
     }
 

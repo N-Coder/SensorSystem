@@ -81,7 +81,7 @@ public class UserManager extends DataManager {
         private void updateData() {
             currentUserName = userName;
             isLoggedIn = true;
-            publishEvent(new UserStatusChangedEvent());
+            publish(new UserStatusChangedEvent());
         }
     }
 
@@ -110,7 +110,7 @@ public class UserManager extends DataManager {
         private void updateData() {
             currentUserName = null;
             isLoggedIn = false;
-            publishEvent(new UserStatusChangedEvent());
+            publish(new UserStatusChangedEvent());
         }
     }
 

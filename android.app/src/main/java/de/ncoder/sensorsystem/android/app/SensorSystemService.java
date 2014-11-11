@@ -99,6 +99,11 @@ public class SensorSystemService extends Service {
             container.unregister(key);
         }
 
+        @Override
+        public void unregister(Component component) {
+            container.unregister(component);
+        }
+
         public boolean isRegistered(Key<? extends Component> key) {
             return container.isRegistered(key);
         }

@@ -60,7 +60,7 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
 
         Handler handler = null;
         SystemLooper looper = getContainer().get(SystemLooper.KEY);
-        if (looper != null) {
+        if (looper != null && looper.getLooper() != null) {
             handler = new Handler(looper.getLooper());
         }
         boolean success;
