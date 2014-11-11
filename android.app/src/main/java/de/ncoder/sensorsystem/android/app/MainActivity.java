@@ -57,8 +57,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                 container.shutdown();
                 container = null;
             }
-            unbindService(connection);
-            stopService(serviceIntent);
             return true;
         } else if (id == R.id.action_settings) {
             return true;
@@ -87,6 +85,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
     // SERVICE ----------------------------------------------------------------
 
+    private boolean bound = false;
+
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -98,6 +98,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         public void onServiceDisconnected(ComponentName name) {
             Log.i(TAG, "SensorSystem Service disconnected");
             container = null;
+            bound = false;
         }
     };
 
@@ -106,15 +107,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         super.onResume();
 
         Intent service = new Intent(this, SensorSystemService.class);
-        if (!bindService(service, connection, Context.BIND_ABOVE_CLIENT)) {
-            Log.w(getClass().getSimpleName(), "SensorSystem Service bind failed");
+        if (bindService(service, connection, Context.BIND_ABOVE_CLIENT)) {
+            bound = true;
+        } else {
+            Log.w(TAG, "SensorSystem Service bind failed");
         }
     }
 
     @Override
     public void onPause() {
-        if (container != null) {
+        if (bound) {
             unbindService(connection);
+            bound = false;
         }
         super.onPause();
     }

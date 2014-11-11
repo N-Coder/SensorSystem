@@ -25,7 +25,7 @@ public class BoundFragment extends Fragment implements ServiceConnection {
     }
 
     @Nullable
-    protected  <T extends Component> T getComponent(Key<T> key) {
+    protected <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {
@@ -34,6 +34,8 @@ public class BoundFragment extends Fragment implements ServiceConnection {
     }
 
     // SERVICE ----------------------------------------------------------------
+
+    private boolean bound = false;
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -52,15 +54,18 @@ public class BoundFragment extends Fragment implements ServiceConnection {
         super.onResume();
 
         Intent service = new Intent(getActivity(), SensorSystemService.class);
-        if (!getActivity().bindService(service, this, Context.BIND_ABOVE_CLIENT)) {
+        if (getActivity().bindService(service, this, Context.BIND_ABOVE_CLIENT)) {
+            bound = true;
+        } else {
             Log.w(getClass().getSimpleName(), "SensorSystem Service bind failed");
         }
     }
 
     @Override
     public void onPause() {
-        if (container != null) {
+        if (bound) {
             getActivity().unbindService(this);
+            bound = false;
         }
         super.onPause();
     }

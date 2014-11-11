@@ -110,6 +110,7 @@ public class SensorSystemService extends Service {
 
         public void shutdown() {
             container.shutdown();
+            stopSelf();
         }
 
         public TypedMap<? extends Component> getData() {

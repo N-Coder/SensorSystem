@@ -46,7 +46,7 @@ public class ComponentInfoActivity extends Activity implements ServiceConnection
     }
 
     @Nullable
-    protected  <T extends Component> T getComponent(Key<T> key) {
+    protected <T extends Component> T getComponent(Key<T> key) {
         if (getContainer() != null) {
             return getContainer().get(key);
         } else {
@@ -55,6 +55,8 @@ public class ComponentInfoActivity extends Activity implements ServiceConnection
     }
 
     // SERVICE ----------------------------------------------------------------
+
+    private boolean bound = false;
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -73,15 +75,18 @@ public class ComponentInfoActivity extends Activity implements ServiceConnection
         super.onResume();
 
         Intent service = new Intent(this, SensorSystemService.class);
-        if (!bindService(service, this, Context.BIND_ABOVE_CLIENT)) {
+        if (bindService(service, this, Context.BIND_ABOVE_CLIENT)) {
+            bound = true;
+        } else {
             Log.w(getClass().getSimpleName(), "SensorSystem Service bind failed");
         }
     }
 
     @Override
     public void onPause() {
-        if (container != null) {
+        if (bound) {
             unbindService(this);
+            bound = false;
         }
         super.onPause();
     }
