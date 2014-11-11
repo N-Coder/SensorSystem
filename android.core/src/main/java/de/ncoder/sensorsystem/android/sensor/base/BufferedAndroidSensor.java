@@ -14,6 +14,7 @@ public abstract class BufferedAndroidSensor<T> extends AndroidSensor<T> {
 
     @Override
     protected void changed(T oldValue, T newValue) {
+        if (!mayChange()) return;
         buffer[pointer] = newValue;
         pointer = (pointer + 1) % buffer.length;
         super.changed(oldValue, newValue);

@@ -86,7 +86,7 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
 
     @Override
     protected void changed(T oldValue, T newValue) {
-        //TODO limit change rate (AccuracySensor floods the MQ and database)
+        if (!mayChange()) return;
         if (oldValue == null) {
             oldValue = cachedValue;
         }
