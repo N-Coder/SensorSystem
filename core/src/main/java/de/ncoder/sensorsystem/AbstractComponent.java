@@ -4,6 +4,11 @@ import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public class AbstractComponent implements Component {
     private Container container;
 
@@ -51,5 +56,10 @@ public class AbstractComponent implements Component {
             }
         }
         return name;
+    }
+
+    @SafeVarargs
+    public static Set<Key<? extends Component>> wrapDependencies(Key<? extends Component>... keys) {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
     }
 }
