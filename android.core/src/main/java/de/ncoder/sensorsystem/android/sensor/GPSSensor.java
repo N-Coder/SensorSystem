@@ -34,10 +34,18 @@ public class GPSSensor extends AbstractSensor<Location> {
         super.init(container);
         looper = getOtherComponent(SystemLooper.KEY).getLooper();
         locationManager.addGpsStatusListener(gpsStatusListener);
+        scheduleGPSUpdate();
+    }
+
+    private void scheduleGPSUpdate() {
         scheduled = getOtherComponent(TimingManager.KEY).scheduleExecution(new Runnable() {
             @Override
             public void run() {
                 locationManager.requestSingleUpdate(getGpsCriteria(), locationListener, looper);
+
+                // scheduleGPSUpdate() could be moved to locationListener if it can be ensured that it will always
+                // be called at some time, even if e.g. the provider was disabled while waiting for the location update
+                scheduleGPSUpdate();
             }
         }, DELAY_FRAMES);
     }
