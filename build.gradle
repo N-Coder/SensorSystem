@@ -16,7 +16,7 @@ subprojects {
     apply plugin: "maven"
 
     group = "de.ncoder.sensorsystem"
-    version = "0.1.2-SNAPSHOT"
+    version = "0.1.2"
 
     repositories {
         mavenCentral()
