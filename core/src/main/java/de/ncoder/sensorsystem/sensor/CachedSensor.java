@@ -44,11 +44,15 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
         return cacheValid;
     }
 
-    private void updateCache() {
+    protected void updateCache() {
+        updateCache(fetch());
+    }
+
+    protected void updateCache(T newValue) {
         T oldValue = cachedValue;
-        cachedValue = fetch();
+        cachedValue = newValue;
         cacheValid = true;
-        changed(oldValue, cachedValue);
+        changed(oldValue, newValue);
     }
 
     protected abstract T fetch();
