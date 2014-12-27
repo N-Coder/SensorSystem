@@ -34,6 +34,7 @@ public class SimpleValueChangedEvent<ValueT, SourceT extends Component> extends 
         this(name, null, oldValue, newValue);
     }
 
+    @Deprecated
     public SimpleValueChangedEvent(SourceT source, ValueT oldValue, ValueT newValue) {
         this(null, source, oldValue, newValue);
     }
