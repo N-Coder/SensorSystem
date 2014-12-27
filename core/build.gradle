@@ -1,0 +1,21 @@
+apply plugin: "java"
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile "org.slf4j:slf4j-api:1.7.5"
+    compile "de.ncoder:typedmap:1.0.1"
+
+    testCompile "junit:junit:4.11"
+}
+
+publishing {
+    publications {
+        core(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+        }
+    }
+}

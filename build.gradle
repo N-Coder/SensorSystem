@@ -1,152 +1,45 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
-        classpath 'org.apache.maven.wagon:wagon-ssh:2.7'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
-subprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
-
-    apply plugin: "maven"
+allprojects {
+    apply plugin: "maven-publish"
 
     group = "de.ncoder.sensorsystem"
     version = "0.1.3-SNAPSHOT"
 
     repositories {
-        mavenCentral()
-        mavenLocal()
+        jcenter()
         maven {
-            url "http://students.fim.uni-passau.de/~${mavenUser}/maven/"
+            url "https://dl.bintray.com/n-coder/maven/"
         }
     }
 
-    configurations {
-        deployerJars
+    task sourceJar(type: Jar) {
+        classifier = 'sources'
+        if (project.hasProperty('android'))
+            from project.android.sourceSets.main.java.srcDirs
+        else if (project.hasProperty('sourceSets'))
+            from project.sourceSets.main.java.srcDirs
     }
 
-    dependencies {
-        deployerJars "org.apache.maven.wagon:wagon-ssh:2.7"
-    }
-
-    uploadArchives {
+    publishing {
         repositories {
-            mavenDeployer {
-                repository(url: mavenLocal().url)
-            }
-            mavenDeployer {
-                configuration = configurations.deployerJars
-                repository(url: "scp://bender.fim.uni-passau.de/home/${mavenUser}/public_html/maven") {
-                    authentication(userName: mavenUser)
-                }
-                pom.project {
-                    licenses {
-                        license {
-                            name 'The MIT License (MIT)'
-                            url 'http://opensource.org/licenses/MIT'
-                            distribution 'repo'
-                        }
+            if (hasProperty("bintrayUsername")) {
+                maven {
+                    name 'Bintray'
+                    url "https://api.bintray.com/maven/n-coder/maven/SensorSystem"
+                    credentials {
+                        username = bintrayUsername
+                        password = bintrayApiKey
                     }
                 }
             }
         }
-    }
-}
-
-project(":core") {
-    apply plugin: "java"
-
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
-
-    dependencies {
-        compile "org.slf4j:slf4j-api:1.7.5"
-        compile "de.ncoder:typedmap:1.0.0"
-
-        testCompile "junit:junit:4.11"
-    }
-}
-
-project(":remote") {
-    apply plugin: "java"
-
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
-
-    dependencies {
-        compile project(":core")
-    }
-}
-
-project(":android.core") {
-    apply plugin: 'android-library'
-
-    android {
-        compileSdkVersion 20
-        buildToolsVersion "20.0.0"
-
-        defaultConfig {
-            minSdkVersion 14
-            targetSdkVersion 20
-        }
-
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_7
-            targetCompatibility JavaVersion.VERSION_1_7
-        }
-
-        lintOptions {
-            abortOnError false
-        }
-    }
-
-    dependencies {
-        compile project(":core")
-    }
-}
-
-project(":android.app") {
-    apply plugin: 'android'
-
-    android {
-        compileSdkVersion 20
-        buildToolsVersion "20.0.0"
-
-        defaultConfig {
-            minSdkVersion 14
-            targetSdkVersion 20
-            versionCode 1
-            versionName version
-        }
-
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_7
-            targetCompatibility JavaVersion.VERSION_1_7
-        }
-
-        buildTypes {
-            release {
-                runProguard false
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            }
-        }
-
-        lintOptions {
-            abortOnError false
-        }
-    }
-
-    dependencies {
-        compile fileTree(dir: 'libs', include: ['*.jar'])
-
-        compile project(":android.core")
-
-        compile 'com.android.support:appcompat-v7:20.+'
-        compile 'com.android.support:support-v13:20.+'
     }
 }
