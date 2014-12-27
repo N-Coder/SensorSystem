@@ -24,6 +24,20 @@
 
 package de.ncoder.sensorsystem;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -32,12 +46,6 @@ import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.sensorsystem.remote.RemoteContainer;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.*;
 
 public class SimpleContainer implements Container, RemoteContainer {
     public static boolean defaultCheckDependencies;
@@ -153,6 +161,16 @@ public class SimpleContainer implements Container, RemoteContainer {
 
     public void setCheckDependencies(boolean checkDependencies) {
         this.checkDependencies = checkDependencies;
+    }
+
+    public Set<String> getPermissions() {
+        Set<String> permissions = new HashSet<>();
+        for (Component component : components.values()) {
+            if (component instanceof PrivilegedComponent) {
+                permissions.addAll(((PrivilegedComponent) component).requiredPermissions());
+            }
+        }
+        return permissions;
     }
 
     // ------------------------------------------------------------------------
