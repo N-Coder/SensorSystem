@@ -65,7 +65,7 @@ public class SimpleContainer implements Container, RemoteContainer {
     private final TypedMap<Component> components = new TypedMap<>();
 
     @Override
-    public synchronized <T extends Component> void register(Key<T> key, T component) {
+    public synchronized <T extends Component, V extends T> void register(Key<T> key, V component) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -87,13 +87,19 @@ public class SimpleContainer implements Container, RemoteContainer {
         publish(new ComponentEvent(key, component, ComponentEvent.Type.ADDED));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public synchronized void unregister(Key<? extends Component> key) {
-        checkRemove(key);
-        Component component = components.remove(key);
-        if (component != null) {
-            component.destroy();
-            publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+    public synchronized void unregister(Key<?> keyUnchecked) {
+        if (Component.class.isAssignableFrom(keyUnchecked.getValueClass())) {
+            Key<? extends Component> key = (Key<? extends Component>) keyUnchecked;
+            checkRemove(key);
+            Component component = components.remove(key);
+            if (component != null) {
+                component.destroy();
+                publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+            }
+        } else {
+            components.remove(keyUnchecked);
         }
     }
 
@@ -132,7 +138,7 @@ public class SimpleContainer implements Container, RemoteContainer {
     }
 
     @Override
-    public boolean isRegistered(Key<? extends Component> key) {
+    public boolean isRegistered(Key<?> key) {
         return components.containsKey(key);
     }
 

@@ -31,6 +31,12 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.util.Collection;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.SimpleContainer;
@@ -41,7 +47,11 @@ import de.ncoder.sensorsystem.android.manager.AndroidScheduleManager;
 import de.ncoder.sensorsystem.android.manager.AndroidThreadPoolManager;
 import de.ncoder.sensorsystem.android.manager.AndroidTimingManager;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
-import de.ncoder.sensorsystem.android.sensor.*;
+import de.ncoder.sensorsystem.android.sensor.AccelerationSensor;
+import de.ncoder.sensorsystem.android.sensor.BrightnessSensor;
+import de.ncoder.sensorsystem.android.sensor.GPSSensor;
+import de.ncoder.sensorsystem.android.sensor.MagneticSensor;
+import de.ncoder.sensorsystem.android.sensor.ProximitySensor;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.ThreadPoolManager;
@@ -49,10 +59,6 @@ import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-import java.util.Collection;
 
 public class SensorSystemService extends Service {
     private final Container container = new SimpleContainer();
@@ -111,15 +117,15 @@ public class SensorSystemService extends Service {
     private final Binder theBinder = new Binder();
 
     public class Binder extends android.os.Binder implements Container {
-        public <T extends Component> void register(Key<T> key, T actor) {
-            container.register(key, actor);
+        public <T extends Component, V extends T> void register(Key<T> key, V component) {
+            container.register(key, component);
         }
 
         public <T extends Component> T get(Key<T> key) {
             return container.get(key);
         }
 
-        public void unregister(Key<? extends Component> key) {
+        public void unregister(Key<?> key) {
             container.unregister(key);
         }
 
@@ -128,7 +134,7 @@ public class SensorSystemService extends Service {
             container.unregister(component);
         }
 
-        public boolean isRegistered(Key<? extends Component> key) {
+        public boolean isRegistered(Key<?> key) {
             return container.isRegistered(key);
         }
 

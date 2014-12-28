@@ -24,21 +24,21 @@
 
 package de.ncoder.sensorsystem;
 
+import java.util.Collection;
+
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
-import java.util.Collection;
-
 public interface Container {
-    <T extends Component> void register(Key<T> key, T actor);
+    <T extends Component, V extends T> void register(Key<T> key, V component);
 
-    void unregister(Key<? extends Component> key);
+    void unregister(Key<?> key);
 
     void unregister(Component component);
 
     <T extends Component> T get(Key<T> key);
 
-    boolean isRegistered(Key<? extends Component> key);
+    boolean isRegistered(Key<?> key);
 
     TypedMap<? extends Component> getData();
 
