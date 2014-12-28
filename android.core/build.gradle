@@ -26,8 +26,8 @@ dependencies {
 publishing {
     publications {
         android(MavenPublication) {
-            if (!hasProperty("bundleRelease")) {
-                println "Could not find property 'bundleRelease' for android.core publication. Ignoring publication."
+            if (!project.tasks.findByPath("bundleRelease")) {
+                println "Could not find task 'bundleRelease' for android.core publication. Ignoring publication."
                 return
             }
 

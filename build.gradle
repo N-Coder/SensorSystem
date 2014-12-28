@@ -30,10 +30,10 @@ allprojects {
 
     publishing {
         repositories {
-            if (hasProperty("bintrayUsername")) {
-                maven {
-                    name 'Bintray'
-                    url "https://api.bintray.com/maven/n-coder/maven/SensorSystem"
+            maven {
+                name 'Bintray'
+                url "https://api.bintray.com/maven/n-coder/maven/SensorSystem"
+                if (project.hasProperty("bintrayUsername")) {
                     credentials {
                         username = bintrayUsername
                         password = bintrayApiKey
