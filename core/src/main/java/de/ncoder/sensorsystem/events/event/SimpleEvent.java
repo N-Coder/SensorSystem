@@ -28,7 +28,7 @@ import de.ncoder.sensorsystem.Component;
 
 public class SimpleEvent<T extends Component> implements Event {
     private final long when;
-    private final T source;
+    private final transient T source;
     private final String name;
 
     public SimpleEvent(String name, T source) {
