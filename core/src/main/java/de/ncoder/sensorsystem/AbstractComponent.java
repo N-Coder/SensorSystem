@@ -24,14 +24,14 @@
 
 package de.ncoder.sensorsystem;
 
-import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.event.Event;
-import de.ncoder.typedmap.Key;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.event.Event;
+import de.ncoder.typedmap.Key;
 
 public class AbstractComponent implements Component {
     private Container container;
@@ -84,7 +84,7 @@ public class AbstractComponent implements Component {
     }
 
     @SafeVarargs
-    public static Set<Key<? extends Component>> wrapDependencies(Key<? extends Component>... keys) {
+    public static <T> Set<T> wrapSet(T... keys) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
     }
 }
