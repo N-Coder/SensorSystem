@@ -37,6 +37,10 @@ publishing {
                 classifier "debug"
             }
 
+            artifact packageReleaseJar {
+                classifier "classes"
+            }
+
             artifact sourceJar
 
             //TODO automatically grab the right dependencies
