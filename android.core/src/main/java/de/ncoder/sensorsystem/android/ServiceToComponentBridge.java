@@ -82,7 +82,9 @@ public class ServiceToComponentBridge<S extends Service, C extends Component> {
 
     public void bindToContainer(Intent containerService, Key key) { //called by service.onBind/onStartCommand
         if (bound) {
-            if (!this.containerService.equals(containerService.getComponent()) || !this.key.equals(key)) {
+            if (this.containerService == null
+                    || !this.containerService.equals(containerService.getComponent())
+                    || !this.key.equals(key)) {
                 throw new IllegalStateException("Binding via an already bound bridge! " +
                         "Current [" + this.containerService + ", " + this.key + "], " +
                         "Requested [" + containerService + ", " + key + "]");
@@ -99,7 +101,7 @@ public class ServiceToComponentBridge<S extends Service, C extends Component> {
             throw new IllegalArgumentException("EXTRA_COMPONENT_KEY " + key + " is not a valid Key for " + component);
         }
         this.key = key;
-        Log.v(TAG, "bindToContainer(" + containerService + "+, " + key + ") called");
+        Log.v(TAG, "bindToContainer(" + containerService + ", " + key + ") called");
         if (getContext().bindService(containerService, containerConnection, 0)) {
             bound = true;
             Log.v(TAG, "bindService(" + containerService + ") successful");
