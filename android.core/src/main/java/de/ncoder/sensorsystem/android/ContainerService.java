@@ -99,7 +99,7 @@ public class ContainerService extends Service implements Container {
         }
     }
 
-    public class ContextComponent extends ContextWrapper implements Component {
+    public static class ContextComponent extends ContextWrapper implements Component {
         public ContextComponent(Context base) {
             super(base);
         }
