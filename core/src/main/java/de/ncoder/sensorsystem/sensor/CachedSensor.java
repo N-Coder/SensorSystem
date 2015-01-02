@@ -30,7 +30,7 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
 
     @Override
     public T get() {
-        if (!cacheValid) {
+        if (!hasCachedValue()) {
             updateCache();
         }
         return cachedValue;
