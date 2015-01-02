@@ -11,7 +11,7 @@ allprojects {
     apply plugin: "maven-publish"
 
     group = "de.ncoder.sensorsystem"
-    version = "0.1.4-SNAPSHOT"
+    version = "0.1.4"
 
     repositories {
         jcenter()
