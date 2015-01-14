@@ -24,10 +24,10 @@
 
 package de.ncoder.sensorsystem.sensor;
 
+import java.util.concurrent.TimeUnit;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.events.event.SimpleValueChangedEvent;
-
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSensor<T> extends AbstractComponent implements Sensor<T> {
     private long lastChanged;
@@ -40,6 +40,10 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
     protected void changed(T oldValue, T newValue) {
         if (!mayChange()) return;
         lastChanged = System.currentTimeMillis();
+        publishChange(oldValue, newValue);
+    }
+
+    protected void publishChange(T oldValue, T newValue) {
         publish(new SimpleValueChangedEvent<>(
                 getName(), this, lastChanged, oldValue, newValue
         ));
