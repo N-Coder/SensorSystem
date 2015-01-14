@@ -27,11 +27,23 @@ package de.ncoder.sensorsystem.sensor;
 public abstract class CachedSensor<T> extends AbstractSensor<T> {
     private T cachedValue;
     private boolean cacheValid = false;
+    private Thread updateThread = null;
 
     @Override
     public T get() {
         if (!hasCachedValue()) {
-            updateCache();
+            synchronized (this) {
+                if (updateThread == null) {
+                    updateThread = Thread.currentThread();
+                    try {
+                        updateCache();
+                    } finally {
+                        updateThread = null;
+                    }
+                } else if (updateThread != Thread.currentThread()) {
+                    return get();
+                } // else a currently running update causes a new update, use the old value
+            }
         }
         return cachedValue;
     }
@@ -44,11 +56,11 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
         return cacheValid;
     }
 
-    protected void updateCache() {
+    protected synchronized void updateCache() {
         updateCache(fetch());
     }
 
-    protected void updateCache(T newValue) {
+    protected synchronized void updateCache(T newValue) {
         T oldValue = cachedValue;
         cachedValue = newValue;
         cacheValid = true;
