@@ -49,6 +49,7 @@ public class ServiceToComponentBridge<S extends Service, C extends Component> {
     // LIFECYCLE --------------------------------------------------------------
 
     public boolean valid = false;
+    private boolean unbinding = false;
     private final S service;
     private final C component;
     private Container container;
@@ -61,18 +62,26 @@ public class ServiceToComponentBridge<S extends Service, C extends Component> {
 
     public void unbind() {
         Log.v(TAG, "unbind() called");
+        if (!unbinding) {
+            unbinding = true;
+            try {
+                doUnbind();
+            } finally {
+                unbinding = false;
+            }
+        }
+    }
+
+    private void doUnbind() {
         valid = false;
         if (container != null) {
             container.unregister(component); //calls component.destroy();
         }
-        if (bound && service != null) {
+        if (bound) {
             getContext().unbindService(containerConnection);
             bound = false;
         }
-        if (service != null) {
-            service.stopSelf(); //calls service.onDestroy();
-            bound = false;
-        }
+        service.stopSelf(); //calls service.onDestroy();
     }
 
     // BINDING ----------------------------------------------------------------

@@ -33,16 +33,14 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
     public T get() {
         if (!hasCachedValue()) {
             synchronized (this) {
-                if (updateThread == null) {
-                    updateThread = Thread.currentThread();
-                    try {
+                if (!hasCachedValue()) {
+                    if (!isUpdating()) {
                         updateCache();
-                    } finally {
-                        updateThread = null;
-                    }
-                } else if (updateThread != Thread.currentThread()) {
-                    return get();
-                } // else a currently running update causes a new update, use the old value
+                    } else if (updateThread != Thread.currentThread()) {
+                        //this should have been delayed until the update was finished, so now we can retry
+                        return get();
+                    } // else a currently running update causes a new update, use the old value
+                }
             }
         }
         return cachedValue;
@@ -57,7 +55,12 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
     }
 
     protected synchronized void updateCache() {
-        updateCache(fetch());
+        updateThread = Thread.currentThread();
+        try {
+            updateCache(fetch());
+        } finally {
+            updateThread = null;
+        }
     }
 
     protected synchronized void updateCache(T newValue) {
@@ -68,4 +71,8 @@ public abstract class CachedSensor<T> extends AbstractSensor<T> {
     }
 
     protected abstract T fetch();
+
+    protected boolean isUpdating() {
+        return updateThread != null;
+    }
 }
