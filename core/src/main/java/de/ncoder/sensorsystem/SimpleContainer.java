@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
@@ -62,7 +63,7 @@ public class SimpleContainer implements Container, RemoteContainer {
     // ------------------------------------------------------------------------
 
     private boolean checkDependencies = defaultCheckDependencies;
-    private final TypedMap<Component> components = new TypedMap<>();
+    private final TypedMap<Component> components = new TypedMap<>(new ConcurrentHashMap<Key<? extends Component>, Component>());
 
     @Override
     public synchronized <T extends Component, V extends T> void register(Key<T> key, V component) {

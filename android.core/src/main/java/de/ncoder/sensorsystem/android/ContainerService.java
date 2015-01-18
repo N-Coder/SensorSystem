@@ -111,6 +111,11 @@ public class ContainerService extends Service implements Container {
         @Override
         public void destroy() {
         }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName();
+        }
     }
 
     public Container getContainer() {
