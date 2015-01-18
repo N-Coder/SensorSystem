@@ -35,6 +35,7 @@ import android.os.Build;
 import android.util.Log;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -43,12 +44,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.DependantComponent;
 import de.ncoder.sensorsystem.android.ContainerService;
+import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
+import de.ncoder.typedmap.Key;
 
-public class AndroidScheduleManager extends ScheduleManager {
+public class AndroidScheduleManager extends ScheduleManager implements DependantComponent {
     private static final String TAG = AndroidScheduleManager.class.getSimpleName();
     private static final String INTENT_ACTION = AndroidScheduleManager.class.getName() + ".ALARM";
     private static final String INTENT_EXTRA_ID = "alarm-id";
@@ -207,5 +212,15 @@ public class AndroidScheduleManager extends ScheduleManager {
             //TODO block
             return null;
         }
+    }
+
+    private static Set<Key<? extends Component>> dependencies;
+
+    @Override
+    public Set<Key<? extends Component>> dependencies() {
+        if (dependencies == null) {
+            dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+        }
+        return dependencies;
     }
 }

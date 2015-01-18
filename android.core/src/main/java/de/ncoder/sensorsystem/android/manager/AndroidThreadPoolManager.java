@@ -27,17 +27,22 @@ package de.ncoder.sensorsystem.android.manager;
 import android.content.Context;
 import android.os.PowerManager;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.DependantComponent;
 import de.ncoder.sensorsystem.android.ContainerService;
+import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ThreadPoolManager;
+import de.ncoder.typedmap.Key;
 
-public class AndroidThreadPoolManager extends ThreadPoolManager {
+public class AndroidThreadPoolManager extends ThreadPoolManager implements DependantComponent {
     private static final String WAKELOCK_TAG = AndroidThreadPoolManager.class.getName() + ".WAKE_LOCK";
 
     private PowerManager.WakeLock wakelock;
@@ -111,5 +116,15 @@ public class AndroidThreadPoolManager extends ThreadPoolManager {
                 wakelock.release();
             }
         }
+    }
+
+    private static Set<Key<? extends Component>> dependencies;
+
+    @Override
+    public Set<Key<? extends Component>> dependencies() {
+        if (dependencies == null) {
+            dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+        }
+        return dependencies;
     }
 }

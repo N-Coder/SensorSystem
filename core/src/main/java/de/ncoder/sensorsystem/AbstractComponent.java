@@ -87,4 +87,11 @@ public class AbstractComponent implements Component {
     public static <T> Set<T> wrapSet(T... keys) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
     }
+
+    @SafeVarargs
+    public static <T> Set<T> wrapSet(Set<T> parent, T... keys) {
+        HashSet<T> set = new HashSet<>(parent);
+        set.addAll(Arrays.asList(keys));
+        return Collections.unmodifiableSet(set);
+    }
 }

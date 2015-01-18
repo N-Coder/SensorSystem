@@ -25,29 +25,31 @@
 package de.ncoder.sensorsystem.android.logging;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import java.util.Set;
+
 import de.ncoder.sensorsystem.AbstractComponent;
+import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.typedmap.Key;
 
-public class DBLogger extends AbstractComponent implements EventListener {
+public class DBLogger extends AbstractComponent implements EventListener, DependantComponent {
     public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
 
-    private final DBHelper dbHelper;
+    private DBHelper dbHelper;
     private SQLiteDatabase database;
-
-    public DBLogger(Context context) {
-        dbHelper = new DBHelper(context);
-    }
 
     @Override
     public void init(Container container) {
+        dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
         super.init(container);
         database = dbHelper.getWritableDatabase();
         EventManager eventManager = getOtherComponent(EventManager.KEY);
@@ -85,5 +87,15 @@ public class DBLogger extends AbstractComponent implements EventListener {
 
     public int getLogEntryCount() {
         return dbHelper.getLogEntryCount();
+    }
+
+    private static Set<Key<? extends Component>> dependencies;
+
+    @Override
+    public Set<Key<? extends Component>> dependencies() {
+        if (dependencies == null) {
+            dependencies = wrapSet(ContainerService.KEY_CONTEXT, EventManager.KEY);
+        }
+        return dependencies;
     }
 }

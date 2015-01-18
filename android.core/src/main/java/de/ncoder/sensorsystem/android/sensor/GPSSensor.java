@@ -24,9 +24,19 @@
 
 package de.ncoder.sensorsystem.android.sensor;
 
-import android.location.*;
+import android.location.Criteria;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.manager.TimingManager;
@@ -35,10 +45,10 @@ import de.ncoder.sensorsystem.manager.accuracy.IntAccuracyRange;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 import de.ncoder.typedmap.Key;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
+/**
+ * @deprecated TimingManager is broken
+ */
+@Deprecated
 public class GPSSensor extends AbstractSensor<Location> {
     public static final Key<GPSSensor> KEY = new Key<>(GPSSensor.class);
 

@@ -24,21 +24,19 @@
 
 package de.ncoder.sensorsystem.manager;
 
-import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.DependantComponent;
-import de.ncoder.sensorsystem.events.FutureCallback;
-import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
-import de.ncoder.typedmap.Key;
-
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import de.ncoder.sensorsystem.AbstractComponent;
+import de.ncoder.sensorsystem.Component;
+import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.events.FutureCallback;
+import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
+import de.ncoder.typedmap.Key;
 
 public abstract class DataManager extends AbstractComponent implements DependantComponent {
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -54,9 +52,7 @@ public abstract class DataManager extends AbstractComponent implements Dependant
     @Override
     public Set<Key<? extends Component>> dependencies() {
         if (dependencies == null) {
-            LinkedHashSet<Key<? extends Component>> d = new LinkedHashSet<>();
-            d.add(ThreadPoolManager.KEY);
-            dependencies = Collections.unmodifiableSet(d);
+            dependencies = DataManager.<Key<? extends Component>>wrapSet(ThreadPoolManager.KEY);
         }
         return dependencies;
     }
