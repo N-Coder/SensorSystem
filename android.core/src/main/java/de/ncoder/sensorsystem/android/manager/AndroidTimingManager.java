@@ -30,39 +30,48 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import java.util.PriorityQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
-import java.util.PriorityQueue;
-import java.util.concurrent.*;
-
+/**
+ * @deprecated implementation is broken
+ */
+@Deprecated
 public class AndroidTimingManager extends TimingManager {
-    private static final String INTENT_ACTION = AndroidTimingManager.class + ".ALARM";
+    private static final String INTENT_ACTION = AndroidTimingManager.class.getName() + ".ALARM";
 
-    private final Context context;
-    private final AlarmManager alarmManager;
-    private final PendingIntent alarmIntent;
-
-    public AndroidTimingManager(Context context) {
-        this.context = context;
-        alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
-        alarmIntent = PendingIntent.getBroadcast(context, 0, new Intent(INTENT_ACTION), PendingIntent.FLAG_CANCEL_CURRENT);
-    }
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
 
     @Override
     public void init(Container container) {
         super.init(container);
-        context.registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION));
+        alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
+        alarmIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(INTENT_ACTION), PendingIntent.FLAG_CANCEL_CURRENT);
+        getContext().registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION));
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, getFrameLength().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
     }
 
     @Override
     public void destroy() {
-        context.unregisterReceiver(broadcastReceiver);
+        getContext().unregisterReceiver(broadcastReceiver);
         alarmManager.cancel(alarmIntent);
         queue.clear();
         super.destroy();
+    }
+
+    private Context getContext() {
+        return getOtherComponent(ContainerService.KEY_CONTEXT);
     }
 
     // ------------------------------------------------------------------------
@@ -87,7 +96,7 @@ public class AndroidTimingManager extends TimingManager {
     };
 
     @Override
-    public Future<?> scheduleRepeatedExecution(Runnable r, int delayFrames, int initialDelayFrames) {
+    public Future<?> scheduleRepeatedExecution(Runnable r, int initialDelayFrames, int delayFrames) {
         Scheduled scheduled = new Scheduled(r, true, delayFrames);
         scheduled.schedule(initialDelayFrames);
         return scheduled;

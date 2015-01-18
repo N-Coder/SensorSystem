@@ -32,41 +32,45 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
+
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class AndroidScheduleManager extends ScheduleManager {
-    private static final String INTENT_ACTION = AndroidScheduleManager.class + ".ALARM";
-    private static final String INTENT_DATA_SCHEME = "alarm-id";
+    private static final String TAG = AndroidScheduleManager.class.getSimpleName();
+    private static final String INTENT_ACTION = AndroidScheduleManager.class.getName() + ".ALARM";
+    private static final String INTENT_EXTRA_ID = "alarm-id";
 
-    private final Context context;
-    private final AlarmManager alarmManager;
+    private AlarmManager alarmManager;
 
     private final AtomicInteger counter = new AtomicInteger(0);
-    private final Map<Integer, Runnable> runnables = new HashMap<>();
-
-    public AndroidScheduleManager(Context context) {
-        this.context = context;
-        alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
-    }
+    private final Map<Integer, Runnable> runnables = new ConcurrentHashMap<>();
 
     @Override
     public void init(Container container) {
         super.init(container);
+        alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
+
         IntentFilter filter = new IntentFilter(INTENT_ACTION);
-        filter.addDataScheme(INTENT_DATA_SCHEME);
-        context.registerReceiver(broadcastReceiver, filter);
+        filter.addDataScheme(INTENT_EXTRA_ID);
+        getContext().registerReceiver(broadcastReceiver, filter);
     }
 
     @Override
     public void destroy() {
-        context.unregisterReceiver(broadcastReceiver);
+        getContext().unregisterReceiver(broadcastReceiver);
         for (Integer id : runnables.keySet()) {
             alarmManager.cancel(makePendingIntent(id));
         }
@@ -74,22 +78,37 @@ public class AndroidScheduleManager extends ScheduleManager {
     }
 
     private PendingIntent makePendingIntent(int id) {
-        Intent intent = new Intent(INTENT_ACTION, Uri.fromParts(INTENT_DATA_SCHEME, "//" + id, null));
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intent = new Intent(INTENT_ACTION, Uri.fromParts(INTENT_EXTRA_ID, String.valueOf(id), null));
+        //intent.putExtra("source-name", toString());
+        //intent.putExtra("source-hash", String.valueOf(hashCode()));
+        //intent.putExtra("source-time", System.currentTimeMillis());
+        return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    private Context getContext() {
+        return getOtherComponent(ContainerService.KEY_CONTEXT);
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Runnable runnable = runnables.get(Integer.parseInt(intent.getData().getHost()));
+            int id = Integer.parseInt(intent.getData().getSchemeSpecificPart().replaceAll("[^0-9]", ""));
+            Runnable runnable = runnables.get(id);
+            //Log.v(TAG, "Run #" + id + ": " + runnable + " from " + intent);
             if (runnable != null) {
                 runnable.run();
+            } else {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_NO_CREATE);
+                Log.w(TAG, "Discarding unknown alarm #" + id + " and cancelling source PendingIntent " + pendingIntent);
+                if (pendingIntent != null) {
+                    alarmManager.cancel(pendingIntent);
+                }
             }
         }
     };
 
     @Override
-    public Future<?> scheduleRepeatedExecution(Runnable runnable, long delayMillis, long initialDelayMillis) {
+    public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
         final int id = counter.getAndIncrement();
 
         runnables.put(id, runnable);
@@ -97,12 +116,13 @@ public class AndroidScheduleManager extends ScheduleManager {
         int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
                 AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
         PendingIntent alarmIntent = makePendingIntent(id);
-        //TODO use repeated batch window scheduling (as described in AlarmManager#setRepeating(...))
-        alarmManager.setRepeating(alarmType, delayMillis, initialDelayMillis, alarmIntent);
+        //TODO consider using repeated batch window scheduling as described in AlarmManager#setRepeating(...)
+        alarmManager.setRepeating(alarmType, initialDelayMillis, delayMillis, alarmIntent);
 
         return new AlarmFuture(id, alarmIntent);
     }
 
+    //TODO consider implementing a version taking Callables and returning their value
     @Override
     public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
         final int id = counter.getAndIncrement();
@@ -122,7 +142,6 @@ public class AndroidScheduleManager extends ScheduleManager {
         return new AlarmFuture(id, alarmIntent);
     }
 
-    //TODO Could be combined with AlarmFuture and effectively replaced with AndroidTimingManager.Scheduled(-Runnable)
     private class OneTimeRunnable implements Runnable {
         private final int id;
         private final Runnable runnable;
@@ -134,15 +153,11 @@ public class AndroidScheduleManager extends ScheduleManager {
 
         @Override
         public void run() {
-            try {
-                runnable.run();
-            } finally {
-                runnables.remove(id);
-            }
+            runnables.remove(id);
+            runnable.run();
         }
     }
 
-    //TODO This should be split up for repeating and one-time alarms
     private class AlarmFuture implements Future<Void> {
         private final int id;
         private final PendingIntent alarmIntent;

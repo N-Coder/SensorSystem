@@ -39,17 +39,14 @@ import de.ncoder.sensorsystem.android.app.data.UserManager;
 import de.ncoder.sensorsystem.android.logging.DBLogger;
 import de.ncoder.sensorsystem.android.manager.AndroidScheduleManager;
 import de.ncoder.sensorsystem.android.manager.AndroidThreadPoolManager;
-import de.ncoder.sensorsystem.android.manager.AndroidTimingManager;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.android.sensor.AccelerationSensor;
 import de.ncoder.sensorsystem.android.sensor.BrightnessSensor;
-import de.ncoder.sensorsystem.android.sensor.GPSSensor;
 import de.ncoder.sensorsystem.android.sensor.MagneticSensor;
 import de.ncoder.sensorsystem.android.sensor.ProximitySensor;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.ThreadPoolManager;
-import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
 public class SensorSystemService extends ContainerService {
@@ -67,11 +64,11 @@ public class SensorSystemService extends ContainerService {
     private void addComponents() {
         register(EventManager.KEY, new EventManager());
         register(AccuracyManager.KEY, new AccuracyManager());
-        register(ThreadPoolManager.KEY, new AndroidThreadPoolManager(AndroidThreadPoolManager.DEFAULT_EXECUTOR(), this));
-        register(ScheduleManager.KEY, new AndroidScheduleManager(this));
-        register(TimingManager.KEY, new AndroidTimingManager(this));
+        register(ThreadPoolManager.KEY, new AndroidThreadPoolManager());
+        register(ScheduleManager.KEY, new AndroidScheduleManager());
+        //register(TimingManager.KEY, new AndroidTimingManager());
         register(SystemLooper.KEY, new SystemLooper());
-        register(DBLogger.KEY, new DBLogger(this));
+        register(DBLogger.KEY, new DBLogger());
         register(UserManager.KEY, new UserManager());
 
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -80,6 +77,6 @@ public class SensorSystemService extends ContainerService {
         register(MagneticSensor.KEY, new MagneticSensor(sensorManager));
         register(ProximitySensor.KEY, new ProximitySensor(sensorManager));
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        register(GPSSensor.KEY, new GPSSensor(locationManager));
+        //register(GPSSensor.KEY, new GPSSensor(locationManager));
     }
 }

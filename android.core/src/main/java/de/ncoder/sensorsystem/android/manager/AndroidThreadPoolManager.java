@@ -26,25 +26,37 @@ package de.ncoder.sensorsystem.android.manager;
 
 import android.content.Context;
 import android.os.PowerManager;
-import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.android.ContainerService;
+import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 
 public class AndroidThreadPoolManager extends ThreadPoolManager {
     private static final String WAKELOCK_TAG = AndroidThreadPoolManager.class.getName() + ".WAKE_LOCK";
 
-    private final PowerManager.WakeLock wakelock;
+    private PowerManager.WakeLock wakelock;
 
-    public AndroidThreadPoolManager(ExecutorService executor, Context context) {
-        super(executor);
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
+    public AndroidThreadPoolManager() {
+        this(new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                20L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>()));
     }
 
-    public static ExecutorService DEFAULT_EXECUTOR() {
-        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                20L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>());
+    public AndroidThreadPoolManager(ExecutorService executor) {
+        super(executor);
+    }
+
+    @Override
+    public void init(Container container) {
+        super.init(container);
+        PowerManager pm = (PowerManager) getOtherComponent(ContainerService.KEY_CONTEXT).getSystemService(Context.POWER_SERVICE);
+        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
     }
 
     @Override

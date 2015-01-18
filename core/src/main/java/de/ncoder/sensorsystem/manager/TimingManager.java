@@ -24,19 +24,19 @@
 
 package de.ncoder.sensorsystem.manager;
 
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.typedmap.Key;
-
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public abstract class TimingManager extends AbstractComponent {
     public static final Key<TimingManager> KEY = new Key<>(TimingManager.class);
 
     // ------------------------------------------------------------------------
 
-    public abstract Future<?> scheduleRepeatedExecution(Runnable r, int delayFrames, int initialDelayFrames);
+    public abstract Future<?> scheduleRepeatedExecution(Runnable r, int initialDelayFrames, int delayFrames);
 
     public abstract Future<?> scheduleExecution(Runnable r, int delayFrames);
 
