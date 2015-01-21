@@ -42,60 +42,60 @@ import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.typedmap.Key;
 
 public class DBLogger extends AbstractComponent implements EventListener, DependantComponent {
-    public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
+	public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
 
-    private DBHelper dbHelper;
-    private SQLiteDatabase database;
+	private DBHelper dbHelper;
+	private SQLiteDatabase database;
 
-    @Override
-    public void init(Container container) {
-        dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
-        super.init(container);
-        database = dbHelper.getWritableDatabase();
-        EventManager eventManager = getOtherComponent(EventManager.KEY);
-        if (eventManager != null) {
-            eventManager.subscribe(this);
-        } else {
-            Log.w(getClass().getSimpleName(), "DBLogger makes no sense if EventManger is not available");
-        }
-    }
+	@Override
+	public void init(Container container) {
+		super.init(container);
+		dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
+		database = dbHelper.getWritableDatabase();
+		EventManager eventManager = getOtherComponent(EventManager.KEY);
+		if (eventManager != null) {
+			eventManager.subscribe(this);
+		} else {
+			Log.w(getClass().getSimpleName(), "DBLogger makes no sense if EventManger is not available");
+		}
+	}
 
-    @Override
-    public void destroy() {
-        EventManager eventManager = getOtherComponent(EventManager.KEY);
-        if (eventManager != null) {
-            eventManager.unsubscribe(this);
-        }
-        dbHelper.close();
-        super.destroy();
-    }
+	@Override
+	public void destroy() {
+		EventManager eventManager = getOtherComponent(EventManager.KEY);
+		if (eventManager != null) {
+			eventManager.unsubscribe(this);
+		}
+		dbHelper.close();
+		super.destroy();
+	}
 
-    @Override
-    public void handle(Event event) {
-        if (event instanceof ValueChangedEvent) {
-            ContentValues values = new ContentValues();
-            values.put(DBHelper.COLUMN_SOURCE, String.valueOf(event.getSource()));
-            values.put(DBHelper.COLUMN_KEY, event.getName());
-            values.put(DBHelper.COLUMN_TIMESTAMP, event.getWhen());
-            values.put(DBHelper.COLUMN_VALUE, JSONUtils.toJSONString(((ValueChangedEvent) event).getNewValue()));
-            long insertId = database.insert(DBHelper.TABLE_LOG, null, values);
-            if (insertId < 0) {
-                Log.w(getClass().getSimpleName(), "Logging event failed: " + insertId);
-            }
-        }
-    }
+	@Override
+	public void handle(Event event) {
+		if (event instanceof ValueChangedEvent) {
+			ContentValues values = new ContentValues();
+			values.put(DBHelper.COLUMN_SOURCE, String.valueOf(event.getSource()));
+			values.put(DBHelper.COLUMN_KEY, event.getName());
+			values.put(DBHelper.COLUMN_TIMESTAMP, event.getWhen());
+			values.put(DBHelper.COLUMN_VALUE, JSONUtils.toJSONString(((ValueChangedEvent) event).getNewValue()));
+			long insertId = database.insert(DBHelper.TABLE_LOG, null, values);
+			if (insertId < 0) {
+				Log.w(getClass().getSimpleName(), "Logging event failed: " + insertId);
+			}
+		}
+	}
 
-    public int getLogEntryCount() {
-        return dbHelper.getLogEntryCount();
-    }
+	public int getLogEntryCount() {
+		return dbHelper.getLogEntryCount();
+	}
 
-    private static Set<Key<? extends Component>> dependencies;
+	private static Set<Key<? extends Component>> dependencies;
 
-    @Override
-    public Set<Key<? extends Component>> dependencies() {
-        if (dependencies == null) {
-            dependencies = wrapSet(ContainerService.KEY_CONTEXT, EventManager.KEY);
-        }
-        return dependencies;
-    }
+	@Override
+	public Set<Key<? extends Component>> dependencies() {
+		if (dependencies == null) {
+			dependencies = wrapSet(ContainerService.KEY_CONTEXT, EventManager.KEY);
+		}
+		return dependencies;
+	}
 }
