@@ -30,6 +30,9 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+
+import java.util.concurrent.TimeUnit;
+
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.events.EventListener;
@@ -38,8 +41,6 @@ import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
-
-import java.util.concurrent.TimeUnit;
 
 public abstract class AndroidSensor<T> extends AbstractSensor<T> implements SensorEventListener {
     protected final SensorManager sensorManager;
@@ -108,15 +109,15 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
         return cachedValue;
     }
 
-    @Override
-    protected void changed(T oldValue, T newValue) {
-        if (!mayChange()) return;
-        if (oldValue == null) {
-            oldValue = cachedValue;
-        }
-        cachedValue = newValue;
-        super.changed(oldValue, newValue);
-    }
+	@Override
+	protected void changed(boolean hasOldValue, T oldValue, T newValue) {
+		if (!mayChange()) return;
+		if (oldValue == null || !hasOldValue) {
+			oldValue = cachedValue;
+		}
+		cachedValue = newValue;
+		super.changed(hasOldValue, oldValue, newValue);
+	}
 
     private final LongAccuracyRange<TimeUnit> accuracy = new LongAccuracyRange<>(
             25_000_000L, 5_000_000L, TimeUnit.MICROSECONDS

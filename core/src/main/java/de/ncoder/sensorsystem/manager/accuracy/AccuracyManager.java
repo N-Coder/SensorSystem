@@ -25,7 +25,7 @@
 package de.ncoder.sensorsystem.manager.accuracy;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.events.event.SimpleValueChangedEvent;
+import de.ncoder.sensorsystem.events.event.CachedValueChangedEvent;
 import de.ncoder.typedmap.Key;
 
 public class AccuracyManager extends AbstractComponent {
@@ -64,8 +64,8 @@ public class AccuracyManager extends AbstractComponent {
 
     // ------------------------------------------------------------------------
 
-    public class AccuracyChangedEvent extends SimpleValueChangedEvent<Integer, AccuracyManager> {
-        //TODO check if serializable
+	public class AccuracyChangedEvent extends CachedValueChangedEvent<Integer, AccuracyManager> {
+		//TODO check if serializable
 
         private AccuracyChangedEvent(int oldValue, int newValue) {
             super(AccuracyChangedEvent.class.getName(), AccuracyManager.this, oldValue, newValue);

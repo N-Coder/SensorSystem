@@ -27,43 +27,63 @@ package de.ncoder.sensorsystem.sensor;
 import java.util.concurrent.TimeUnit;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.events.event.SimpleValueChangedEvent;
+import de.ncoder.sensorsystem.events.event.CachedValueChangedEvent;
+import de.ncoder.sensorsystem.events.event.TransientValueChangedEvent;
+import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 
 public abstract class AbstractSensor<T> extends AbstractComponent implements Sensor<T> {
-    private long lastChanged;
-    private long maxChangeRate = 200 /*ms*/; //not an AccuracyRange for efficiency reasons
+	private long lastChanged;
+	private long maxChangeRate = 200 /*ms*/; //not an AccuracyRange for efficiency reasons
 
-    protected boolean mayChange() {
-        return System.currentTimeMillis() - lastChanged > maxChangeRate;
-    }
+	protected boolean mayChange() {
+		return System.currentTimeMillis() - lastChanged > maxChangeRate;
+	}
 
-    protected void changed(T oldValue, T newValue) {
-        if (!mayChange()) return;
-        lastChanged = System.currentTimeMillis();
-        publishChange(oldValue, newValue);
-    }
+	protected final void changed(T oldValue, T newValue) {
+		changed(true, oldValue, newValue);
+	}
 
-    protected void publishChange(T oldValue, T newValue) {
-        publish(new SimpleValueChangedEvent<>(
-                getName(), this, lastChanged, oldValue, newValue
-        ));
-    }
+	protected final void changed(T newValue) {
+		changed(false, null, newValue);
+	}
 
-    public long getMaxChangeRate() {
-        return maxChangeRate;
-    }
+	protected void changed(boolean hasOldValue, T oldValue, T newValue) {
+		if (!mayChange()) return;
+		lastChanged = System.currentTimeMillis();
+		publishChange(hasOldValue, oldValue, newValue);
+	}
 
-    public void setMaxChangeRate(long maxChangeRate, TimeUnit unit) {
-        this.maxChangeRate = unit.toMillis(maxChangeRate);
-    }
+	protected void publishChange(boolean hasOldValue, T oldValue, T newValue) {
+		publish(newChangedEvent(hasOldValue, oldValue, newValue));
+	}
 
-    @Override
-    public String getName() {
-        return getClass().getName();
-    }
+	protected ValueChangedEvent<T> newChangedEvent(boolean hasOldValue, T oldValue, T newValue) {
+		if (hasOldValue) {
+			return new CachedValueChangedEvent<>(
+					getName(), this, lastChanged, oldValue, newValue
+			);
+		} else {
+			return new TransientValueChangedEvent<>(
+					getName(), this, lastChanged, newValue
+			);
+		}
+	}
 
-    @Override
-    public long lastChange() {
-        return lastChanged;
-    }
+	public long getMaxChangeRate() {
+		return maxChangeRate;
+	}
+
+	public void setMaxChangeRate(long maxChangeRate, TimeUnit unit) {
+		this.maxChangeRate = unit.toMillis(maxChangeRate);
+	}
+
+	@Override
+	public String getName() {
+		return getClass().getName();
+	}
+
+	@Override
+	public long lastChange() {
+		return lastChanged;
+	}
 }
