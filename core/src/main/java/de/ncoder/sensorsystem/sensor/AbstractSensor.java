@@ -32,8 +32,10 @@ import de.ncoder.sensorsystem.events.event.TransientValueChangedEvent;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 
 public abstract class AbstractSensor<T> extends AbstractComponent implements Sensor<T> {
+	protected static long DEFAULT_MAX_CHANGE_RATE = 200 /*ms*/;
+
 	private long lastChanged;
-	private long maxChangeRate = 200 /*ms*/; //not an AccuracyRange for efficiency reasons
+	private long maxChangeRate = DEFAULT_MAX_CHANGE_RATE; //not an AccuracyRange for efficiency reasons
 
 	protected boolean mayChange() {
 		return System.currentTimeMillis() - lastChanged > maxChangeRate;
