@@ -24,21 +24,21 @@
 
 package de.ncoder.sensorsystem.android.sensor;
 
-import android.location.Criteria;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.location.*;
 import android.os.Bundle;
 import android.os.Looper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
+import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.PrivilegedComponent;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
+import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.sensorsystem.manager.accuracy.IntAccuracyRange;
@@ -49,8 +49,9 @@ import de.ncoder.typedmap.Key;
  * @deprecated TimingManager is broken
  */
 @Deprecated
-public class GPSSensor extends AbstractSensor<Location> {
-    public static final Key<GPSSensor> KEY = new Key<>(GPSSensor.class);
+public class GPSSensor extends AbstractSensor<Location> implements DependantComponent, PrivilegedComponent {
+	@Deprecated
+	public static final Key<GPSSensor> KEY = new Key<>(GPSSensor.class);
 
     private static final int DELAY_FRAMES = 4;
     private static final int MAX_SNRS = 30;
@@ -171,4 +172,24 @@ public class GPSSensor extends AbstractSensor<Location> {
             }
         }
     };
+
+	private static Set<Key<? extends Component>> dependencies;
+
+	@Override
+	public Set<Key<? extends Component>> dependencies() {
+		if (dependencies == null) {
+			dependencies = DataManager.wrapSet(TimingManager.KEY, SystemLooper.KEY);
+		}
+		return dependencies;
+	}
+
+	private static Set<String> permissions;
+
+	@Override
+	public Set<String> requiredPermissions() {
+		if (permissions == null) {
+			permissions = DataManager.wrapSet("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION");
+		}
+		return permissions;
+	}
 }

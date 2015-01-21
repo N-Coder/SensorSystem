@@ -36,191 +36,197 @@ import android.util.Log;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.PrivilegedComponent;
 import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.typedmap.Key;
 
-public class AndroidScheduleManager extends ScheduleManager implements DependantComponent {
-    private static final String TAG = AndroidScheduleManager.class.getSimpleName();
-    private static final String INTENT_ACTION = AndroidScheduleManager.class.getName() + ".ALARM";
-    private static final String INTENT_EXTRA_ID = "alarm-id";
+public class AndroidScheduleManager extends ScheduleManager implements DependantComponent, PrivilegedComponent {
+	private static final String TAG = AndroidScheduleManager.class.getSimpleName();
+	private static final String INTENT_ACTION = AndroidScheduleManager.class.getName() + ".ALARM";
+	private static final String INTENT_EXTRA_ID = "alarm-id";
 
-    private AlarmManager alarmManager;
+	private AlarmManager alarmManager;
 
-    private final AtomicInteger counter = new AtomicInteger(0);
-    private final Map<Integer, Runnable> runnables = new ConcurrentHashMap<>();
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Map<Integer, Runnable> runnables = new ConcurrentHashMap<>();
 
-    @Override
-    public void init(Container container) {
-        super.init(container);
-        alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
+	@Override
+	public void init(Container container) {
+		super.init(container);
+		alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
 
-        IntentFilter filter = new IntentFilter(INTENT_ACTION);
-        filter.addDataScheme(INTENT_EXTRA_ID);
-        getContext().registerReceiver(broadcastReceiver, filter);
-    }
+		IntentFilter filter = new IntentFilter(INTENT_ACTION);
+		filter.addDataScheme(INTENT_EXTRA_ID);
+		getContext().registerReceiver(broadcastReceiver, filter);
+	}
 
-    @Override
-    public void destroy() {
-        getContext().unregisterReceiver(broadcastReceiver);
-        for (Integer id : runnables.keySet()) {
-            alarmManager.cancel(makePendingIntent(id));
-        }
-        super.destroy();
-    }
+	@Override
+	public void destroy() {
+		getContext().unregisterReceiver(broadcastReceiver);
+		for (Integer id : runnables.keySet()) {
+			alarmManager.cancel(makePendingIntent(id));
+		}
+		super.destroy();
+	}
 
-    private PendingIntent makePendingIntent(int id) {
-        Intent intent = new Intent(INTENT_ACTION, Uri.fromParts(INTENT_EXTRA_ID, String.valueOf(id), null));
-        //intent.putExtra("source-name", toString());
-        //intent.putExtra("source-hash", String.valueOf(hashCode()));
-        //intent.putExtra("source-time", System.currentTimeMillis());
-        return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-    }
+	private PendingIntent makePendingIntent(int id) {
+		Intent intent = new Intent(INTENT_ACTION, Uri.fromParts(INTENT_EXTRA_ID, String.valueOf(id), null));
+		//intent.putExtra("source-name", toString());
+		//intent.putExtra("source-hash", String.valueOf(hashCode()));
+		//intent.putExtra("source-time", System.currentTimeMillis());
+		return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+	}
 
-    private Context getContext() {
-        return getOtherComponent(ContainerService.KEY_CONTEXT);
-    }
+	private Context getContext() {
+		return getOtherComponent(ContainerService.KEY_CONTEXT);
+	}
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int id = Integer.parseInt(intent.getData().getSchemeSpecificPart().replaceAll("[^0-9]", ""));
-            Runnable runnable = runnables.get(id);
-            //Log.v(TAG, "Run #" + id + ": " + runnable + " from " + intent);
-            if (runnable != null) {
-                runnable.run();
-            } else {
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_NO_CREATE);
-                Log.w(TAG, "Discarding unknown alarm #" + id + " and cancelling source PendingIntent " + pendingIntent);
-                if (pendingIntent != null) {
-                    alarmManager.cancel(pendingIntent);
-                }
-            }
-        }
-    };
+	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int id = Integer.parseInt(intent.getData().getSchemeSpecificPart().replaceAll("[^0-9]", ""));
+			Runnable runnable = runnables.get(id);
+			//Log.v(TAG, "Run #" + id + ": " + runnable + " from " + intent);
+			if (runnable != null) {
+				runnable.run();
+			} else {
+				PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_NO_CREATE);
+				Log.w(TAG, "Discarding unknown alarm #" + id + " and cancelling source PendingIntent " + pendingIntent);
+				if (pendingIntent != null) {
+					alarmManager.cancel(pendingIntent);
+				}
+			}
+		}
+	};
 
-    @Override
-    public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
-        final int id = counter.getAndIncrement();
+	@Override
+	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
+		final int id = counter.getAndIncrement();
 
-        runnables.put(id, runnable);
+		runnables.put(id, runnable);
 
-        int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
-                AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
-        PendingIntent alarmIntent = makePendingIntent(id);
-        //TODO consider using repeated batch window scheduling as described in AlarmManager#setRepeating(...)
-        alarmManager.setRepeating(alarmType, initialDelayMillis, delayMillis, alarmIntent);
+		int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
+				AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+		PendingIntent alarmIntent = makePendingIntent(id);
+		//TODO consider using repeated batch window scheduling as described in AlarmManager#setRepeating(...)
+		alarmManager.setRepeating(alarmType, initialDelayMillis, delayMillis, alarmIntent);
 
-        return new AlarmFuture(id, alarmIntent);
-    }
+		return new AlarmFuture(id, alarmIntent);
+	}
 
-    //TODO consider implementing a version taking Callables and returning their value
-    @Override
-    public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
-        final int id = counter.getAndIncrement();
+	//TODO consider implementing a version taking Callables and returning their value
+	@Override
+	public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
+		final int id = counter.getAndIncrement();
 
-        runnables.put(id, new OneTimeRunnable(id, runnable));
+		runnables.put(id, new OneTimeRunnable(id, runnable));
 
-        int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
-                AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
-        PendingIntent alarmIntent = makePendingIntent(id);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setWindow(alarmType, delayMillis,
-                    getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
-        } else {
-            alarmManager.set(alarmType, delayMillis, alarmIntent);
-        }
+		int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
+				AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+		PendingIntent alarmIntent = makePendingIntent(id);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			alarmManager.setWindow(alarmType, delayMillis,
+					getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
+		} else {
+			alarmManager.set(alarmType, delayMillis, alarmIntent);
+		}
 
-        return new AlarmFuture(id, alarmIntent);
-    }
+		return new AlarmFuture(id, alarmIntent);
+	}
 
-    private class OneTimeRunnable implements Runnable {
-        private final int id;
-        private final Runnable runnable;
+	private class OneTimeRunnable implements Runnable {
+		private final int id;
+		private final Runnable runnable;
 
-        private OneTimeRunnable(int id, Runnable runnable) {
-            this.id = id;
-            this.runnable = runnable;
-        }
+		private OneTimeRunnable(int id, Runnable runnable) {
+			this.id = id;
+			this.runnable = runnable;
+		}
 
-        @Override
-        public void run() {
-            runnables.remove(id);
-            runnable.run();
-        }
-    }
+		@Override
+		public void run() {
+			runnables.remove(id);
+			runnable.run();
+		}
+	}
 
-    private class AlarmFuture implements Future<Void> {
-        private final int id;
-        private final PendingIntent alarmIntent;
-        private boolean cancelled;
+	private class AlarmFuture implements Future<Void> {
+		private final int id;
+		private final PendingIntent alarmIntent;
+		private boolean cancelled;
 
-        public AlarmFuture(int id, PendingIntent alarmIntent) {
-            this.id = id;
-            this.alarmIntent = alarmIntent;
-            cancelled = false;
-        }
+		public AlarmFuture(int id, PendingIntent alarmIntent) {
+			this.id = id;
+			this.alarmIntent = alarmIntent;
+			cancelled = false;
+		}
 
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            if (!cancelled && !isDone()) {
-                alarmManager.cancel(alarmIntent);
-                runnables.remove(id);
-                cancelled = true;
-                return true;
-            }
-            return false;
-        }
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning) {
+			if (!cancelled && !isDone()) {
+				alarmManager.cancel(alarmIntent);
+				runnables.remove(id);
+				cancelled = true;
+				return true;
+			}
+			return false;
+		}
 
-        @Override
-        public boolean isCancelled() {
-            return cancelled;
-        }
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
 
-        @Override
-        public boolean isDone() {
-            return !runnables.containsKey(id);
-        }
+		@Override
+		public boolean isDone() {
+			return !runnables.containsKey(id);
+		}
 
-        @Override
-        public Void get() throws InterruptedException, ExecutionException {
-            if (isCancelled()) {
-                throw new CancellationException();
-            }
-            //TODO block
-            return null;
-        }
+		@Override
+		public Void get() throws InterruptedException, ExecutionException {
+			if (isCancelled()) {
+				throw new CancellationException();
+			}
+			//TODO block
+			return null;
+		}
 
-        @Override
-        public Void get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            if (isCancelled()) {
-                throw new CancellationException();
-            }
-            //TODO block
-            return null;
-        }
-    }
+		@Override
+		public Void get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+			if (isCancelled()) {
+				throw new CancellationException();
+			}
+			//TODO block
+			return null;
+		}
+	}
 
-    private static Set<Key<? extends Component>> dependencies;
+	private static Set<Key<? extends Component>> dependencies;
 
-    @Override
-    public Set<Key<? extends Component>> dependencies() {
-        if (dependencies == null) {
-            dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
-        }
-        return dependencies;
-    }
+	@Override
+	public Set<Key<? extends Component>> dependencies() {
+		if (dependencies == null) {
+			dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+		}
+		return dependencies;
+	}
+
+	private static Set<String> permissions;
+
+	@Override
+	public Set<String> requiredPermissions() {
+		if (permissions == null) {
+			permissions = DataManager.wrapSet("android.permission.WAKE_LOCK");
+		}
+		return permissions;
+	}
 }
