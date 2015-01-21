@@ -24,64 +24,70 @@
 
 package de.ncoder.sensorsystem.manager;
 
+import java.util.List;
+import java.util.concurrent.*;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.typedmap.Key;
 
-import java.util.List;
-import java.util.concurrent.*;
-
 public class ThreadPoolManager extends AbstractComponent implements Executor {
-    public static final Key<ThreadPoolManager> KEY = new Key<>(ThreadPoolManager.class);
+	public static final Key<ThreadPoolManager> KEY = new Key<>(ThreadPoolManager.class);
 
-    private final ExecutorService executor;
+	private final ExecutorService executor;
 
-    public ThreadPoolManager(ExecutorService executor) {
-        this.executor = executor;
-    }
+	public ThreadPoolManager() {
+		this(new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+				60L, TimeUnit.SECONDS,
+				new SynchronousQueue<Runnable>()));
+	}
 
-    @Override
-    public void execute(Runnable command) {
-        executor.execute(command);
-    }
+	public ThreadPoolManager(ExecutorService executor) {
+		this.executor = executor;
+	}
 
-    public <T> Future<T> submit(Callable<T> task) {
-        return executor.submit(task);
-    }
+	@Override
+	public void execute(Runnable command) {
+		executor.execute(command);
+	}
 
-    public <T> Future<T> submit(Runnable task, T result) {
-        return executor.submit(task, result);
-    }
+	public <T> Future<T> submit(Callable<T> task) {
+		return executor.submit(task);
+	}
 
-    public Future<?> submit(Runnable task) {
-        return executor.submit(task);
-    }
+	public <T> Future<T> submit(Runnable task, T result) {
+		return executor.submit(task, result);
+	}
 
-    @Override
-    public void destroy() {
-        List<Runnable> disposed = executor.shutdownNow();
-        publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
-        super.destroy();
-    }
+	public Future<?> submit(Runnable task) {
+		return executor.submit(task);
+	}
 
-    @Override
-    public boolean isActive() {
-        return super.isActive() && !executor.isShutdown();
-    }
+	@Override
+	public void destroy() {
+		List<Runnable> disposed = executor.shutdownNow();
+		publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
+		super.destroy();
+	}
 
-    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        return executor.awaitTermination(timeout, unit);
-    }
+	@Override
+	public boolean isActive() {
+		return super.isActive() && !executor.isShutdown();
+	}
 
-    public boolean isTerminated() {
-        return executor.isTerminated();
-    }
+	public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+		return executor.awaitTermination(timeout, unit);
+	}
 
-    public Runnable awakeWrapper(Runnable runnable) {
-        return runnable;
-    }
+	public boolean isTerminated() {
+		return executor.isTerminated();
+	}
 
-    public <T> Callable<T> awakeWrapper(Callable<T> callable) {
-        return callable;
-    }
+	public Runnable awakeWrapper(Runnable runnable) {
+		return runnable;
+	}
+
+	public <T> Callable<T> awakeWrapper(Callable<T> callable) {
+		return callable;
+	}
 }
