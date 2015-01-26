@@ -51,7 +51,7 @@ import de.ncoder.typedmap.Key;
 
 public class AndroidScheduleManager extends ScheduleManager implements DependantComponent, PrivilegedComponent {
 	private static final String TAG = AndroidScheduleManager.class.getSimpleName();
-	private static final String INTENT_ACTION = AndroidScheduleManager.class.getName() + ".ALARM";
+	private String INTENT_ACTION;
 	private static final String INTENT_EXTRA_ID = "alarm-id";
 
 	private AlarmManager alarmManager;
@@ -62,11 +62,13 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public void init(Container container) {
 		super.init(container);
-		alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
+		Context context = getContext();
+		alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
 
+		INTENT_ACTION = context.getPackageName() + ".ScheduleManager.ALARM";
 		IntentFilter filter = new IntentFilter(INTENT_ACTION);
 		filter.addDataScheme(INTENT_EXTRA_ID);
-		getContext().registerReceiver(broadcastReceiver, filter);
+		context.registerReceiver(broadcastReceiver, filter);
 	}
 
 	@Override
