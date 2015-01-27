@@ -43,6 +43,10 @@ public class ContainerService extends Service implements Container {
 
     public static final Key<ContextComponent> KEY_CONTEXT = new Key<>(ContextComponent.class, "ContainerContext");
 
+	static {
+		SimpleContainer.defaultCheckDependencies = BuildConfig.DEBUG;
+	}
+
     @Override
     public void onCreate() {
         super.onCreate();
