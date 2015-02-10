@@ -27,9 +27,11 @@ package de.ncoder.sensorsystem.sensor;
 import java.util.concurrent.TimeUnit;
 
 import de.ncoder.sensorsystem.AbstractComponent;
+import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.events.event.CachedValueChangedEvent;
 import de.ncoder.sensorsystem.events.event.TransientValueChangedEvent;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
+import de.ncoder.typedmap.Key;
 
 public abstract class AbstractSensor<T> extends AbstractComponent implements Sensor<T> {
 	protected static long DEFAULT_MAX_CHANGE_RATE = 200 /*ms*/;
@@ -62,11 +64,11 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
 	protected ValueChangedEvent<T> newChangedEvent(boolean hasOldValue, T oldValue, T newValue) {
 		if (hasOldValue) {
 			return new CachedValueChangedEvent<>(
-					getName(), this, lastChanged, oldValue, newValue
+					toString(), this, lastChanged, oldValue, newValue
 			);
 		} else {
 			return new TransientValueChangedEvent<>(
-					getName(), this, lastChanged, newValue
+					toString(), this, lastChanged, newValue
 			);
 		}
 	}
@@ -80,8 +82,8 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
 	}
 
 	@Override
-	public String getName() {
-		return getClass().getName();
+	public Key<? extends Component> getKey() {
+		return super.getKey();
 	}
 
 	@Override
