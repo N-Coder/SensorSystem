@@ -24,8 +24,10 @@
 
 package de.ncoder.sensorsystem;
 
-public interface Component {
-    public void init(Container container);
+import de.ncoder.typedmap.Key;
 
-    public void destroy();
+public interface Component {
+	public void init(Container container, Key<? extends Component> key);
+
+	public void destroy(Key<? extends Component> key);
 }

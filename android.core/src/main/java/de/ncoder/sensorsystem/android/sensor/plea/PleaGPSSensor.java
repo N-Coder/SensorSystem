@@ -45,19 +45,19 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 	private GpsStatus cachedGpsStatus = null; //will be created and reused by GPSStatusListener
 
 	@Override
-	public void init(Container container) {
-		super.init(container);
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
 		getLocationManager().addGpsStatusListener(gpsStatusListener);
 		container.register(KEY_TRACKER, new MovementTracker());
 		startGpsLoop();
 	}
 
 	@Override
-	public void destroy() {
+	public void destroy(Key<? extends Component> key) {
 		getContainer().unregister(KEY_TRACKER);
 		getLocationManager().removeUpdates(simpleLocationListener);
 		getLocationManager().removeGpsStatusListener(gpsStatusListener);
-		super.destroy();
+		super.destroy(key);
 	}
 
 	@Override

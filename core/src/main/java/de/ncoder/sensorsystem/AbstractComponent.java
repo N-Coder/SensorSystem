@@ -24,74 +24,87 @@
 
 package de.ncoder.sensorsystem;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
 public class AbstractComponent implements Component {
-    private Container container;
+	private Container container;
+	private Key<? extends Component> key;
 
-    @Override
-    public void init(Container container) {
-        this.container = container;
-    }
+	@Override
+	public void init(Container container, Key<? extends Component> key) {
+		if (this.container != null || this.key != null) {
+			throw new IllegalStateException("Component " + getClass().getSimpleName() + " can't be shared!");
+		}
+		this.container = Objects.requireNonNull(container, "container");
+		this.key = Objects.requireNonNull(key, "key");
+	}
 
-    @Override
-    public void destroy() {
-        container = null;
-    }
+	@Override
+	public void destroy(Key<? extends Component> key) {
+		assert this.key == null || key == this.key;
+		container = null;
+		this.key = null;
+	}
 
-    protected boolean isActive() {
-        return container != null;
-    }
+	protected boolean isActive() {
+		return container != null;
+	}
 
-    protected Container getContainer() {
-        return container;
-    }
+	protected Container getContainer() {
+		return container;
+	}
 
-    protected <T extends Component> T getOtherComponent(Key<T> key) {
-        Container container = getContainer();
-        if (container != null) {
-            return container.get(key);
-        } else {
-            return null;
-        }
-    }
+	public Key<? extends Component> getKey() {
+		return key;
+	}
 
-    protected void publish(Event event) {
-        EventManager eventManager = getOtherComponent(EventManager.KEY);
-        if (eventManager != null) {
-            eventManager.publish(event);
-        }
-    }
+	protected <T extends Component> T getOtherComponent(Key<T> key) {
+		Container container = getContainer();
+		if (container != null) {
+			return container.get(key);
+		} else {
+			return null;
+		}
+	}
 
-    @Override
-    public String toString() {
-        String name = getClass().getSimpleName();
-        if (name == null || name.isEmpty()) {
-            name = getClass().getName();
-            int index = name.lastIndexOf(".");
-            if (index >= 0 && index + 1 < name.length()) {
-                name = name.substring(index + 1);
-            }
-        }
-        return name;
-    }
+	protected void publish(Event event) {
+		EventManager eventManager = getOtherComponent(EventManager.KEY);
+		if (eventManager != null) {
+			eventManager.publish(event);
+		}
+	}
 
-    @SafeVarargs
-    public static <T> Set<T> wrapSet(T... keys) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
-    }
+	@Override
+	public String toString() {
+		String name = getClass().getSimpleName();
+		if (name == null || name.isEmpty()) {
+			//extract name from full name
+			name = getClass().getName();
+			int index = name.lastIndexOf(".");
+			if (index >= 0 && index + 1 < name.length()) {
+				name = name.substring(index + 1);
+			}
+		}
+		if (!getKey().getValueClass().equals(getClass())) {
+			//append Key if it doesn't exactly match this Component
+			name += "<" + getKey().toString() + ">";
+		}
+		return name;
+	}
 
-    @SafeVarargs
-    public static <T> Set<T> wrapSet(Set<T> parent, T... keys) {
-        HashSet<T> set = new HashSet<>(parent);
-        set.addAll(Arrays.asList(keys));
-        return Collections.unmodifiableSet(set);
-    }
+	@SafeVarargs
+	public static <T> Set<T> wrapSet(T... keys) {
+		return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
+	}
+
+	@SafeVarargs
+	public static <T> Set<T> wrapSet(Set<T> parent, T... keys) {
+		HashSet<T> set = new HashSet<>(parent);
+		set.addAll(Arrays.asList(keys));
+		return Collections.unmodifiableSet(set);
+	}
 }

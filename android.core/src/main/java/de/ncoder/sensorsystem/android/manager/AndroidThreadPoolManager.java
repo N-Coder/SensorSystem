@@ -28,11 +28,7 @@ import android.content.Context;
 import android.os.PowerManager;
 
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
@@ -43,88 +39,88 @@ import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.typedmap.Key;
 
 public class AndroidThreadPoolManager extends ThreadPoolManager implements DependantComponent {
-    private static final String WAKELOCK_TAG = AndroidThreadPoolManager.class.getName() + ".WAKE_LOCK";
+	private static final String WAKELOCK_TAG = AndroidThreadPoolManager.class.getName() + ".WAKE_LOCK";
 
-    private PowerManager.WakeLock wakelock;
+	private PowerManager.WakeLock wakelock;
 
-    public AndroidThreadPoolManager() {
-        this(new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                20L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>()));
-    }
+	public AndroidThreadPoolManager() {
+		this(new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+				20L, TimeUnit.SECONDS,
+				new SynchronousQueue<Runnable>()));
+	}
 
-    public AndroidThreadPoolManager(ExecutorService executor) {
-        super(executor);
-    }
+	public AndroidThreadPoolManager(ExecutorService executor) {
+		super(executor);
+	}
 
-    @Override
-    public void init(Container container) {
-        super.init(container);
-        PowerManager pm = (PowerManager) getOtherComponent(ContainerService.KEY_CONTEXT).getSystemService(Context.POWER_SERVICE);
-        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
-    }
+	@Override
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
+		PowerManager pm = (PowerManager) getOtherComponent(ContainerService.KEY_CONTEXT).getSystemService(Context.POWER_SERVICE);
+		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
+	}
 
-    @Override
-    public void destroy() {
-        super.destroy();
-        while (wakelock.isHeld()) {
-            wakelock.release();
-        }
-    }
+	@Override
+	public void destroy(Key<? extends Component> key) {
+		while (wakelock.isHeld()) {
+			wakelock.release();
+		}
+		super.destroy(key);
+	}
 
-    @Override
-    public Runnable awakeWrapper(Runnable runnable) {
-        return new AwakeRunnable(runnable);
-    }
+	@Override
+	public Runnable awakeWrapper(Runnable runnable) {
+		return new AwakeRunnable(runnable);
+	}
 
-    @Override
-    public <T> Callable<T> awakeWrapper(Callable<T> callable) {
-        return new AwakeCallable<>(callable);
-    }
+	@Override
+	public <T> Callable<T> awakeWrapper(Callable<T> callable) {
+		return new AwakeCallable<>(callable);
+	}
 
-    private class AwakeRunnable implements Runnable {
-        private final Runnable runnable;
+	private class AwakeRunnable implements Runnable {
+		private final Runnable runnable;
 
-        private AwakeRunnable(Runnable runnable) {
-            this.runnable = runnable;
-        }
+		private AwakeRunnable(Runnable runnable) {
+			this.runnable = runnable;
+		}
 
-        @Override
-        public void run() {
-            wakelock.acquire();
-            try {
-                runnable.run();
-            } finally {
-                wakelock.release();
-            }
-        }
-    }
+		@Override
+		public void run() {
+			wakelock.acquire();
+			try {
+				runnable.run();
+			} finally {
+				wakelock.release();
+			}
+		}
+	}
 
-    private class AwakeCallable<T> implements Callable<T> {
-        private final Callable<T> callable;
+	private class AwakeCallable<T> implements Callable<T> {
+		private final Callable<T> callable;
 
-        private AwakeCallable(Callable<T> callable) {
-            this.callable = callable;
-        }
+		private AwakeCallable(Callable<T> callable) {
+			this.callable = callable;
+		}
 
-        @Override
-        public T call() throws Exception {
-            wakelock.acquire();
-            try {
-                return callable.call();
-            } finally {
-                wakelock.release();
-            }
-        }
-    }
+		@Override
+		public T call() throws Exception {
+			wakelock.acquire();
+			try {
+				return callable.call();
+			} finally {
+				wakelock.release();
+			}
+		}
+	}
 
-    private static Set<Key<? extends Component>> dependencies;
+	private static Set<Key<? extends Component>> dependencies;
 
-    @Override
-    public Set<Key<? extends Component>> dependencies() {
-        if (dependencies == null) {
-            dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
-        }
-        return dependencies;
-    }
+	@Override
+	public Set<Key<? extends Component>> dependencies() {
+		if (dependencies == null) {
+			dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+		}
+		return dependencies;
+	}
 }

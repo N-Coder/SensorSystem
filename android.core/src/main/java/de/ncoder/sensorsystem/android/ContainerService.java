@@ -39,135 +39,135 @@ import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
 public class ContainerService extends Service implements Container {
-    private final Container container = new SimpleContainer();
+	private final Container container = new SimpleContainer();
 
-    public static final Key<ContextComponent> KEY_CONTEXT = new Key<>(ContextComponent.class, "ContainerContext");
+	public static final Key<ContextComponent> KEY_CONTEXT = new Key<>(ContextComponent.class, "ContainerContext");
 
 	static {
 		SimpleContainer.defaultCheckDependencies = BuildConfig.DEBUG;
 	}
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        container.register(KEY_CONTEXT, new ContextComponent(this));
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		container.register(KEY_CONTEXT, new ContextComponent(this));
+	}
 
-    @Override
-    public void onDestroy() {
-        container.shutdown();
-        super.onDestroy();
-    }
+	@Override
+	public void onDestroy() {
+		container.shutdown();
+		super.onDestroy();
+	}
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return theBinder;
-    }
+	@Override
+	public IBinder onBind(Intent intent) {
+		return theBinder;
+	}
 
-    private final Binder theBinder = new Binder();
+	private final Binder theBinder = new Binder();
 
-    public class Binder extends android.os.Binder implements Container {
-        public <T extends Component, V extends T> void register(Key<T> key, V component) {
-            container.register(key, component);
-        }
+	public class Binder extends android.os.Binder implements Container {
+		public <T extends Component, V extends T> void register(Key<T> key, V component) {
+			container.register(key, component);
+		}
 
-        public <T extends Component> T get(Key<T> key) {
-            return container.get(key);
-        }
+		public <T extends Component> T get(Key<T> key) {
+			return container.get(key);
+		}
 
-        public void unregister(Key<?> key) {
-            container.unregister(key);
-        }
+		public void unregister(Key<?> key) {
+			container.unregister(key);
+		}
 
-        @Override
-        public void unregister(Component component) {
-            container.unregister(component);
-        }
+		@Override
+		public void unregister(Component component) {
+			container.unregister(component);
+		}
 
-        public boolean isRegistered(Key<?> key) {
-            return container.isRegistered(key);
-        }
+		public boolean isRegistered(Key<?> key) {
+			return container.isRegistered(key);
+		}
 
-        public void shutdown() {
-            container.shutdown();
-            stopSelf();
-        }
+		public void shutdown() {
+			container.shutdown();
+			stopSelf();
+		}
 
-        public TypedMap<? extends Component> getData() {
-            return container.getData();
-        }
+		public TypedMap<? extends Component> getData() {
+			return container.getData();
+		}
 
-        @Override
-        public Collection<Key<? extends Component>> getKeys() {
-            return container.getKeys();
-        }
-    }
+		@Override
+		public Collection<Key<? extends Component>> getKeys() {
+			return container.getKeys();
+		}
+	}
 
-    public static class ContextComponent extends ContextWrapper implements Component {
-        public ContextComponent(Context base) {
-            super(base);
-        }
+	public static class ContextComponent extends ContextWrapper implements Component {
+		public ContextComponent(Context base) {
+			super(base);
+		}
 
-        @Override
-        public void init(Container container) {
-        }
+		@Override
+		public void init(Container container, Key<? extends Component> key) {
+		}
 
-        @Override
-        public void destroy() {
-        }
+		@Override
+		public void destroy(Key<? extends Component> key) {
+		}
 
-        @Override
-        public String toString() {
-            return getClass().getSimpleName();
-        }
-    }
+		@Override
+		public String toString() {
+			return getClass().getSimpleName();
+		}
+	}
 
-    public Container getContainer() {
-        return container;
-    }
+	public Container getContainer() {
+		return container;
+	}
 
-    @Override
-    public <T extends Component, V extends T> void register(Key<T> key, V component) {
-        container.register(key, component);
-    }
+	@Override
+	public <T extends Component, V extends T> void register(Key<T> key, V component) {
+		container.register(key, component);
+	}
 
-    public void registerService(Key<? extends Component> key,
-                                Class<? extends Service> component) {
-        ServiceToComponentBridge.startService(this, this.getClass(), key, component);
-    }
+	public void registerService(Key<? extends Component> key,
+	                            Class<? extends Service> component) {
+		ServiceToComponentBridge.startService(this, this.getClass(), key, component);
+	}
 
-    @Override
-    public void unregister(Key<?> key) {
-        container.unregister(key);
-    }
+	@Override
+	public void unregister(Key<?> key) {
+		container.unregister(key);
+	}
 
-    @Override
-    public void unregister(Component component) {
-        container.unregister(component);
-    }
+	@Override
+	public void unregister(Component component) {
+		container.unregister(component);
+	}
 
-    @Override
-    public <T extends Component> T get(Key<T> key) {
-        return container.get(key);
-    }
+	@Override
+	public <T extends Component> T get(Key<T> key) {
+		return container.get(key);
+	}
 
-    @Override
-    public boolean isRegistered(Key<?> key) {
-        return container.isRegistered(key);
-    }
+	@Override
+	public boolean isRegistered(Key<?> key) {
+		return container.isRegistered(key);
+	}
 
-    @Override
-    public TypedMap<? extends Component> getData() {
-        return container.getData();
-    }
+	@Override
+	public TypedMap<? extends Component> getData() {
+		return container.getData();
+	}
 
-    @Override
-    public Collection<Key<? extends Component>> getKeys() {
-        return container.getKeys();
-    }
+	@Override
+	public Collection<Key<? extends Component>> getKeys() {
+		return container.getKeys();
+	}
 
-    @Override
-    public void shutdown() {
-        container.shutdown();
-    }
+	@Override
+	public void shutdown() {
+		container.shutdown();
+	}
 }

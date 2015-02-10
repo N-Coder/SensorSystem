@@ -27,15 +27,15 @@ public class MovementTracker extends AbstractComponent implements EventListener,
 	private int eventCount;
 
 	@Override
-	public void init(Container container) {
-		super.init(container);
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
 		getOtherComponent(EventManager.KEY).subscribe(this);
 	}
 
 	@Override
-	public void destroy() {
+	public void destroy(Key<? extends Component> key) {
 		getOtherComponent(EventManager.KEY).unsubscribe(this);
-		super.destroy();
+		super.destroy(key);
 	}
 
 	public void reset() {

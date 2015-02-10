@@ -53,125 +53,125 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Deprecated
 	public static final Key<GPSSensor> KEY = new Key<>(GPSSensor.class);
 
-    private static final int DELAY_FRAMES = 4;
-    private static final int MAX_SNRS = 30;
+	private static final int DELAY_FRAMES = 4;
+	private static final int MAX_SNRS = 30;
 
-    private final LocationManager locationManager;
-    private Looper looper;
-    private Future<?> scheduled;
+	private final LocationManager locationManager;
+	private Looper looper;
+	private Future<?> scheduled;
 
-    public GPSSensor(LocationManager locationManager) {
-        this.locationManager = locationManager;
-    }
+	public GPSSensor(LocationManager locationManager) {
+		this.locationManager = locationManager;
+	}
 
-    @Override
-    public void init(Container container) {
-        super.init(container);
-        looper = getOtherComponent(SystemLooper.KEY).getLooper();
-        locationManager.addGpsStatusListener(gpsStatusListener);
-        scheduleGPSUpdate();
-    }
+	@Override
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
+		looper = getOtherComponent(SystemLooper.KEY).getLooper();
+		locationManager.addGpsStatusListener(gpsStatusListener);
+		scheduleGPSUpdate();
+	}
 
-    private void scheduleGPSUpdate() {
-        scheduled = getOtherComponent(TimingManager.KEY).scheduleExecution(new Runnable() {
-            @Override
-            public void run() {
-                locationManager.requestSingleUpdate(getGpsCriteria(), locationListener, looper);
+	private void scheduleGPSUpdate() {
+		scheduled = getOtherComponent(TimingManager.KEY).scheduleExecution(new Runnable() {
+			@Override
+			public void run() {
+				locationManager.requestSingleUpdate(getGpsCriteria(), locationListener, looper);
 
-                // scheduleGPSUpdate() could be moved to locationListener if it can be ensured that it will always
-                // be called at some time, even if e.g. the provider was disabled while waiting for the location update
-                scheduleGPSUpdate();
-            }
-        }, DELAY_FRAMES);
-    }
+				// scheduleGPSUpdate() could be moved to locationListener if it can be ensured that it will always
+				// be called at some time, even if e.g. the provider was disabled while waiting for the location update
+				scheduleGPSUpdate();
+			}
+		}, DELAY_FRAMES);
+	}
 
-    @Override
-    public void destroy() {
-        super.destroy();
-        scheduled.cancel(false);
-        locationManager.removeUpdates(locationListener);
-        locationManager.removeGpsStatusListener(gpsStatusListener);
-    }
+	@Override
+	public void destroy(Key<? extends Component> key) {
+		scheduled.cancel(false);
+		locationManager.removeUpdates(locationListener);
+		locationManager.removeGpsStatusListener(gpsStatusListener);
+		super.destroy(key);
+	}
 
-    // --------------------------------
+	// --------------------------------
 
-    private final Criteria criteria = new Criteria();
-    private final IntAccuracyRange<Void> accuracyRange = new IntAccuracyRange<>(Criteria.ACCURACY_LOW, Criteria.ACCURACY_HIGH);
+	private final Criteria criteria = new Criteria();
+	private final IntAccuracyRange<Void> accuracyRange = new IntAccuracyRange<>(Criteria.ACCURACY_LOW, Criteria.ACCURACY_HIGH);
 
-    private Criteria getGpsCriteria() {
-        criteria.setAccuracy(accuracyRange.scale(getOtherComponent(AccuracyManager.KEY)));
-        //criteria.setPowerRequirement(level);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setSpeedRequired(true);
-        criteria.setCostAllowed(false);
-        return criteria;
-    }
+	private Criteria getGpsCriteria() {
+		criteria.setAccuracy(accuracyRange.scale(getOtherComponent(AccuracyManager.KEY)));
+		//criteria.setPowerRequirement(level);
+		criteria.setAltitudeRequired(false);
+		criteria.setBearingRequired(false);
+		criteria.setSpeedRequired(true);
+		criteria.setCostAllowed(false);
+		return criteria;
+	}
 
-    // ------------------------------------------------------------------------
-    private Location location;
-    private final float[] distance = new float[1];
-    private GpsStatus status = null; //will be created and reused by LocationManager.getGpsStatus
-    private final List<Float> satelliteSNRs = new ArrayList<>(MAX_SNRS);
+	// ------------------------------------------------------------------------
+	private Location location;
+	private final float[] distance = new float[1];
+	private GpsStatus status = null; //will be created and reused by LocationManager.getGpsStatus
+	private final List<Float> satelliteSNRs = new ArrayList<>(MAX_SNRS);
 
-    @Override
-    public Location get() {
-        return location;
-    }
+	@Override
+	public Location get() {
+		return location;
+	}
 
-    public float getDistance() {
-        return distance[0];
-    }
+	public float getDistance() {
+		return distance[0];
+	}
 
-    public GpsStatus getGpsStatus() {
-        return status;
-    }
+	public GpsStatus getGpsStatus() {
+		return status;
+	}
 
-    public List<Float> getSatelliteSNRs() {
-        return satelliteSNRs;
-    }
+	public List<Float> getSatelliteSNRs() {
+		return satelliteSNRs;
+	}
 
-    private final LocationListener locationListener = new LocationListener() {
+	private final LocationListener locationListener = new LocationListener() {
 
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-        }
+		@Override
+		public void onStatusChanged(String s, int i, Bundle bundle) {
+		}
 
-        @Override
-        public void onProviderEnabled(String s) {
-        }
+		@Override
+		public void onProviderEnabled(String s) {
+		}
 
-        @Override
-        public void onProviderDisabled(String s) {
-        }
+		@Override
+		public void onProviderDisabled(String s) {
+		}
 
-        @Override
-        public void onLocationChanged(Location newLocation) {
-            if (location != null) {
-                Location.distanceBetween(newLocation.getLatitude(), newLocation.getLongitude(),
-                        location.getLatitude(), location.getLongitude(), distance);
-            }
-            changed(location, newLocation);
-            location = newLocation;
-        }
-    };
+		@Override
+		public void onLocationChanged(Location newLocation) {
+			if (location != null) {
+				Location.distanceBetween(newLocation.getLatitude(), newLocation.getLongitude(),
+						location.getLatitude(), location.getLongitude(), distance);
+			}
+			changed(location, newLocation);
+			location = newLocation;
+		}
+	};
 
-    private final GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener() {
-        @Override
-        public void onGpsStatusChanged(int event) {
-            if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS || event == GpsStatus.GPS_EVENT_FIRST_FIX) {
-                status = locationManager.getGpsStatus(status);
-                // Check number of satellites in list to determine fix state
-                satelliteSNRs.clear();
-                for (GpsSatellite sat : status.getSatellites()) {
-                    //do not count satellites the phone doesn't have a connection to
-                    if (sat.getSnr() != 0 || sat.usedInFix()) {
-                        satelliteSNRs.add(sat.getSnr());
-                    }
-                }
-            }
-        }
-    };
+	private final GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener() {
+		@Override
+		public void onGpsStatusChanged(int event) {
+			if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS || event == GpsStatus.GPS_EVENT_FIRST_FIX) {
+				status = locationManager.getGpsStatus(status);
+				// Check number of satellites in list to determine fix state
+				satelliteSNRs.clear();
+				for (GpsSatellite sat : status.getSatellites()) {
+					//do not count satellites the phone doesn't have a connection to
+					if (sat.getSnr() != 0 || sat.usedInFix()) {
+						satelliteSNRs.add(sat.getSnr());
+					}
+				}
+			}
+		}
+	};
 
 	private static Set<Key<? extends Component>> dependencies;
 

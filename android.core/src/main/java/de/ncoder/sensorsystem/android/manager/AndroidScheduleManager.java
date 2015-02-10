@@ -62,8 +62,8 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	private final Map<Integer, Runnable> runnables = new ConcurrentHashMap<>();
 
 	@Override
-	public void init(Container container) {
-		super.init(container);
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
 		Context context = getContext();
 		alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
 
@@ -74,12 +74,12 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	}
 
 	@Override
-	public void destroy() {
+	public void destroy(Key<? extends Component> key) {
 		getContext().unregisterReceiver(broadcastReceiver);
 		for (Integer id : runnables.keySet()) {
 			alarmManager.cancel(makePendingIntent(id));
 		}
-		super.destroy();
+		super.destroy(key);
 	}
 
 	private Context getContext() {

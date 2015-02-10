@@ -40,31 +40,23 @@ import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
 public class SimpleContainer implements Container, RemoteContainer {
-	public static boolean defaultCheckDependencies;
+	private boolean checkDependencies;
+	private final TypedMap<Component> components = new TypedMap<>(new ConcurrentHashMap<Key<? extends Component>, Component>());
+	private final List<Key<? extends Component>> log = new LinkedList<>();
 
-	static {
-		defaultCheckDependencies = true;
+	public SimpleContainer() {
+		checkDependencies = true;
 		try {
 			assert false;
-			defaultCheckDependencies = false;
+			checkDependencies = false;
 		} catch (AssertionError ignore) {
 		}
 	}
 
-	// ------------------------------------------------------------------------
-
-	private boolean checkDependencies = defaultCheckDependencies;
-	private final TypedMap<Component> components = new TypedMap<>(new ConcurrentHashMap<Key<? extends Component>, Component>());
-	private final List<Key<? extends Component>> log = new LinkedList<>();
-
 	@Override
 	public synchronized <T extends Component, V extends T> void register(Key<T> key, V component) {
-		if (key == null) {
-			throw new NullPointerException("key");
-		}
-		if (component == null) {
-			throw new NullPointerException("component");
-		}
+		Objects.requireNonNull(key, "key");
+		Objects.requireNonNull(component, "component");
 		if (isRegistered(key)) {
 			throw new IllegalArgumentException("Component for " + key + " already registered");
 		}
@@ -75,10 +67,15 @@ public class SimpleContainer implements Container, RemoteContainer {
 				}
 			}
 		}
-		log.add(key);
-		components.putTyped(key, component);
-		component.init(this);
-		publish(new ComponentEvent(key, component, ComponentEvent.Type.ADDED));
+		try {
+			components.putTyped(key, component);
+			component.init(this, key);
+			log.add(key);
+			publish(new ComponentEvent(key, component, ComponentEvent.Type.ADDED));
+		} catch (RuntimeException e) {
+			components.remove(key);
+			throw e;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -89,7 +86,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 			checkRemove(key);
 			Component component = components.remove(key);
 			if (component != null) {
-				component.destroy();
+				component.destroy(key);
 				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
 			}
 		} else {
@@ -99,19 +96,16 @@ public class SimpleContainer implements Container, RemoteContainer {
 
 	@Override
 	public synchronized void unregister(Component component) {
-		boolean removed = false;
 		Iterator<Map.Entry<Key<? extends Component>, Component>> it = components.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<Key<? extends Component>, Component> entry = it.next();
 			if (entry.getValue() == component) {
-				checkRemove(entry.getKey());
+				Key<? extends Component> key = entry.getKey();
+				checkRemove(key);
 				it.remove();
-				publish(new ComponentEvent(entry.getKey(), component, ComponentEvent.Type.REMOVED));
-				removed = true;
+				component.destroy(key);
+				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
 			}
-		}
-		if (removed) {
-			component.destroy();
 		}
 	}
 
@@ -120,7 +114,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 			for (Map.Entry<Key<? extends Component>, Component> entry : components.entrySet()) {
 				if (entry.getValue() instanceof DependantComponent
 						&& ((DependantComponent) entry.getValue()).dependencies().contains(key)) {
-					throw new DependencyException(entry.getKey(), key);
+					throw new DependencyException(entry.getKey(), entry.getValue(), key);
 				}
 			}
 		}
@@ -181,12 +175,14 @@ public class SimpleContainer implements Container, RemoteContainer {
 		ListIterator<Key<? extends Component>> it = log.listIterator(log.size());
 		while (it.hasPrevious()) {
 			Key<? extends Component> key = it.previous();
+			it.remove();
 			Component component = components.remove(key);
 			if (component != null) {
-				component.destroy();
+				component.destroy(key);
 				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
 			}
 		}
+		log.clear();
 		assert components.isEmpty() : "Not all components were removed: " + components;
 	}
 
@@ -209,10 +205,6 @@ public class SimpleContainer implements Container, RemoteContainer {
 
 	public static class DependencyException extends IllegalStateException {
 		private final Key<? extends Component> dependant, dependency;
-
-		public DependencyException(Key<? extends Component> dependant, Key<? extends Component> dependency) {
-			this(dependant, null, dependency);
-		}
 
 		public DependencyException(Key<? extends Component> dependant, Component component, Key<? extends Component> dependency) {
 			super("Component " + (component != null ? component + " " : "")

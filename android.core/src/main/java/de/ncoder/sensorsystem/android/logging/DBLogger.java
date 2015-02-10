@@ -48,8 +48,8 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 	private SQLiteDatabase database;
 
 	@Override
-	public void init(Container container) {
-		super.init(container);
+	public void init(Container container, Key<? extends Component> key) {
+		super.init(container, key);
 		dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
 		database = dbHelper.getWritableDatabase();
 		EventManager eventManager = getOtherComponent(EventManager.KEY);
@@ -61,13 +61,13 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 	}
 
 	@Override
-	public void destroy() {
+	public void destroy(Key<? extends Component> key) {
 		EventManager eventManager = getOtherComponent(EventManager.KEY);
 		if (eventManager != null) {
 			eventManager.unsubscribe(this);
 		}
 		dbHelper.close();
-		super.destroy();
+		super.destroy(key);
 	}
 
 	@Override
