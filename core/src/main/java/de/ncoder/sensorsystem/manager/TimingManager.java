@@ -31,22 +31,27 @@ import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.typedmap.Key;
 
+/**
+ * @deprecated no working implementation
+ */
+@Deprecated
 public abstract class TimingManager extends AbstractComponent {
-    public static final Key<TimingManager> KEY = new Key<>(TimingManager.class);
+	@Deprecated
+	public static final Key<TimingManager> KEY = new Key<>(TimingManager.class);
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    public abstract Future<?> scheduleRepeatedExecution(Runnable r, int initialDelayFrames, int delayFrames);
+	public abstract Future<?> scheduleRepeatedExecution(Runnable r, int initialDelayFrames, int delayFrames);
 
-    public abstract Future<?> scheduleExecution(Runnable r, int delayFrames);
+	public abstract Future<?> scheduleExecution(Runnable r, int delayFrames);
 
-    // --------------------------------ACCURACY--------------------------------
+	// --------------------------------ACCURACY--------------------------------
 
-    private final LongAccuracyRange<TimeUnit> frameLength = new LongAccuracyRange<>(
-            15L, 60L, TimeUnit.SECONDS
-    );
+	private final LongAccuracyRange<TimeUnit> frameLength = new LongAccuracyRange<>(
+			15L, 60L, TimeUnit.SECONDS
+	);
 
-    public LongAccuracyRange<TimeUnit> getFrameLength() {
-        return frameLength;
-    }
+	public LongAccuracyRange<TimeUnit> getFrameLength() {
+		return frameLength;
+	}
 }

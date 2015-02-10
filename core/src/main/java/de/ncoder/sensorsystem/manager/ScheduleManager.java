@@ -28,8 +28,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.manager.accuracy.BooleanAccuracyRange;
-import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.typedmap.Key;
 
 public abstract class ScheduleManager extends AbstractComponent {
@@ -45,26 +43,9 @@ public abstract class ScheduleManager extends AbstractComponent {
         return scheduleRepeatedExecution(r, unit.toMillis(initialDelay), unit.toMillis(delay));
     }
 
-    public Future<?> scheduleExecution(Runnable r, long delay, TimeUnit unit) {
+	//TODO consider implementing a version taking Callables and returning their value
+	public Future<?> scheduleExecution(Runnable r, long delay, TimeUnit unit) {
         return scheduleExecution(r, unit.toMillis(delay));
-    }
-
-    // --------------------------------ACCURACY--------------------------------
-
-    private final LongAccuracyRange<TimeUnit> latency = new LongAccuracyRange<>(
-            10L, 0L, TimeUnit.SECONDS
-    );
-
-    public LongAccuracyRange<TimeUnit> getExecutionLatency() {
-        return latency;
-    }
-
-    private final BooleanAccuracyRange<Void> wakeupTreshold = new BooleanAccuracyRange<>(
-            10, false
-    );
-
-    public BooleanAccuracyRange<Void> getWakeupTreshold() {
-        return wakeupTreshold;
     }
 }
 

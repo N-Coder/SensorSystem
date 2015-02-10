@@ -47,6 +47,8 @@ import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
+import de.ncoder.sensorsystem.manager.accuracy.BooleanAccuracyRange;
+import de.ncoder.sensorsystem.manager.accuracy.LongAccuracyRange;
 import de.ncoder.typedmap.Key;
 
 public class AndroidScheduleManager extends ScheduleManager implements DependantComponent, PrivilegedComponent {
@@ -80,16 +82,16 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		super.destroy();
 	}
 
+	private Context getContext() {
+		return getOtherComponent(ContainerService.KEY_CONTEXT);
+	}
+
 	private PendingIntent makePendingIntent(int id) {
 		Intent intent = new Intent(INTENT_ACTION, Uri.fromParts(INTENT_EXTRA_ID, String.valueOf(id), null));
 		//intent.putExtra("source-name", toString());
 		//intent.putExtra("source-hash", String.valueOf(hashCode()));
 		//intent.putExtra("source-time", System.currentTimeMillis());
 		return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-	}
-
-	private Context getContext() {
-		return getOtherComponent(ContainerService.KEY_CONTEXT);
 	}
 
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -110,40 +112,51 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		}
 	};
 
-	@Override
-	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
+	//---------------------------------SCHEDULING FUNCTIONS--------------------
+
+	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis, boolean wakeUp, long executionLatency) {
 		final int id = counter.getAndIncrement();
 
 		runnables.put(id, runnable);
 
-		int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
-				AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+		int alarmType = wakeUp ? AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
 		PendingIntent alarmIntent = makePendingIntent(id);
-		//TODO consider using repeated batch window scheduling as described in AlarmManager#setRepeating(...)
+		//TODO consider using repeated batch window scheduling as described in AlarmManager#setRepeating(...) to correctly use executionLatency
 		alarmManager.setRepeating(alarmType, initialDelayMillis, delayMillis, alarmIntent);
 
 		return new AlarmFuture(id, alarmIntent);
 	}
 
-	//TODO consider implementing a version taking Callables and returning their value
 	@Override
-	public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
-		final int id = counter.getAndIncrement();
+	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
+		return scheduleRepeatedExecution(runnable, initialDelayMillis, delayMillis,
+				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
+				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
+	}
 
+	public Future<?> scheduleExecution(Runnable runnable, long delayMillis, boolean wakeUp, long executionLatency) {
+		final int id = counter.getAndIncrement();
 		runnables.put(id, new OneTimeRunnable(id, runnable));
 
-		int alarmType = getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)) ?
-				AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
+		int alarmType = wakeUp ? AlarmManager.ELAPSED_REALTIME_WAKEUP : AlarmManager.ELAPSED_REALTIME;
 		PendingIntent alarmIntent = makePendingIntent(id);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			alarmManager.setWindow(alarmType, delayMillis,
-					getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)), alarmIntent);
+			alarmManager.setWindow(alarmType, delayMillis, executionLatency, alarmIntent);
 		} else {
 			alarmManager.set(alarmType, delayMillis, alarmIntent);
 		}
 
 		return new AlarmFuture(id, alarmIntent);
 	}
+
+	@Override
+	public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
+		return scheduleExecution(runnable, delayMillis,
+				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
+				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
+	}
+
+	//---------------------------------CLASSES---------------------------------
 
 	private class OneTimeRunnable implements Runnable {
 		private final int id;
@@ -211,6 +224,26 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 			return null;
 		}
 	}
+
+	// --------------------------------ACCURACY--------------------------------
+
+	private final LongAccuracyRange<TimeUnit> latency = new LongAccuracyRange<>(
+			10L, 0L, TimeUnit.SECONDS
+	);
+
+	public LongAccuracyRange<TimeUnit> getExecutionLatency() {
+		return latency;
+	}
+
+	private final BooleanAccuracyRange<Void> wakeupTreshold = new BooleanAccuracyRange<>(
+			10, false
+	);
+
+	public BooleanAccuracyRange<Void> getWakeupTreshold() {
+		return wakeupTreshold;
+	}
+
+	//---------------------------------COMPONENT INFO--------------------------
 
 	private static Set<Key<? extends Component>> dependencies;
 
