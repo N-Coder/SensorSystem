@@ -24,14 +24,14 @@
 
 package de.ncoder.sensorsystem.events.event;
 
-import de.ncoder.sensorsystem.Component;
-
 import java.io.Serializable;
 
+import de.ncoder.sensorsystem.Component;
+
 public interface Event extends Serializable {
-    public long getWhen();
+	public long getWhen();
 
-    public Component getSource();
+	public Component getSource();
 
-    public String getName();
+	public String getName();
 }

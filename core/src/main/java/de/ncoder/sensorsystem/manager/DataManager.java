@@ -39,55 +39,55 @@ import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
 import de.ncoder.typedmap.Key;
 
 public abstract class DataManager extends AbstractComponent implements DependantComponent {
-    protected ReadWriteLock lock = new ReentrantReadWriteLock();
+	protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public Lock getReadLock() {
-        return lock.readLock();
-    }
+	public Lock getReadLock() {
+		return lock.readLock();
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    private static Set<Key<? extends Component>> dependencies;
+	private static Set<Key<? extends Component>> dependencies;
 
-    @Override
-    public Set<Key<? extends Component>> dependencies() {
-        if (dependencies == null) {
-            dependencies = DataManager.<Key<? extends Component>>wrapSet(ThreadPoolManager.KEY);
-        }
-        return dependencies;
-    }
+	@Override
+	public Set<Key<? extends Component>> dependencies() {
+		if (dependencies == null) {
+			dependencies = DataManager.<Key<? extends Component>>wrapSet(ThreadPoolManager.KEY);
+		}
+		return dependencies;
+	}
 
-    protected <T> FutureCallback<T> defaultCallback() {
-        return new FutureCallback<T>() {
-            @Override
-            public void onDone(FutureTask<T> task) {
-                publish(new SimpleFutureDoneEvent<>(task, DataManager.this));
-            }
-        };
-    }
+	protected <T> FutureCallback<T> defaultCallback() {
+		return new FutureCallback<T>() {
+			@Override
+			public void onDone(FutureTask<T> task) {
+				publish(new SimpleFutureDoneEvent<>(task, DataManager.this));
+			}
+		};
+	}
 
-    protected <T> FutureTask<T> execute(final Callable<T> callable) {
-        return execute(callable, this.<T>defaultCallback());
-    }
+	protected <T> FutureTask<T> execute(final Callable<T> callable) {
+		return execute(callable, this.<T>defaultCallback());
+	}
 
-    protected <T> FutureTask<T> execute(final Callable<T> callable, final FutureCallback<T> callback) {
-        FutureTask<T> futureTask = new FutureTask<T>(callable) {
-            @Override
-            public void run() {
-                lock.writeLock().lock();
-                try {
-                    super.run();
-                } finally {
-                    lock.writeLock().unlock();
-                }
-            }
+	protected <T> FutureTask<T> execute(final Callable<T> callable, final FutureCallback<T> callback) {
+		FutureTask<T> futureTask = new FutureTask<T>(callable) {
+			@Override
+			public void run() {
+				lock.writeLock().lock();
+				try {
+					super.run();
+				} finally {
+					lock.writeLock().unlock();
+				}
+			}
 
-            @Override
-            protected void done() {
-                callback.onDone(this);
-            }
-        };
-        getOtherComponent(ThreadPoolManager.KEY).execute(futureTask);
-        return futureTask;
-    }
+			@Override
+			protected void done() {
+				callback.onDone(this);
+			}
+		};
+		getOtherComponent(ThreadPoolManager.KEY).execute(futureTask);
+		return futureTask;
+	}
 }

@@ -28,11 +28,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public interface FutureDoneEvent<Result> extends Event {
-    public Future<Result> getFuture();
+	public Future<Result> getFuture();
 
-    public Result getResult() throws ExecutionException;
+	public Result getResult() throws ExecutionException;
 
-    public boolean wasSuccess();
+	public boolean wasSuccess();
 
-    public Throwable getException();
+	public Throwable getException();
 }

@@ -24,11 +24,11 @@
 
 package de.ncoder.sensorsystem.events;
 
-import de.ncoder.sensorsystem.events.event.Event;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import de.ncoder.sensorsystem.events.event.Event;
+
 public interface EventListener extends Remote {
-    void handle(Event event) throws RemoteException;
+	void handle(Event event) throws RemoteException;
 }

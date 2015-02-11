@@ -31,21 +31,21 @@ import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.typedmap.Key;
 
 public abstract class ScheduleManager extends AbstractComponent {
-    public static final Key<ScheduleManager> KEY = new Key<>(ScheduleManager.class);
+	public static final Key<ScheduleManager> KEY = new Key<>(ScheduleManager.class);
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    public abstract Future<?> scheduleRepeatedExecution(Runnable r, long initialDelayMillis, long delayMillis);
+	public abstract Future<?> scheduleRepeatedExecution(Runnable r, long initialDelayMillis, long delayMillis);
 
-    public abstract Future<?> scheduleExecution(Runnable r, long delayMillis);
+	public abstract Future<?> scheduleExecution(Runnable r, long delayMillis);
 
-    public Future<?> scheduleRepeatedExecution(Runnable r, long initialDelay, long delay, TimeUnit unit) {
-        return scheduleRepeatedExecution(r, unit.toMillis(initialDelay), unit.toMillis(delay));
-    }
+	public Future<?> scheduleRepeatedExecution(Runnable r, long initialDelay, long delay, TimeUnit unit) {
+		return scheduleRepeatedExecution(r, unit.toMillis(initialDelay), unit.toMillis(delay));
+	}
 
 	//TODO consider implementing a version taking Callables and returning their value
 	public Future<?> scheduleExecution(Runnable r, long delay, TimeUnit unit) {
-        return scheduleExecution(r, unit.toMillis(delay));
-    }
+		return scheduleExecution(r, unit.toMillis(delay));
+	}
 }
 

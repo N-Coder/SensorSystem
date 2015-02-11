@@ -50,33 +50,33 @@ import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 
 public class SensorSystemService extends ContainerService {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        addComponents();
-        try {
-            ComponentInfoManager.parseResources(getResources().getXml(R.xml.info_activities));
-        } catch (XmlPullParserException | IOException e) {
-            Log.w(ComponentInfoManager.class.getSimpleName(), "Can't parse resources, detail views won't be available", e);
-        }
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		addComponents();
+		try {
+			ComponentInfoManager.parseResources(getResources().getXml(R.xml.info_activities));
+		} catch (XmlPullParserException | IOException e) {
+			Log.w(ComponentInfoManager.class.getSimpleName(), "Can't parse resources, detail views won't be available", e);
+		}
+	}
 
-    private void addComponents() {
-        register(EventManager.KEY, new EventManager());
-        register(AccuracyManager.KEY, new AccuracyManager());
-        register(ThreadPoolManager.KEY, new AndroidThreadPoolManager());
-        register(ScheduleManager.KEY, new AndroidScheduleManager());
-        //register(TimingManager.KEY, new AndroidTimingManager());
-        register(SystemLooper.KEY, new SystemLooper());
-        register(DBLogger.KEY, new DBLogger());
-        register(UserManager.KEY, new UserManager());
+	private void addComponents() {
+		register(EventManager.KEY, new EventManager());
+		register(AccuracyManager.KEY, new AccuracyManager());
+		register(ThreadPoolManager.KEY, new AndroidThreadPoolManager());
+		register(ScheduleManager.KEY, new AndroidScheduleManager());
+		//register(TimingManager.KEY, new AndroidTimingManager());
+		register(SystemLooper.KEY, new SystemLooper());
+		register(DBLogger.KEY, new DBLogger());
+		register(UserManager.KEY, new UserManager());
 
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        register(AccelerationSensor.KEY, new AccelerationSensor(sensorManager));
-        register(BrightnessSensor.KEY, new BrightnessSensor(sensorManager));
-        register(MagneticSensor.KEY, new MagneticSensor(sensorManager));
-        register(ProximitySensor.KEY, new ProximitySensor(sensorManager));
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //register(GPSSensor.KEY, new GPSSensor(locationManager));
-    }
+		SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		register(AccelerationSensor.KEY, new AccelerationSensor(sensorManager));
+		register(BrightnessSensor.KEY, new BrightnessSensor(sensorManager));
+		register(MagneticSensor.KEY, new MagneticSensor(sensorManager));
+		register(ProximitySensor.KEY, new ProximitySensor(sensorManager));
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		//register(GPSSensor.KEY, new GPSSensor(locationManager));
+	}
 }

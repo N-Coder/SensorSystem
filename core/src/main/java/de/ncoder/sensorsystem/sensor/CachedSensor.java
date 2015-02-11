@@ -25,54 +25,54 @@
 package de.ncoder.sensorsystem.sensor;
 
 public abstract class CachedSensor<T> extends AbstractSensor<T> {
-    private T cachedValue;
-    private boolean cacheValid = false;
-    private Thread updateThread = null;
+	private T cachedValue;
+	private boolean cacheValid = false;
+	private Thread updateThread = null;
 
-    @Override
-    public T get() {
-        if (!hasCachedValue()) {
-            synchronized (this) {
-                if (!hasCachedValue()) {
-                    if (!isUpdating()) {
-                        updateCache();
-                    } else if (updateThread != Thread.currentThread()) {
-                        //this should have been delayed until the update was finished, so now we can retry
-                        return get();
-                    } // else a currently running update causes a new update, use the old value
-                }
-            }
-        }
-        return cachedValue;
-    }
+	@Override
+	public T get() {
+		if (!hasCachedValue()) {
+			synchronized (this) {
+				if (!hasCachedValue()) {
+					if (!isUpdating()) {
+						updateCache();
+					} else if (updateThread != Thread.currentThread()) {
+						//this should have been delayed until the update was finished, so now we can retry
+						return get();
+					} // else a currently running update causes a new update, use the old value
+				}
+			}
+		}
+		return cachedValue;
+	}
 
-    public void invalidate() {
-        cacheValid = false;
-    }
+	public void invalidate() {
+		cacheValid = false;
+	}
 
-    public boolean hasCachedValue() {
-        return cacheValid;
-    }
+	public boolean hasCachedValue() {
+		return cacheValid;
+	}
 
-    protected synchronized void updateCache() {
-        updateThread = Thread.currentThread();
-        try {
-            updateCache(fetch());
-        } finally {
-            updateThread = null;
-        }
-    }
+	protected synchronized void updateCache() {
+		updateThread = Thread.currentThread();
+		try {
+			updateCache(fetch());
+		} finally {
+			updateThread = null;
+		}
+	}
 
-    protected synchronized void updateCache(T newValue) {
-        T oldValue = cachedValue;
-        cachedValue = newValue;
-        cacheValid = true;
-        changed(oldValue, newValue);
-    }
+	protected synchronized void updateCache(T newValue) {
+		T oldValue = cachedValue;
+		cachedValue = newValue;
+		cacheValid = true;
+		changed(oldValue, newValue);
+	}
 
-    protected abstract T fetch();
+	protected abstract T fetch();
 
-    protected boolean isUpdating() {
-        return updateThread != null;
-    }
+	protected boolean isUpdating() {
+		return updateThread != null;
+	}
 }

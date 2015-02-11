@@ -13,31 +13,31 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <uses-feature
-            android:name="android.hardware.sensor.accelerometer"
-            android:required="true"/>
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true"/>
     <uses-feature
-            android:name="android.hardware.sensor.proximity"
-            android:required="true"/>
+        android:name="android.hardware.sensor.proximity"
+        android:required="true"/>
     <uses-feature
-            android:name="android.hardware.sensor.light"
-            android:required="true"/>
+        android:name="android.hardware.sensor.light"
+        android:required="true"/>
     <uses-feature
-            android:name="android.hardware.sensor.compass"
-            android:required="true"/>
+        android:name="android.hardware.sensor.compass"
+        android:required="true"/>
 
     <application
-            android:allowBackup="true"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
 
         <!-- <uses-library android:name="de.ncoder.sensorsystem.android.core"/> -->
 
         <service android:name="de.ncoder.sensorsystem.android.app.SensorSystemService"/>
 
         <activity
-                android:name="de.ncoder.sensorsystem.android.app.MainActivity"
-                android:label="@string/app_name">
+            android:name="de.ncoder.sensorsystem.android.app.MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -45,28 +45,28 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".componentInfo.DBLoggerInfoActivity"
-                android:label="@string/title_component_info_dblogger"
-                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
+            android:name=".componentInfo.DBLoggerInfoActivity"
+            android:label="@string/title_component_info_dblogger"
+            android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
         <activity
-                android:name=".componentInfo.AndroidSensorInfoActivity"
-                android:label="@string/title_component_info_sensor"
-                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
+            android:name=".componentInfo.AndroidSensorInfoActivity"
+            android:label="@string/title_component_info_sensor"
+            android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
         <activity
-                android:name=".componentInfo.UserInfoActivity"
-                android:label="@string/title_component_info_user"
-                android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
+            android:name=".componentInfo.UserInfoActivity"
+            android:label="@string/title_component_info_user"
+            android:parentActivityName="de.ncoder.sensorsystem.android.app.MainActivity">
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
     </application>
 

@@ -9,29 +9,59 @@
               android:orientation="vertical"
               tools:context="de.ncoder.sensorsystem.android.app.componentInfo.UserInfoActivity">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:orientation="vertical" android:id="@+id/loginContainer">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/loginContainer">
+
         <EditText
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:id="@+id/userName" android:inputType="text" android:hint="Name"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/userName"
+            android:inputType="text"
+            android:hint="Name"/>
+
         <EditText
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:id="@+id/password" android:inputType="textPassword" android:hint="Password"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/password"
+            android:inputType="textPassword"
+            android:hint="Password"/>
 
         <Button
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:id="@+id/login" android:onClick="doLogin" android:text="Login"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/login"
+            android:onClick="doLogin"
+            android:text="Login"/>
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:orientation="vertical" android:id="@+id/logoutContainer">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/logoutContainer">
+
         <Button
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:id="@+id/logout" android:onClick="doLogout" android:text="Logout"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/logout"
+            android:onClick="doLogout"
+            android:text="Logout"/>
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:orientation="vertical" android:id="@+id/infoContainer">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:id="@+id/userInfo" android:text="Status"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/infoContainer">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/userInfo"
+            android:text="Status"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -24,10 +24,10 @@
 
 package de.ncoder.sensorsystem;
 
-import de.ncoder.typedmap.Key;
-
 import java.util.Set;
 
+import de.ncoder.typedmap.Key;
+
 public interface DependantComponent extends Component {
-    public Set<Key<? extends Component>> dependencies();
+	public Set<Key<? extends Component>> dependencies();
 }

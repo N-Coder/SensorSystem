@@ -28,9 +28,9 @@ import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
 public interface Sensor<T> extends Component {
-    public T get();
+	public T get();
 
-    public long lastChange();
+	public long lastChange();
 
 	public Key<? extends Component> getKey();
 }

@@ -27,7 +27,7 @@ package de.ncoder.sensorsystem.events.event;
 public interface ValueChangedEvent<T> extends Event {
 	public boolean hasOldValue();
 
-    public T getOldValue();
+	public T getOldValue();
 
-    public T getNewValue();
+	public T getNewValue();
 }
