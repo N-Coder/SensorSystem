@@ -2,16 +2,12 @@ package de.ncoder.sensorsystem.android.sensor.plea;
 
 import java.util.Set;
 
-import de.ncoder.sensorsystem.AbstractComponent;
-import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.sensor.LinearAccelerationSensor;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.typedmap.Key;
 
 public class MovementTracker extends AbstractComponent implements EventListener, DependantComponent {
@@ -144,7 +140,7 @@ public class MovementTracker extends AbstractComponent implements EventListener,
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.<Key<? extends Component>>wrapSet(LinearAccelerationSensor.KEY, EventManager.KEY);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(LinearAccelerationSensor.KEY, EventManager.KEY);
 		}
 		return dependencies;
 	}

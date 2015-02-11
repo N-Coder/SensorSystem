@@ -25,7 +25,7 @@
 package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.typedmap.Key;
 
 public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChangedEvent<V> {
@@ -71,7 +71,7 @@ public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChan
 		if (msg.length() > 0) {
 			msg.append(": ");
 		}
-		msg.append(EventUtils.toString(getOldValue())).append(" -> ").append(EventUtils.toString(getNewValue()));
+		msg.append(Utils.valueToString(getOldValue())).append(" -> ").append(Utils.valueToString(getNewValue()));
 		return msg.toString();
 	}
 

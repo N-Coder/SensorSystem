@@ -16,9 +16,9 @@ import java.util.concurrent.TimeUnit;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.sensor.AbstractSensor;
 import de.ncoder.typedmap.Key;
@@ -243,7 +243,7 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.wrapSet(
+			dependencies = Utils.wrapSet(
 					ScheduleManager.KEY, SystemLooper.KEY, ContainerService.KEY_CONTEXT
 			);
 		}

@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.events.FutureCallback;
 import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
 import de.ncoder.typedmap.Key;
@@ -52,7 +53,7 @@ public abstract class DataManager extends AbstractComponent implements Dependant
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.<Key<? extends Component>>wrapSet(ThreadPoolManager.KEY);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(ThreadPoolManager.KEY);
 		}
 		return dependencies;
 	}

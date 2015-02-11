@@ -22,17 +22,20 @@
  * THE SOFTWARE.
  */
 
-package de.ncoder.sensorsystem.events;
+package de.ncoder.sensorsystem;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EventUtils {
-	private EventUtils() {
+public class Utils {
+	private Utils() {
 	}
 
-	public static String toString(Object o) {
+	public static String valueToString(Object o) {
 		if (o instanceof Object[])
 			return Arrays.deepToString((Object[]) o);
 		else if (o instanceof byte[])
@@ -86,13 +89,24 @@ public class EventUtils {
 	}
 
 	public static String simpleClassNames(String name) {
-		Pattern fqn = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*([a-zA-Z_$][a-zA-Z\\d_$]*)");
-		Matcher matcher = fqn.matcher(name);
+		Matcher matcher = FQN.matcher(name);
 		StringBuffer bob = new StringBuffer();
 		while (matcher.find()) {
 			matcher.appendReplacement(bob, matcher.group(matcher.groupCount()));
 		}
 		matcher.appendTail(bob);
 		return bob.toString();
+	}
+
+	@SafeVarargs
+	public static <T> Set<T> wrapSet(T... keys) {
+		return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
+	}
+
+	@SafeVarargs
+	public static <T> Set<T> wrapSet(Set<T> parent, T... keys) {
+		HashSet<T> set = new HashSet<>(parent);
+		set.addAll(Arrays.asList(keys));
+		return Collections.unmodifiableSet(set);
 	}
 }

@@ -39,12 +39,8 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.DependantComponent;
-import de.ncoder.sensorsystem.PrivilegedComponent;
+import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.ContainerService;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.sensorsystem.manager.accuracy.BooleanAccuracyRange;
@@ -250,7 +246,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
 		}
 		return dependencies;
 	}
@@ -260,7 +256,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public Set<String> requiredPermissions() {
 		if (permissions == null) {
-			permissions = DataManager.wrapSet("android.permission.WAKE_LOCK");
+			permissions = Utils.wrapSet("android.permission.WAKE_LOCK");
 		}
 		return permissions;
 	}

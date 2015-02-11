@@ -33,8 +33,8 @@ import java.util.concurrent.*;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.ContainerService;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.ThreadPoolManager;
 import de.ncoder.typedmap.Key;
 
@@ -119,7 +119,7 @@ public class AndroidThreadPoolManager extends ThreadPoolManager implements Depen
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
 		}
 		return dependencies;
 	}

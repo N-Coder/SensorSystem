@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.sensor.base.AndroidSensor;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.sensorsystem.sensor.Sensor;
@@ -110,7 +110,7 @@ public class AndroidSensorInfoActivity extends ComponentInfoActivity implements 
 		public void run() {
 			if (sensor != null) {
 				((TextView) findViewById(R.id.sensor_value)).setText(
-						EventUtils.toString(sensor.get()));
+						Utils.valueToString(sensor.get()));
 				((TextView) findViewById(R.id.sensor_last_update)).setText(
 						formatDuration(updateTime, TimeUnit.MILLISECONDS));
 			} else {

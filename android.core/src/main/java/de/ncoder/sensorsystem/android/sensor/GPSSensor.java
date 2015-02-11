@@ -33,12 +33,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import de.ncoder.sensorsystem.Component;
-import de.ncoder.sensorsystem.Container;
-import de.ncoder.sensorsystem.DependantComponent;
-import de.ncoder.sensorsystem.PrivilegedComponent;
+import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.manager.TimingManager;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
 import de.ncoder.sensorsystem.manager.accuracy.IntAccuracyRange;
@@ -178,7 +174,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.wrapSet(TimingManager.KEY, SystemLooper.KEY);
+			dependencies = Utils.wrapSet(TimingManager.KEY, SystemLooper.KEY);
 		}
 		return dependencies;
 	}
@@ -188,7 +184,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Override
 	public Set<String> requiredPermissions() {
 		if (permissions == null) {
-			permissions = DataManager.wrapSet("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION");
+			permissions = Utils.wrapSet("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION");
 		}
 		return permissions;
 	}

@@ -41,12 +41,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.ncoder.sensorsystem.Component;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
@@ -122,7 +122,7 @@ public class ComponentsFragment extends BoundFragment {
 				((TextView) convertView.findViewById(R.id.component_title)).setText(
 						component.getClass().getSimpleName());
 				((TextView) convertView.findViewById(R.id.component_type)).setText(
-						EventUtils.simpleClassNames(component.toString()));
+						Utils.simpleClassNames(component.toString()));
 			}
 
 			return convertView;

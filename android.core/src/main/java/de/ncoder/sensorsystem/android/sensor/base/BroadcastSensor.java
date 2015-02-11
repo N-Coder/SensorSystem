@@ -10,8 +10,8 @@ import java.util.Set;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.ContainerService;
-import de.ncoder.sensorsystem.manager.DataManager;
 import de.ncoder.sensorsystem.sensor.CachedSensor;
 import de.ncoder.typedmap.Key;
 
@@ -45,7 +45,7 @@ public abstract class BroadcastSensor<T> extends CachedSensor<T> implements Depe
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = DataManager.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(ContainerService.KEY_CONTEXT);
 		}
 		return dependencies;
 	}

@@ -40,10 +40,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.ncoder.sensorsystem.Utils;
 import de.ncoder.sensorsystem.android.app.R;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
-import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 
@@ -115,10 +115,10 @@ public class EventLogFragment extends BoundFragment {
 				title = event.getClass().getName();
 			}
 			((TextView) convertView.findViewById(R.id.event_title)).setText(
-					EventUtils.simpleClassNames(title));
+					Utils.simpleClassNames(title));
 			if (event instanceof ValueChangedEvent<?>) {
 				((TextView) convertView.findViewById(R.id.event_content)).setText(
-						EventUtils.toString(((ValueChangedEvent) event).getNewValue()));
+						Utils.valueToString(((ValueChangedEvent) event).getNewValue()));
 			} else {
 				((TextView) convertView.findViewById(R.id.event_content)).setText(
 						event.toString());
@@ -126,7 +126,7 @@ public class EventLogFragment extends BoundFragment {
 			((TextView) convertView.findViewById(R.id.event_when)).setText(
 					whenFormat.format(new Date(event.getWhen())));
 			((TextView) convertView.findViewById(R.id.event_source)).setText(
-					EventUtils.simpleClassNames(String.valueOf(event.getSource())));
+					Utils.simpleClassNames(String.valueOf(event.getSource())));
 
 			return convertView;
 		}
