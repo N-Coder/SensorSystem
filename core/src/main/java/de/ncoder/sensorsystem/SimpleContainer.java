@@ -40,6 +40,8 @@ import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
 public class SimpleContainer implements Container, RemoteContainer {
+	public static final String TAG_PRE_SHUTDOWN = Container.class.getName() + ".PRE_SHUTDOWN";
+
 	private boolean checkDependencies;
 	private final TypedMap<Component> components = new TypedMap<>(new ConcurrentHashMap<Key<? extends Component>, Component>());
 	private final List<Key<? extends Component>> log = new LinkedList<>();
@@ -71,7 +73,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 			components.putTyped(key, component);
 			component.init(this, key);
 			log.add(key);
-			publish(new ComponentEvent(key, component, ComponentEvent.Type.ADDED));
+			publish(new ComponentEvent(key, ComponentEvent.Type.ADDED));
 		} catch (RuntimeException e) {
 			components.remove(key);
 			throw e;
@@ -87,7 +89,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 			Component component = components.remove(key);
 			if (component != null) {
 				component.destroy(key);
-				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+				publish(new ComponentEvent(key, ComponentEvent.Type.REMOVED));
 			}
 		} else {
 			components.remove(keyUnchecked);
@@ -104,7 +106,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 				checkRemove(key);
 				it.remove();
 				component.destroy(key);
-				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+				publish(new ComponentEvent(key, ComponentEvent.Type.REMOVED));
 			}
 		}
 	}
@@ -171,7 +173,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 
 	@Override
 	public void shutdown() {
-		publish(new PreShutdownEvent());
+		publish(new SimpleEvent(TAG_PRE_SHUTDOWN, null));
 		ListIterator<Key<? extends Component>> it = log.listIterator(log.size());
 		while (it.hasPrevious()) {
 			Key<? extends Component> key = it.previous();
@@ -179,7 +181,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 			Component component = components.remove(key);
 			if (component != null) {
 				component.destroy(key);
-				publish(new ComponentEvent(key, component, ComponentEvent.Type.REMOVED));
+				publish(new ComponentEvent(key, ComponentEvent.Type.REMOVED));
 			}
 		}
 		log.clear();
@@ -194,14 +196,6 @@ public class SimpleContainer implements Container, RemoteContainer {
 	}
 
 	// ------------------------------------------------------------------------
-
-	public static class PreShutdownEvent extends SimpleEvent<Component> {
-		public static final String NAME = Container.class.getName() + ".PRE_SHUTDOWN";
-
-		public PreShutdownEvent() {
-			super(NAME, null);
-		}
-	}
 
 	public static class DependencyException extends IllegalStateException {
 		private final Key<? extends Component> dependant, dependency;

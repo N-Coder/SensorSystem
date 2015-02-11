@@ -29,40 +29,39 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import de.ncoder.sensorsystem.Component;
+import de.ncoder.typedmap.Key;
 
-public class SimpleFutureDoneEvent<Result, Source extends Component>
-		extends SimpleEvent<Source> implements FutureDoneEvent<Result> {
-	private final static String DEFAULT_NAME = FutureDoneEvent.class.getName();
+public class SimpleFutureDoneEvent extends SimpleEvent implements FutureDoneEvent<Object> {
+	private final Future<?> future;
 
-	private final Future<Result> future;
-
-	public SimpleFutureDoneEvent(Future<Result> future, Source source) {
-		super(DEFAULT_NAME, source);
+	public SimpleFutureDoneEvent(Future<?> future, Key<? extends Component> source) {
+		super(null, source);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<Result> future, Source source, long when) {
-		super(DEFAULT_NAME, source, when);
+	public SimpleFutureDoneEvent(Future<?> future, Key<? extends Component> source, long when) {
+		super(null, source, when);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<Result> future, String name, Source source) {
-		super(name, source);
+	public SimpleFutureDoneEvent(Future<?> future, String tag, Key<? extends Component> source) {
+		super(tag, source);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<Result> future, String name, Source source, long when) {
-		super(name, source, when);
+	public SimpleFutureDoneEvent(Future<?> future, String tag, Key<? extends Component> source, long when) {
+		super(tag, source, when);
 		this.future = future;
 	}
 
 	@Override
-	public Future<Result> getFuture() {
-		return future;
+	@SuppressWarnings("unchecked")
+	public Future<Object> getFuture() {
+		return (Future<Object>) future;
 	}
 
 	@Override
-	public Result getResult() throws ExecutionException {
+	public Object getResult() throws ExecutionException {
 		try {
 			return future.get();
 		} catch (InterruptedException e) {
@@ -94,10 +93,22 @@ public class SimpleFutureDoneEvent<Result, Source extends Component>
 
 	@Override
 	public String toString() {
-		try {
-			return "[Future " + future + " done: " + future.get() + "]";
-		} catch (InterruptedException | ExecutionException | CancellationException e) {
-			return "[Future " + future + " failed: " + e + "]";
+		StringBuilder msg = new StringBuilder();
+		msg.append(getTag());
+		if (getSource() != null) {
+			msg.append("<").append(getSource()).append(">");
 		}
+		if (msg.length() > 0) {
+			msg.append(" ");
+		}
+		msg.append(future);
+		try {
+			//TODO this should not block
+			Object ret = future.get();
+			msg.append(" done: ").append(ret);
+		} catch (InterruptedException | ExecutionException | CancellationException e) {
+			msg.append(" failed: ").append(e);
+		}
+		return msg.toString();
 	}
 }

@@ -140,7 +140,7 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
 	private final EventListener accuracyListener = new EventListener() {
 		@Override
 		public void handle(Event event) {
-			if (event instanceof AccuracyManager.AccuracyChangedEvent) {
+			if (event.getTag().equals(AccuracyManager.TAG_CHANGED)) {
 				updateSensorListener();
 			}
 		}

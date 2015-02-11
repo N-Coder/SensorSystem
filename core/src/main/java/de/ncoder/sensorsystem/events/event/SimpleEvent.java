@@ -25,23 +25,34 @@
 package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
+import de.ncoder.typedmap.Key;
 
-public class SimpleEvent<T extends Component> implements Event {
+/**
+ * Simple*Events should be easy to instantiate and dispatch, they are not made for extension!
+ * Generics make inheritance easier but not usage. For this reason Simple*Events are not Generic.
+ * If you want TypeSafety, provide your own implementation of Event.
+ */
+public class SimpleEvent implements Event {
+	private final String tag;
 	private final long when;
-	private final transient T source;
-	private final String name;
+	private final Key<? extends Component> source;
 
-	public SimpleEvent(String name, T source) {
-		this(name, source, System.currentTimeMillis());
+	public SimpleEvent(String tag, Key<? extends Component> source) {
+		this(tag, source, System.currentTimeMillis());
 	}
 
-	public SimpleEvent(String name, T source, long when) {
-		if (name == null && source != null) {
-			name = source.getClass().toString();
+	public SimpleEvent(String tag, Key<? extends Component> source, long when) {
+		if (tag == null || tag.isEmpty()) {
+			tag = getClass().getName();
 		}
-		this.name = name;
+		this.tag = tag;
 		this.when = when;
 		this.source = source;
+	}
+
+	@Override
+	public String getTag() {
+		return tag;
 	}
 
 	@Override
@@ -50,18 +61,13 @@ public class SimpleEvent<T extends Component> implements Event {
 	}
 
 	@Override
-	public T getSource() {
+	public Key<? extends Component> getSource() {
 		return source;
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public String toString() {
-		return "[" + getName() + "]";
+		return getTag() + (getSource() != null ? "<" + getSource() + ">" : "");
 	}
 
 	@Override
@@ -70,16 +76,15 @@ public class SimpleEvent<T extends Component> implements Event {
 		if (!(o instanceof SimpleEvent)) return false;
 		SimpleEvent that = (SimpleEvent) o;
 		return when == that.when
-				&& (name != null ? name.equals(that.name) : that.name == null)
-				&& (source != null ? source.equals(that.source) : that.source == null);
-
+				&& (source != null ? source.equals(that.source) : that.source == null)
+				&& (tag != null ? tag.equals(that.tag) : that.tag == null);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = (int) (when ^ (when >>> 32));
+		int result = tag != null ? tag.hashCode() : 0;
+		result = 31 * result + (int) (when ^ (when >>> 32));
 		result = 31 * result + (source != null ? source.hashCode() : 0);
-		result = 31 * result + (name != null ? name.hashCode() : 0);
 		return result;
 	}
 }

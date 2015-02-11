@@ -5,7 +5,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
     compile "org.slf4j:slf4j-api:1.7.5"
-    compile "de.ncoder:typedmap:1.0.1"
+    compile "de.ncoder:typedmap:1.0.2"
 
     testCompile "junit:junit:4.11"
 }

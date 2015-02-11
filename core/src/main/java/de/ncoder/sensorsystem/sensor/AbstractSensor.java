@@ -64,11 +64,11 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
 	protected ValueChangedEvent<T> newChangedEvent(boolean hasOldValue, T oldValue, T newValue) {
 		if (hasOldValue) {
 			return new CachedValueChangedEvent<>(
-					toString(), this, lastChanged, oldValue, newValue
+					TAG_CHANGED, getKey(), lastChanged, oldValue, newValue
 			);
 		} else {
 			return new TransientValueChangedEvent<>(
-					toString(), this, lastChanged, newValue
+					TAG_CHANGED, getKey(), lastChanged, newValue
 			);
 		}
 	}

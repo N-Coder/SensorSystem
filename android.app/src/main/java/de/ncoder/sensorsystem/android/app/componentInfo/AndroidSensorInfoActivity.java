@@ -41,8 +41,8 @@ import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
-import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.sensorsystem.manager.accuracy.AccuracyManager;
+import de.ncoder.sensorsystem.sensor.Sensor;
 import de.ncoder.typedmap.Key;
 
 public class AndroidSensorInfoActivity extends ComponentInfoActivity implements EventListener {
@@ -94,10 +94,10 @@ public class AndroidSensorInfoActivity extends ComponentInfoActivity implements 
 
 	@Override
 	public void handle(Event event) {
-		if (event instanceof AccuracyManager.AccuracyChangedEvent) {
+		if (event.getTag().equals(AccuracyManager.TAG_CHANGED)) {
 			runOnUiThread(updateAccuracy);
-		} else if (event instanceof ValueChangedEvent) {
-			if (event.getSource() != null && event.getSource() == sensor) {
+		} else if (event.getTag().equals(Sensor.TAG_CHANGED)) {
+			if (sensor != null && sensor.getKey().equals(event.getSource())) {
 				updateTime = System.currentTimeMillis() - lastUpdate;
 				lastUpdate = System.currentTimeMillis();
 				runOnUiThread(updateValues);

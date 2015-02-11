@@ -80,15 +80,7 @@ public class AbstractComponent implements Component {
 
 	@Override
 	public String toString() {
-		String name = getClass().getSimpleName();
-		if (name == null || name.isEmpty()) {
-			//extract name from full name
-			name = getClass().getName();
-			int index = name.lastIndexOf(".");
-			if (index >= 0 && index + 1 < name.length()) {
-				name = name.substring(index + 1);
-			}
-		}
+		String name = getClass().getName();
 		if (!getKey().getValueClass().equals(getClass())) {
 			//append Key if it doesn't exactly match this Component
 			name += "<" + getKey().toString() + ">";

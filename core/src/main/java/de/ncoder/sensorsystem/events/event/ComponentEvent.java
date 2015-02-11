@@ -24,10 +24,12 @@
 
 package de.ncoder.sensorsystem.events.event;
 
+import java.util.Objects;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
-public class ComponentEvent extends SimpleEvent<Component> {
+public class ComponentEvent extends SimpleEvent {
 	public static enum Type {
 		ADDED, STARTED, STOPPED, REMOVED;
 
@@ -39,33 +41,23 @@ public class ComponentEvent extends SimpleEvent<Component> {
 
 	private final Type type;
 	private final String action;
-	private final Key<?> key;
 
-	public ComponentEvent(Key<?> key, Component component, Type type, String action) {
-		super(type.toString(), component);
+	public ComponentEvent(Key<? extends Component> key, Type type, String action) {
+		super(null, Objects.requireNonNull(key));
 		this.type = type;
-		this.key = key;
 		this.action = action;
 	}
 
-	public ComponentEvent(Key<?> key, Component component, Type type) {
-		this(key, component, type, type.name().toLowerCase());
-	}
-
-	public ComponentEvent(Component component, Type type, String action) {
-		this(null, component, type, action);
-	}
-
-	public ComponentEvent(Component component, Type type) {
-		this(null, component, type);
+	public ComponentEvent(Key<? extends Component> key, Type type) {
+		this(key, type, type.name().toLowerCase());
 	}
 
 	public Type getType() {
 		return type;
 	}
 
-	public Key<?> getKey() {
-		return key;
+	public Key<? extends Component> getKey() {
+		return super.getSource();
 	}
 
 	public String getAction() {
@@ -73,6 +65,6 @@ public class ComponentEvent extends SimpleEvent<Component> {
 	}
 
 	public String toString() {
-		return "[" + (getKey() != null ? getKey() + " -> " : "") + getSource() + " " + getAction() + "]";
+		return getSource() + " " + getAction();
 	}
 }

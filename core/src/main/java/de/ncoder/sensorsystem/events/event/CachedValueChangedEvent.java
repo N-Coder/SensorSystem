@@ -26,26 +26,23 @@ package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.typedmap.Key;
 
-public class CachedValueChangedEvent<ValueT, SourceT extends Component> extends SimpleEvent<SourceT> implements ValueChangedEvent<ValueT> {
-	private final ValueT oldValue, newValue;
+public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChangedEvent<V> {
+	private final V oldValue, newValue;
 
-	public CachedValueChangedEvent(String name, ValueT oldValue, ValueT newValue) {
-		this(name, null, oldValue, newValue);
-	}
-
-	public CachedValueChangedEvent(SourceT source, ValueT oldValue, ValueT newValue) {
+	public CachedValueChangedEvent(Key<? extends Component> source, V oldValue, V newValue) {
 		this(null, source, oldValue, newValue);
 	}
 
-	public CachedValueChangedEvent(String name, SourceT source, ValueT oldValue, ValueT newValue) {
-		super(name, source);
+	public CachedValueChangedEvent(String tag, Key<? extends Component> source, V oldValue, V newValue) {
+		super(tag, source);
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
 
-	public CachedValueChangedEvent(String name, SourceT source, long when, ValueT oldValue, ValueT newValue) {
-		super(name, source, when);
+	public CachedValueChangedEvent(String tag, Key<? extends Component> source, long when, V oldValue, V newValue) {
+		super(tag, source, when);
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
@@ -55,18 +52,27 @@ public class CachedValueChangedEvent<ValueT, SourceT extends Component> extends 
 	}
 
 	@Override
-	public ValueT getOldValue() {
+	public V getOldValue() {
 		return oldValue;
 	}
 
 	@Override
-	public ValueT getNewValue() {
+	public V getNewValue() {
 		return newValue;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getName() + ": " + EventUtils.toString(getOldValue()) + "->" + EventUtils.toString(getNewValue()) + "]";
+		StringBuilder msg = new StringBuilder();
+		msg.append(getTag());
+		if (getSource() != null) {
+			msg.append("<").append(getSource()).append(">");
+		}
+		if (msg.length() > 0) {
+			msg.append(": ");
+		}
+		msg.append(EventUtils.toString(getOldValue())).append(" -> ").append(EventUtils.toString(getNewValue()));
+		return msg.toString();
 	}
 
 	@Override

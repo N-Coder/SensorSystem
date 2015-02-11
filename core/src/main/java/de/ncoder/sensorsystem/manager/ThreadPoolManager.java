@@ -67,7 +67,7 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 	@Override
 	public void destroy(Key<? extends Component> key) {
 		List<Runnable> disposed = executor.shutdownNow();
-		publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
+		publish(new ComponentEvent(getKey(), ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
 		super.destroy(key);
 	}
 

@@ -25,6 +25,8 @@
 package de.ncoder.sensorsystem.events;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EventUtils {
 	private EventUtils() {
@@ -53,11 +55,44 @@ public class EventUtils {
 			return String.valueOf(o);
 	}
 
-	public static String shortenName(String name) {
-		int i = name.lastIndexOf('.');
-		if (i >= 0 && i <= name.length() - 1) {
-			name = name.substring(i + 1);
+	private static final Pattern FQN = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*([a-zA-Z_$][a-zA-Z\\d_$]*)");
+
+	@Deprecated
+	public static String abbreviatedClassNames(String name) {
+		Matcher matcher = FQN.matcher(name);
+		StringBuffer bob = new StringBuffer();
+		StringBuilder replacement = new StringBuilder();
+		while (matcher.find()) {
+			String[] names = matcher.group().split("\\.");
+			for (int i = 0; i < names.length; i++) {
+				if (names[i] != null && !names[i].isEmpty()) {
+					if (i < names.length - 1) {
+						replacement.append(names[i].charAt(0));
+						if (names[i].length() > 1) {
+							replacement.append("\u2026");
+						} else {
+							replacement.append(".");
+						}
+					} else {
+						replacement.append(names[i]);
+					}
+				}
+			}
+			matcher.appendReplacement(bob, replacement.toString());
+			replacement.setLength(0);
 		}
-		return name;
+		matcher.appendTail(bob);
+		return bob.toString();
+	}
+
+	public static String simpleClassNames(String name) {
+		Pattern fqn = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*([a-zA-Z_$][a-zA-Z\\d_$]*)");
+		Matcher matcher = fqn.matcher(name);
+		StringBuffer bob = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(bob, matcher.group(matcher.groupCount()));
+		}
+		matcher.appendTail(bob);
+		return bob.toString();
 	}
 }

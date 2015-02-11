@@ -39,12 +39,14 @@ import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
 public class ContainerService extends Service implements Container {
-	private final Container container = new SimpleContainer();
-
 	public static final Key<ContextComponent> KEY_CONTEXT = new Key<>(ContextComponent.class, "ContainerContext");
 
-	static {
-		SimpleContainer.defaultCheckDependencies = BuildConfig.DEBUG;
+	private final Container container;
+
+	public ContainerService() {
+		SimpleContainer simpleContainer = new SimpleContainer();
+		simpleContainer.setCheckDependencies(BuildConfig.DEBUG);
+		container = simpleContainer;
 	}
 
 	@Override

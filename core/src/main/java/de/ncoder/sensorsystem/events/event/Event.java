@@ -27,11 +27,34 @@ package de.ncoder.sensorsystem.events.event;
 import java.io.Serializable;
 
 import de.ncoder.sensorsystem.Component;
+import de.ncoder.sensorsystem.sensor.Sensor;
+import de.ncoder.typedmap.Key;
 
 public interface Event extends Serializable {
+	/**
+	 * @return the system time in milliseconds when this Event occurred
+	 */
 	public long getWhen();
 
-	public Component getSource();
+	/**
+	 * Get the Key of the Component this Event originates from.
+	 * Components that can be registered for multiple Keys,
+	 * need to specify which Key is used for Events.
+	 *
+	 * @return the Key of the Component this Event originates from
+	 */
+	public Key<? extends Component> getSource();
 
-	public String getName();
+	/**
+	 * <p>Get the Tag of this Event.
+	 * This is used to differentiate between Events of the same class,
+	 * so that instead of defining a new subtype that doesn't add any functionality,
+	 * a different tag can be used.
+	 * The default value is the fully qualified class name of the Event.</p>
+	 * <p>For example, the default Tag of a {@link ValueChangedEvent} would be {@code de.ncoder.sensorsystem.events.event.ValueChangedEvent}.
+	 * When the specific value of a {@link Sensor} changed, {@code de.ncoder.sensorsystem.sensor.Sensor.Changed} could be used.</p>
+	 *
+	 * @return the Tag of this Event
+	 */
+	public String getTag();
 }

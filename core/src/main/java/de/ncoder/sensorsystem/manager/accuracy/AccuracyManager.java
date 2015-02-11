@@ -30,6 +30,7 @@ import de.ncoder.typedmap.Key;
 
 public class AccuracyManager extends AbstractComponent {
 	public static final Key<AccuracyManager> KEY = new Key<>(AccuracyManager.class);
+	public static final String TAG_CHANGED = AccuracyManager.class.getName() + ".AccuracyChanged";
 
 	public static final int ACCURACY_MIN = 0;
 	public static final int ACCURACY_LOW = 25;
@@ -53,22 +54,13 @@ public class AccuracyManager extends AbstractComponent {
 		if (accuracy < ACCURACY_MIN || accuracy > ACCURACY_MAX) {
 			throw new IllegalArgumentException("Accuracy " + accuracy + " is out of bounds");
 		}
-		AccuracyChangedEvent event = new AccuracyChangedEvent(this.accuracy, accuracy);
+		CachedValueChangedEvent<Integer> event = new CachedValueChangedEvent<>(
+				TAG_CHANGED, getKey(), this.accuracy, accuracy);
 		this.accuracy = accuracy;
 		publish(event);
 	}
 
 	public int getAccuracy() {
 		return accuracy;
-	}
-
-	// ------------------------------------------------------------------------
-
-	public class AccuracyChangedEvent extends CachedValueChangedEvent<Integer, AccuracyManager> {
-		//TODO check if serializable
-
-		private AccuracyChangedEvent(int oldValue, int newValue) {
-			super(AccuracyChangedEvent.class.getName(), AccuracyManager.this, oldValue, newValue);
-		}
 	}
 }

@@ -46,6 +46,7 @@ import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoActivity;
 import de.ncoder.sensorsystem.android.app.componentInfo.ComponentInfoManager;
 import de.ncoder.sensorsystem.events.EventListener;
 import de.ncoder.sensorsystem.events.EventManager;
+import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
@@ -119,9 +120,9 @@ public class ComponentsFragment extends BoundFragment {
 			Component component = getItem(position);
 			if (component != null) {
 				((TextView) convertView.findViewById(R.id.component_title)).setText(
-						component.toString());
+						component.getClass().getSimpleName());
 				((TextView) convertView.findViewById(R.id.component_type)).setText(
-						component.getClass().getName());
+						EventUtils.simpleClassNames(component.toString()));
 			}
 
 			return convertView;
@@ -154,7 +155,8 @@ public class ComponentsFragment extends BoundFragment {
 		@Override
 		public void handle(final Event event) {
 			if (event instanceof ComponentEvent) {
-				if (((ComponentEvent) event).getType() == ComponentEvent.Type.ADDED) {
+				ComponentEvent.Type type = ((ComponentEvent) event).getType();
+				if (type == ComponentEvent.Type.ADDED) {
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -163,7 +165,7 @@ public class ComponentsFragment extends BoundFragment {
 							notifyDataSetChanged();
 						}
 					});
-				} else if (((ComponentEvent) event).getType() == ComponentEvent.Type.REMOVED) {
+				} else if (type == ComponentEvent.Type.REMOVED) {
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {

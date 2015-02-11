@@ -75,7 +75,7 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 		if (event instanceof ValueChangedEvent) {
 			ContentValues values = new ContentValues();
 			values.put(DBHelper.COLUMN_SOURCE, String.valueOf(event.getSource()));
-			values.put(DBHelper.COLUMN_KEY, event.getName());
+			values.put(DBHelper.COLUMN_KEY, event.getTag());
 			values.put(DBHelper.COLUMN_TIMESTAMP, event.getWhen());
 			values.put(DBHelper.COLUMN_VALUE, JSONUtils.toJSONString(((ValueChangedEvent) event).getNewValue()));
 			long insertId = database.insert(DBHelper.TABLE_LOG, null, values);

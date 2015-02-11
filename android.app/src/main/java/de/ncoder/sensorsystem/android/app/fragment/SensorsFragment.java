@@ -46,6 +46,7 @@ import de.ncoder.sensorsystem.events.EventUtils;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.sensorsystem.events.event.ValueChangedEvent;
 import de.ncoder.sensorsystem.sensor.Sensor;
+import de.ncoder.typedmap.Key;
 
 
 public class SensorsFragment extends BoundFragment {
@@ -71,8 +72,8 @@ public class SensorsFragment extends BoundFragment {
 	private final EventsAdapter eventsAdapter = new EventsAdapter();
 
 	private class EventsAdapter extends BaseAdapter implements de.ncoder.sensorsystem.events.EventListener {
-		private final List<String> index = new ArrayList<>();
-		private final Map<String, Event> eventSet = new HashMap<>();
+		private final List<Key<?>> index = new ArrayList<>();
+		private final Map<Key<?>, Event> eventSet = new HashMap<>();
 
 		private final DateFormat whenFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -101,7 +102,7 @@ public class SensorsFragment extends BoundFragment {
 
 			Event event = getItem(position);
 			((TextView) convertView.findViewById(R.id.event_title)).setText(
-					EventUtils.shortenName(event.getName()));
+					event.getSource().getValueClass().getSimpleName());
 			if (event instanceof ValueChangedEvent<?>) {
 				((TextView) convertView.findViewById(R.id.event_content)).setText(
 						EventUtils.toString(((ValueChangedEvent) event).getNewValue()));
@@ -112,20 +113,20 @@ public class SensorsFragment extends BoundFragment {
 			((TextView) convertView.findViewById(R.id.event_when)).setText(
 					whenFormat.format(new Date(event.getWhen())));
 			((TextView) convertView.findViewById(R.id.event_source)).setText(
-					String.valueOf(event.getSource()));
+					EventUtils.simpleClassNames(String.valueOf(event.getSource())));
 
 			return convertView;
 		}
 
 		@Override
 		public void handle(final Event event) {
-			if (event.getSource() instanceof Sensor) {
+			if (event.getTag().equals(Sensor.TAG_CHANGED)) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Event old = eventSet.put(event.getName(), event);
+						Event old = eventSet.put(event.getSource(), event);
 						if (old == null) {
-							index.add(event.getName());
+							index.add(event.getSource());
 						}
 						notifyDataSetChanged();
 					}

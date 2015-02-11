@@ -99,7 +99,7 @@ public class MovementTracker extends AbstractComponent implements EventListener,
 
 	@Override
 	public void handle(Event event) {
-		if (event instanceof ValueChangedEvent && event.getSource() instanceof LinearAccelerationSensor) {
+		if (event instanceof ValueChangedEvent && LinearAccelerationSensor.KEY.equals(event.getSource())) {
 			eventCount++;
 			float[] linearAccel = (float[]) ((ValueChangedEvent) event).getNewValue();
 

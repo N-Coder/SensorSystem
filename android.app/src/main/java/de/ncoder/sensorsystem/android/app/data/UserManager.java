@@ -141,7 +141,7 @@ public class UserManager extends DataManager {
 
 	// ------------------------------------------------------------------------
 
-	public class UserStatusChangedEvent extends SimpleEvent<UserManager> {
+	public class UserStatusChangedEvent extends SimpleEvent {
 		private final boolean isLoggedIn;
 		private final String userName;
 
@@ -150,8 +150,7 @@ public class UserManager extends DataManager {
 		}
 
 		private UserStatusChangedEvent(boolean isLoggedIn, String userName) {
-			super(UserStatusChangedEvent.class.getName() + "." + (isLoggedIn ? "Login" : "Logout"),
-					UserManager.this);
+			super(null, getKey());
 			this.isLoggedIn = isLoggedIn;
 			this.userName = userName;
 		}

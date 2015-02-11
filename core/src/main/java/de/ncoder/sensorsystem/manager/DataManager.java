@@ -61,7 +61,7 @@ public abstract class DataManager extends AbstractComponent implements Dependant
 		return new FutureCallback<T>() {
 			@Override
 			public void onDone(FutureTask<T> task) {
-				publish(new SimpleFutureDoneEvent<>(task, DataManager.this));
+				publish(new SimpleFutureDoneEvent(task, getKey()));
 			}
 		};
 	}

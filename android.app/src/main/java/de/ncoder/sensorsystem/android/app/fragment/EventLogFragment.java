@@ -110,8 +110,12 @@ public class EventLogFragment extends BoundFragment {
 			}
 
 			Event event = getItem(position);
+			String title = event.getTag();
+			if (title.isEmpty()) {
+				title = event.getClass().getName();
+			}
 			((TextView) convertView.findViewById(R.id.event_title)).setText(
-					EventUtils.shortenName(event.getName()));
+					EventUtils.simpleClassNames(title));
 			if (event instanceof ValueChangedEvent<?>) {
 				((TextView) convertView.findViewById(R.id.event_content)).setText(
 						EventUtils.toString(((ValueChangedEvent) event).getNewValue()));
@@ -122,7 +126,7 @@ public class EventLogFragment extends BoundFragment {
 			((TextView) convertView.findViewById(R.id.event_when)).setText(
 					whenFormat.format(new Date(event.getWhen())));
 			((TextView) convertView.findViewById(R.id.event_source)).setText(
-					String.valueOf(event.getSource()));
+					EventUtils.simpleClassNames(String.valueOf(event.getSource())));
 
 			return convertView;
 		}
@@ -134,10 +138,8 @@ public class EventLogFragment extends BoundFragment {
 				public void run() {
 					events.add(event);
 					notifyDataSetChanged();
-
 				}
 			});
-
 		}
 	}
 

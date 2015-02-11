@@ -39,6 +39,7 @@ public class SystemLooper extends Thread implements Component {
 	public static final Key<SystemLooper> KEY = new Key<>(SystemLooper.class);
 
 	private Container container;
+	private Key<? extends Component> lastKey;
 	private Looper looper;
 
 	@Override
@@ -47,6 +48,7 @@ public class SystemLooper extends Thread implements Component {
 			throw new IllegalStateException("This component can't be shared across containers!");
 		}
 		this.container = Objects.requireNonNull(container, "container");
+		lastKey = Objects.requireNonNull(key, "key");
 		this.start();
 	}
 
@@ -54,10 +56,10 @@ public class SystemLooper extends Thread implements Component {
 	public void run() {
 		Looper.prepare();
 		looper = Looper.myLooper();
-		publish(new ComponentEvent(this, ComponentEvent.Type.STARTED));
+		publish(new ComponentEvent(lastKey, ComponentEvent.Type.STARTED));
 		Looper.loop();
 		looper = null;
-		publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED));
+		publish(new ComponentEvent(lastKey, ComponentEvent.Type.STOPPED));
 		if (container != null) {
 			container.unregister(this);
 		}

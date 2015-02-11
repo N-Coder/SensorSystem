@@ -28,6 +28,8 @@ import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
 public interface Sensor<T> extends Component {
+	public String TAG_CHANGED = Sensor.class.getName() + ".Changed";
+
 	public T get();
 
 	public long lastChange();

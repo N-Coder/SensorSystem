@@ -26,25 +26,22 @@ package de.ncoder.sensorsystem.events.event;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.events.EventUtils;
+import de.ncoder.typedmap.Key;
 
-public class TransientValueChangedEvent<ValueT, SourceT extends Component> extends SimpleEvent<SourceT> implements ValueChangedEvent<ValueT> {
-	private final ValueT newValue;
+public class TransientValueChangedEvent<V> extends SimpleEvent implements ValueChangedEvent<V> {
+	private final V newValue;
 
-	public TransientValueChangedEvent(String name, ValueT newValue) {
-		this(name, null, newValue);
-	}
-
-	public TransientValueChangedEvent(SourceT source, ValueT newValue) {
+	public TransientValueChangedEvent(Key<? extends Component> source, V newValue) {
 		this(null, source, newValue);
 	}
 
-	public TransientValueChangedEvent(String name, SourceT source, ValueT newValue) {
-		super(name, source);
+	public TransientValueChangedEvent(String tag, Key<? extends Component> source, V newValue) {
+		super(tag, source);
 		this.newValue = newValue;
 	}
 
-	public TransientValueChangedEvent(String name, SourceT source, long when, ValueT newValue) {
-		super(name, source, when);
+	public TransientValueChangedEvent(String tag, Key<? extends Component> source, long when, V newValue) {
+		super(tag, source, when);
 		this.newValue = newValue;
 	}
 
@@ -54,18 +51,27 @@ public class TransientValueChangedEvent<ValueT, SourceT extends Component> exten
 
 	@Override
 	@Deprecated
-	public ValueT getOldValue() {
+	public V getOldValue() {
 		return null;
 	}
 
 	@Override
-	public ValueT getNewValue() {
+	public V getNewValue() {
 		return newValue;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getName() + ": " + EventUtils.toString(getNewValue()) + "]";
+		StringBuilder msg = new StringBuilder();
+		msg.append(getTag());
+		if (getSource() != null) {
+			msg.append("<").append(getSource()).append(">");
+		}
+		if (msg.length() > 0) {
+			msg.append(": ");
+		}
+		msg.append(EventUtils.toString(getNewValue()));
+		return msg.toString();
 	}
 
 	@Override
