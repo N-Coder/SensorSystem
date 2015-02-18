@@ -31,7 +31,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
@@ -45,20 +48,19 @@ import de.ncoder.sensorsystem.sensor.AbstractSensor;
 import de.ncoder.typedmap.Key;
 
 public abstract class AndroidSensor<T> extends AbstractSensor<T> implements SensorEventListener {
+	@Nonnull
 	protected final SensorManager sensorManager;
+	@Nonnull
 	protected final Sensor sensor;
 	private T cachedValue;
 
-	public AndroidSensor(SensorManager sensorManager, Sensor sensor) {
-		this.sensorManager = sensorManager;
-		this.sensor = sensor;
-		if (sensor == null) {
-			Log.w(getClass().getSimpleName(), "Device doesn't have the required sensor type installed");
-		}
+	public AndroidSensor(@Nonnull SensorManager sensorManager, @Nonnull Sensor sensor) {
+		this.sensorManager = Objects.requireNonNull(sensorManager);
+		this.sensor = Objects.requireNonNull(sensor);
 	}
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		updateSensorListener();
 		EventManager eventManager = getOtherComponent(EventManager.KEY);
@@ -86,7 +88,7 @@ public abstract class AndroidSensor<T> extends AbstractSensor<T> implements Sens
 				"BatchLatency: " + getBatchReportLatency().getAdditional().toMillis(batchLatency) + "ms");
 
 		Handler handler = null;
-		SystemLooper looper = getContainer().get(SystemLooper.KEY);
+		SystemLooper looper = getOtherComponent(SystemLooper.KEY);
 		if (looper != null && looper.getLooper() != null) {
 			handler = new Handler(looper.getLooper());
 		}

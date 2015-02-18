@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
@@ -17,7 +19,7 @@ import de.ncoder.typedmap.Key;
 
 public abstract class BroadcastSensor<T> extends CachedSensor<T> implements DependantComponent {
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		getOtherComponent(ContainerService.KEY_CONTEXT)
 				.registerReceiver(receiver, getBroadcastIntentFilter());
@@ -42,6 +44,7 @@ public abstract class BroadcastSensor<T> extends CachedSensor<T> implements Depe
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {

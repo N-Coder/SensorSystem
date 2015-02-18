@@ -39,6 +39,9 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.manager.ScheduleManager;
@@ -52,13 +55,14 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	private String INTENT_ACTION;
 	private static final String INTENT_EXTRA_ID = "alarm-id";
 
+	@Nullable
 	private AlarmManager alarmManager;
 
 	private final AtomicInteger counter = new AtomicInteger(0);
 	private final Map<Integer, Runnable> runnables = new ConcurrentHashMap<>();
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		Context context = getContext();
 		alarmManager = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
@@ -78,6 +82,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		super.destroy(key);
 	}
 
+	@Nullable
 	private Context getContext() {
 		return getOtherComponent(ContainerService.KEY_CONTEXT);
 	}
@@ -90,9 +95,10 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	}
 
+	@Nullable
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(Context context, @Nonnull Intent intent) {
 			int id = Integer.parseInt(intent.getData().getSchemeSpecificPart().replaceAll("[^0-9]", ""));
 			Runnable runnable = runnables.get(id);
 			//Log.v(TAG, "Run #" + id + ": " + runnable + " from " + intent);
@@ -110,7 +116,8 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 
 	//---------------------------------SCHEDULING FUNCTIONS--------------------
 
-	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis, boolean wakeUp, long executionLatency) {
+	@Nonnull
+	public Future<?> scheduleRepeatedExecution(@Nonnull Runnable runnable, long initialDelayMillis, long delayMillis, boolean wakeUp, long executionLatency) {
 		final int id = counter.getAndIncrement();
 
 		runnables.put(id, runnable);
@@ -123,14 +130,16 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		return new AlarmFuture(id, alarmIntent);
 	}
 
+	@Nonnull
 	@Override
-	public Future<?> scheduleRepeatedExecution(Runnable runnable, long initialDelayMillis, long delayMillis) {
+	public Future<?> scheduleRepeatedExecution(@Nonnull Runnable runnable, long initialDelayMillis, long delayMillis) {
 		return scheduleRepeatedExecution(runnable, initialDelayMillis, delayMillis,
 				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
 				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
 	}
 
-	public Future<?> scheduleExecution(Runnable runnable, long delayMillis, boolean wakeUp, long executionLatency) {
+	@Nonnull
+	public Future<?> scheduleExecution(@Nonnull Runnable runnable, long delayMillis, boolean wakeUp, long executionLatency) {
 		final int id = counter.getAndIncrement();
 		runnables.put(id, new OneTimeRunnable(id, runnable));
 
@@ -145,8 +154,9 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		return new AlarmFuture(id, alarmIntent);
 	}
 
+	@Nonnull
 	@Override
-	public Future<?> scheduleExecution(Runnable runnable, long delayMillis) {
+	public Future<?> scheduleExecution(@Nonnull Runnable runnable, long delayMillis) {
 		return scheduleExecution(runnable, delayMillis,
 				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
 				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
@@ -202,6 +212,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 			return !runnables.containsKey(id);
 		}
 
+		@Nullable
 		@Override
 		public Void get() throws InterruptedException, ExecutionException {
 			if (isCancelled()) {
@@ -211,6 +222,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 			return null;
 		}
 
+		@Nullable
 		@Override
 		public Void get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 			if (isCancelled()) {
@@ -227,6 +239,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 			10L, 0L, TimeUnit.SECONDS
 	);
 
+	@Nonnull
 	public LongAccuracyRange<TimeUnit> getExecutionLatency() {
 		return latency;
 	}
@@ -235,6 +248,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 			10, false
 	);
 
+	@Nonnull
 	public BooleanAccuracyRange<Void> getWakeupTreshold() {
 		return wakeupTreshold;
 	}
@@ -243,6 +257,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
@@ -253,6 +268,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 
 	private static Set<String> permissions;
 
+	@Nonnull
 	@Override
 	public Set<String> requiredPermissions() {
 		if (permissions == null) {

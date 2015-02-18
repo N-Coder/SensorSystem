@@ -31,11 +31,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class Utils {
 	private Utils() {
 	}
 
-	public static String valueToString(Object o) {
+	@Nonnull
+	public static String valueToString(@Nullable Object o) {
 		if (o instanceof Object[])
 			return Arrays.deepToString((Object[]) o);
 		else if (o instanceof byte[])
@@ -88,7 +92,8 @@ public class Utils {
 		return bob.toString();
 	}
 
-	public static String simpleClassNames(String name) {
+	@Nonnull
+	public static String simpleClassNames(@Nonnull String name) {
 		Matcher matcher = FQN.matcher(name);
 		StringBuffer bob = new StringBuffer();
 		while (matcher.find()) {
@@ -98,15 +103,23 @@ public class Utils {
 		return bob.toString();
 	}
 
+	@Nonnull
 	@SafeVarargs
-	public static <T> Set<T> wrapSet(T... keys) {
-		return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
+	public static <T> Set<T> wrapSet(@Nullable T... keys) {
+		if (keys == null || keys.length == 0) {
+			return Collections.emptySet();
+		} else {
+			return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(keys)));
+		}
 	}
 
+	@Nonnull
 	@SafeVarargs
-	public static <T> Set<T> wrapSet(Set<T> parent, T... keys) {
+	public static <T> Set<T> wrapSet(@Nonnull Set<T> parent, @Nullable T... keys) {
 		HashSet<T> set = new HashSet<>(parent);
-		set.addAll(Arrays.asList(keys));
+		if (keys != null && keys.length > 0) {
+			set.addAll(Arrays.asList(keys));
+		}
 		return Collections.unmodifiableSet(set);
 	}
 }

@@ -24,10 +24,13 @@
 
 package de.ncoder.sensorsystem;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.typedmap.Key;
 
 public interface Component {
-	public void init(Container container, Key<? extends Component> key);
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key);
 
-	public void destroy(Key<? extends Component> key);
+	public void destroy(@Nullable Key<? extends Component> key);
 }

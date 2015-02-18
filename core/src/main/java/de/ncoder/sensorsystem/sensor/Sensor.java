@@ -24,15 +24,19 @@
 
 package de.ncoder.sensorsystem.sensor;
 
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
 public interface Sensor<T> extends Component {
 	public String TAG_CHANGED = Sensor.class.getName() + ".Changed";
 
+	@Nullable
 	public T get();
 
 	public long lastChange();
 
+	@Nullable
 	public Key<? extends Component> getKey();
 }

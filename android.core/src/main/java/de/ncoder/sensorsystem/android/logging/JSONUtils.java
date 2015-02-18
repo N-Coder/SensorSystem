@@ -38,12 +38,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class JSONUtils {
 	public static String toJSONString(Object o) {
 		return wrap(o).toString();
 	}
 
-	public static Object wrap(Object o) {
+	@Nonnull
+	public static Object wrap(@Nullable Object o) {
 		if (o == null) {
 			return JSONObject.NULL;
 		} else if (o instanceof JSONArray || o instanceof JSONObject) {

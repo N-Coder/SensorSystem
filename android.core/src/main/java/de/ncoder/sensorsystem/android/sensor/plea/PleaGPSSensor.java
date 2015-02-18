@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.DependantComponent;
@@ -45,7 +47,7 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 	private GpsStatus cachedGpsStatus = null; //will be created and reused by GPSStatusListener
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		getLocationManager().addGpsStatusListener(gpsStatusListener);
 		container.register(KEY_TRACKER, new MovementTracker());
@@ -240,6 +242,7 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {

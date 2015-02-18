@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
@@ -43,7 +45,7 @@ public class EventManager extends AbstractComponent implements RemoteEventManage
 	public static final Key<EventManager> KEY = new Key<>(EventManager.class);
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		if (log.isTraceEnabled()) {
 			subscribe(new EventListener() {
@@ -65,15 +67,15 @@ public class EventManager extends AbstractComponent implements RemoteEventManage
 
 	private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
-	public void subscribe(EventListener listener) {
+	public void subscribe(@Nonnull EventListener listener) {
 		listeners.add(listener);
 	}
 
-	public void unsubscribe(EventListener listener) {
+	public void unsubscribe(@Nonnull EventListener listener) {
 		listeners.remove(listener);
 	}
 
-	public void publish(Event event) {
+	public void publish(@Nonnull Event event) {
 		for (EventListener listener : listeners) {
 			try {
 				listener.handle(event);

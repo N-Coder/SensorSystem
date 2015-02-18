@@ -26,8 +26,11 @@ package de.ncoder.sensorsystem;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.typedmap.Key;
 
 public interface DependantComponent extends Component {
+	@Nonnull
 	public Set<Key<? extends Component>> dependencies();
 }

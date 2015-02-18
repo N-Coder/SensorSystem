@@ -24,23 +24,27 @@
 
 package de.ncoder.sensorsystem.events.event;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Utils;
 import de.ncoder.typedmap.Key;
 
 public class TransientValueChangedEvent<V> extends SimpleEvent implements ValueChangedEvent<V> {
+	@Nullable
 	private final V newValue;
 
 	public TransientValueChangedEvent(Key<? extends Component> source, V newValue) {
 		this(null, source, newValue);
 	}
 
-	public TransientValueChangedEvent(String tag, Key<? extends Component> source, V newValue) {
+	public TransientValueChangedEvent(String tag, Key<? extends Component> source, @Nullable V newValue) {
 		super(tag, source);
 		this.newValue = newValue;
 	}
 
-	public TransientValueChangedEvent(String tag, Key<? extends Component> source, long when, V newValue) {
+	public TransientValueChangedEvent(String tag, Key<? extends Component> source, long when, @Nullable V newValue) {
 		super(tag, source, when);
 		this.newValue = newValue;
 	}
@@ -51,15 +55,18 @@ public class TransientValueChangedEvent<V> extends SimpleEvent implements ValueC
 
 	@Override
 	@Deprecated
+	@Nullable
 	public V getOldValue() {
 		return null;
 	}
 
+	@Nullable
 	@Override
 	public V getNewValue() {
 		return newValue;
 	}
 
+	@Nonnull
 	@Override
 	public String toString() {
 		StringBuilder msg = new StringBuilder();

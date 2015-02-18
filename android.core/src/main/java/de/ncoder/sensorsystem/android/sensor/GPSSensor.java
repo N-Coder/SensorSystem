@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.manager.SystemLooper;
 import de.ncoder.sensorsystem.manager.TimingManager;
@@ -61,7 +63,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	}
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		looper = getOtherComponent(SystemLooper.KEY).getLooper();
 		locationManager.addGpsStatusListener(gpsStatusListener);
@@ -171,6 +173,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
@@ -181,6 +184,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 
 	private static Set<String> permissions;
 
+	@Nonnull
 	@Override
 	public Set<String> requiredPermissions() {
 		if (permissions == null) {

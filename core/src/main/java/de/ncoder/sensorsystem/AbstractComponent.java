@@ -26,16 +26,21 @@ package de.ncoder.sensorsystem;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
 import de.ncoder.typedmap.Key;
 
 public class AbstractComponent implements Component {
+	@Nullable
 	private Container container;
+	@Nullable
 	private Key<? extends Component> key;
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		if (this.container != null || this.key != null) {
 			throw new IllegalStateException("Component " + getClass().getSimpleName() + " can't be shared!");
 		}
@@ -44,7 +49,7 @@ public class AbstractComponent implements Component {
 	}
 
 	@Override
-	public void destroy(Key<? extends Component> key) {
+	public void destroy(@Nullable Key<? extends Component> key) {
 		assert this.key == null || key == this.key;
 		container = null;
 		this.key = null;
@@ -54,15 +59,18 @@ public class AbstractComponent implements Component {
 		return container != null;
 	}
 
+	@Nullable
 	protected Container getContainer() {
 		return container;
 	}
 
+	@Nullable
 	public Key<? extends Component> getKey() {
 		return key;
 	}
 
-	protected <T extends Component> T getOtherComponent(Key<T> key) {
+	@Nullable
+	protected <T extends Component> T getOtherComponent(@Nonnull Key<T> key) {
 		Container container = getContainer();
 		if (container != null) {
 			return container.get(key);
@@ -71,7 +79,7 @@ public class AbstractComponent implements Component {
 		}
 	}
 
-	protected void publish(Event event) {
+	protected void publish(@Nonnull Event event) {
 		EventManager eventManager = getOtherComponent(EventManager.KEY);
 		if (eventManager != null) {
 			eventManager.publish(event);
@@ -81,9 +89,10 @@ public class AbstractComponent implements Component {
 	@Override
 	public String toString() {
 		String name = getClass().getName();
-		if (!getKey().getValueClass().equals(getClass())) {
+		Key<? extends Component> key = getKey();
+		if (key != null && !key.getValueClass().equals(getClass())) {
 			//append Key if it doesn't exactly match this Component
-			name += "<" + getKey().toString() + ">";
+			name += "<" + key.toString() + ">";
 		}
 		return name;
 	}

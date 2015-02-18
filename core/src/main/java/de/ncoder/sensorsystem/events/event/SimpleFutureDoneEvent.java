@@ -28,38 +28,44 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
 public class SimpleFutureDoneEvent extends SimpleEvent implements FutureDoneEvent<Object> {
+	@Nonnull
 	private final Future<?> future;
 
-	public SimpleFutureDoneEvent(Future<?> future, Key<? extends Component> source) {
+	public SimpleFutureDoneEvent(@Nonnull Future<?> future, Key<? extends Component> source) {
 		super(null, source);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<?> future, Key<? extends Component> source, long when) {
+	public SimpleFutureDoneEvent(@Nonnull Future<?> future, Key<? extends Component> source, long when) {
 		super(null, source, when);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<?> future, String tag, Key<? extends Component> source) {
+	public SimpleFutureDoneEvent(@Nonnull Future<?> future, String tag, Key<? extends Component> source) {
 		super(tag, source);
 		this.future = future;
 	}
 
-	public SimpleFutureDoneEvent(Future<?> future, String tag, Key<? extends Component> source, long when) {
+	public SimpleFutureDoneEvent(@Nonnull Future<?> future, String tag, Key<? extends Component> source, long when) {
 		super(tag, source, when);
 		this.future = future;
 	}
 
+	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
 	public Future<Object> getFuture() {
 		return (Future<Object>) future;
 	}
 
+	@Nullable
 	@Override
 	public Object getResult() throws ExecutionException {
 		try {
@@ -79,6 +85,7 @@ public class SimpleFutureDoneEvent extends SimpleEvent implements FutureDoneEven
 		}
 	}
 
+	@Nullable
 	@Override
 	public Throwable getException() {
 		try {
@@ -91,6 +98,7 @@ public class SimpleFutureDoneEvent extends SimpleEvent implements FutureDoneEven
 		}
 	}
 
+	@Nonnull
 	@Override
 	public String toString() {
 		StringBuilder msg = new StringBuilder();

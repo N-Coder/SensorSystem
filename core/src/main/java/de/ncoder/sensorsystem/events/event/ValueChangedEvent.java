@@ -24,10 +24,14 @@
 
 package de.ncoder.sensorsystem.events.event;
 
+import javax.annotation.Nullable;
+
 public interface ValueChangedEvent<T> extends Event {
 	public boolean hasOldValue();
 
+	@Nullable
 	public T getOldValue();
 
+	@Nullable
 	public T getNewValue();
 }

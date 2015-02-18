@@ -26,6 +26,9 @@ package de.ncoder.sensorsystem.events.event;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.sensor.Sensor;
 import de.ncoder.typedmap.Key;
@@ -43,6 +46,7 @@ public interface Event extends Serializable {
 	 *
 	 * @return the Key of the Component this Event originates from
 	 */
+	@Nullable
 	public Key<? extends Component> getSource();
 
 	/**
@@ -56,5 +60,6 @@ public interface Event extends Serializable {
 	 *
 	 * @return the Tag of this Event
 	 */
+	@Nonnull
 	public String getTag();
 }

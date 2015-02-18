@@ -24,8 +24,10 @@
 
 package de.ncoder.sensorsystem.events;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.events.event.Event;
 
 public interface EventListener {
-	void handle(Event event);
+	void handle(@Nonnull Event event);
 }

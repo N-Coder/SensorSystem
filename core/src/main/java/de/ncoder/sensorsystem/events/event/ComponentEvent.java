@@ -26,6 +26,9 @@ package de.ncoder.sensorsystem.events.event;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
@@ -33,37 +36,44 @@ public class ComponentEvent extends SimpleEvent {
 	public static enum Type {
 		ADDED, STARTED, STOPPED, REMOVED;
 
+		@Nonnull
 		@Override
 		public String toString() {
 			return ComponentEvent.class.getName() + "." + super.toString();
 		}
 	}
 
+	@Nonnull
 	private final Type type;
+	@Nonnull
 	private final String action;
 
-	public ComponentEvent(Key<? extends Component> key, Type type, String action) {
+	public ComponentEvent(Key<? extends Component> key, @Nonnull Type type, @Nonnull String action) {
 		super(null, Objects.requireNonNull(key));
 		this.type = type;
 		this.action = action;
 	}
 
-	public ComponentEvent(Key<? extends Component> key, Type type) {
+	public ComponentEvent(Key<? extends Component> key, @Nonnull Type type) {
 		this(key, type, type.name().toLowerCase());
 	}
 
+	@Nonnull
 	public Type getType() {
 		return type;
 	}
 
+	@Nullable
 	public Key<? extends Component> getKey() {
 		return super.getSource();
 	}
 
+	@Nonnull
 	public String getAction() {
 		return action;
 	}
 
+	@Nonnull
 	public String toString() {
 		return getSource() + " " + getAction();
 	}

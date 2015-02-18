@@ -26,6 +26,8 @@ package de.ncoder.sensorsystem.sensor;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.events.event.CachedValueChangedEvent;
@@ -43,25 +45,25 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
 		return System.currentTimeMillis() - lastChanged > maxChangeRate;
 	}
 
-	protected final void changed(T oldValue, T newValue) {
+	protected final void changed(@Nullable T oldValue, @Nullable T newValue) {
 		changed(true, oldValue, newValue);
 	}
 
-	protected final void changed(T newValue) {
+	protected final void changed(@Nullable T newValue) {
 		changed(false, null, newValue);
 	}
 
-	protected void changed(boolean hasOldValue, T oldValue, T newValue) {
+	protected void changed(boolean hasOldValue, @Nullable T oldValue, @Nullable T newValue) {
 		if (!mayChange()) return;
 		lastChanged = System.currentTimeMillis();
 		publishChange(hasOldValue, oldValue, newValue);
 	}
 
-	protected void publishChange(boolean hasOldValue, T oldValue, T newValue) {
+	protected void publishChange(boolean hasOldValue, @Nullable T oldValue, @Nullable T newValue) {
 		publish(newChangedEvent(hasOldValue, oldValue, newValue));
 	}
 
-	protected ValueChangedEvent<T> newChangedEvent(boolean hasOldValue, T oldValue, T newValue) {
+	protected ValueChangedEvent<T> newChangedEvent(boolean hasOldValue, @Nullable T oldValue, @Nullable T newValue) {
 		if (hasOldValue) {
 			return new CachedValueChangedEvent<>(
 					TAG_CHANGED, getKey(), lastChanged, oldValue, newValue
@@ -82,6 +84,7 @@ public abstract class AbstractSensor<T> extends AbstractComponent implements Sen
 	}
 
 	@Override
+	@Nullable
 	public Key<? extends Component> getKey() {
 		return super.getKey();
 	}

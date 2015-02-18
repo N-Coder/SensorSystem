@@ -34,6 +34,8 @@ import android.content.IntentFilter;
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.android.ContainerService;
@@ -52,7 +54,7 @@ public class AndroidTimingManager extends TimingManager {
 	private PendingIntent alarmIntent;
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		alarmManager = (AlarmManager) (getContext().getSystemService(Context.ALARM_SERVICE));
 		alarmIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(INTENT_ACTION), PendingIntent.FLAG_CANCEL_CURRENT);

@@ -26,6 +26,8 @@ package de.ncoder.sensorsystem.events;
 
 import java.util.concurrent.FutureTask;
 
+import javax.annotation.Nonnull;
+
 public interface FutureCallback<T> {
-	public void onDone(FutureTask<T> task);
+	public void onDone(@Nonnull FutureTask<T> task);
 }

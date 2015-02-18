@@ -31,6 +31,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.ComponentEvent;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -56,7 +59,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 	}
 
 	@Override
-	public synchronized <T extends Component, V extends T> void register(Key<T> key, V component) {
+	public synchronized <T extends Component, V extends T> void register(@Nonnull Key<T> key, @Nonnull V component) {
 		Objects.requireNonNull(key, "key");
 		Objects.requireNonNull(component, "component");
 		if (isRegistered(key)) {
@@ -82,7 +85,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized void unregister(Key<?> keyUnchecked) {
+	public synchronized void unregister(@Nonnull Key<?> keyUnchecked) {
 		if (Component.class.isAssignableFrom(keyUnchecked.getValueClass())) {
 			Key<? extends Component> key = (Key<? extends Component>) keyUnchecked;
 			checkRemove(key);
@@ -97,7 +100,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 	}
 
 	@Override
-	public synchronized void unregister(Component component) {
+	public synchronized void unregister(@Nonnull Component component) {
 		Iterator<Map.Entry<Key<? extends Component>, Component>> it = components.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<Key<? extends Component>, Component> entry = it.next();
@@ -123,17 +126,21 @@ public class SimpleContainer implements Container, RemoteContainer {
 	}
 
 	@Override
-	public <T extends Component> T get(Key<T> key) {
+	@Nullable
+	public <T extends Component> T get(@Nonnull Key<T> key) {
 		return components.get(key);
 	}
 
+	@SuppressWarnings("SuspiciousMethodCalls")
 	@Override
-	public boolean isRegistered(Key<?> key) {
+	public boolean isRegistered(@Nonnull Key<?> key) {
 		return components.containsKey(key);
 	}
 
 	private transient TypedMap<Component> componentsUnmodifiable;
 
+	@Nonnull
+	@Override
 	public TypedMap<Component> getData() {
 		if (componentsUnmodifiable == null) {
 			componentsUnmodifiable = components.unmodifiableView();
@@ -143,6 +150,7 @@ public class SimpleContainer implements Container, RemoteContainer {
 
 	private transient UnmodifiableSet<Key<? extends Component>> keysUnmodifiable;
 
+	@Nonnull
 	@Override
 	public Collection<Key<? extends Component>> getKeys() {
 		if (keysUnmodifiable == null) {

@@ -24,24 +24,28 @@
 
 package de.ncoder.sensorsystem.events.event;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Utils;
 import de.ncoder.typedmap.Key;
 
 public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChangedEvent<V> {
+	@Nullable
 	private final V oldValue, newValue;
 
 	public CachedValueChangedEvent(Key<? extends Component> source, V oldValue, V newValue) {
 		this(null, source, oldValue, newValue);
 	}
 
-	public CachedValueChangedEvent(String tag, Key<? extends Component> source, V oldValue, V newValue) {
+	public CachedValueChangedEvent(String tag, Key<? extends Component> source, @Nullable V oldValue, @Nullable V newValue) {
 		super(tag, source);
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
 
-	public CachedValueChangedEvent(String tag, Key<? extends Component> source, long when, V oldValue, V newValue) {
+	public CachedValueChangedEvent(String tag, Key<? extends Component> source, long when, @Nullable V oldValue, @Nullable V newValue) {
 		super(tag, source, when);
 		this.oldValue = oldValue;
 		this.newValue = newValue;
@@ -51,16 +55,19 @@ public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChan
 		return true;
 	}
 
+	@Nullable
 	@Override
 	public V getOldValue() {
 		return oldValue;
 	}
 
+	@Nullable
 	@Override
 	public V getNewValue() {
 		return newValue;
 	}
 
+	@Nonnull
 	@Override
 	public String toString() {
 		StringBuilder msg = new StringBuilder();
@@ -76,7 +83,7 @@ public class CachedValueChangedEvent<V> extends SimpleEvent implements ValueChan
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@Nullable Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;

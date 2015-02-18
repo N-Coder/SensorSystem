@@ -28,6 +28,8 @@ import android.os.Looper;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.events.EventManager;
@@ -43,7 +45,7 @@ public class SystemLooper extends Thread implements Component {
 	private Looper looper;
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		if (this.container != null && container != this.container) {
 			throw new IllegalStateException("This component can't be shared across containers!");
 		}

@@ -26,22 +26,28 @@ package de.ncoder.sensorsystem;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.typedmap.Key;
 import de.ncoder.typedmap.TypedMap;
 
 public interface Container {
-	<T extends Component, V extends T> void register(Key<T> key, V component);
+	<T extends Component, V extends T> void register(@Nonnull Key<T> key, @Nonnull V component);
 
-	void unregister(Key<?> key);
+	void unregister(@Nonnull Key<?> key);
 
-	void unregister(Component component);
+	void unregister(@Nonnull Component component);
 
-	<T extends Component> T get(Key<T> key);
+	@Nullable
+	<T extends Component> T get(@Nonnull Key<T> key);
 
-	boolean isRegistered(Key<?> key);
+	boolean isRegistered(@Nonnull Key<?> key);
 
+	@Nonnull
 	TypedMap<? extends Component> getData();
 
+	@Nonnull
 	Collection<Key<? extends Component>> getKeys();
 
 	void shutdown();

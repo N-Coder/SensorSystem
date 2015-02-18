@@ -24,6 +24,9 @@
 
 package de.ncoder.sensorsystem.events.event;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.typedmap.Key;
 
@@ -33,15 +36,17 @@ import de.ncoder.typedmap.Key;
  * If you want TypeSafety, provide your own implementation of Event.
  */
 public class SimpleEvent implements Event {
+	@Nonnull
 	private final String tag;
 	private final long when;
+	@Nullable
 	private final Key<? extends Component> source;
 
-	public SimpleEvent(String tag, Key<? extends Component> source) {
+	public SimpleEvent(@Nullable String tag, @Nullable Key<? extends Component> source) {
 		this(tag, source, System.currentTimeMillis());
 	}
 
-	public SimpleEvent(String tag, Key<? extends Component> source, long when) {
+	public SimpleEvent(@Nullable String tag, @Nullable Key<? extends Component> source, long when) {
 		if (tag == null || tag.isEmpty()) {
 			tag = getClass().getName();
 		}
@@ -50,6 +55,7 @@ public class SimpleEvent implements Event {
 		this.source = source;
 	}
 
+	@Nonnull
 	@Override
 	public String getTag() {
 		return tag;
@@ -60,6 +66,7 @@ public class SimpleEvent implements Event {
 		return when;
 	}
 
+	@Nullable
 	@Override
 	public Key<? extends Component> getSource() {
 		return source;
@@ -75,14 +82,12 @@ public class SimpleEvent implements Event {
 		if (this == o) return true;
 		if (!(o instanceof SimpleEvent)) return false;
 		SimpleEvent that = (SimpleEvent) o;
-		return when == that.when
-				&& (source != null ? source.equals(that.source) : that.source == null)
-				&& (tag != null ? tag.equals(that.tag) : that.tag == null);
+		return when == that.when && (source != null ? source.equals(that.source) : that.source == null) && (tag.equals(that.tag));
 	}
 
 	@Override
 	public int hashCode() {
-		int result = tag != null ? tag.hashCode() : 0;
+		int result = tag.hashCode();
 		result = 31 * result + (int) (when ^ (when >>> 32));
 		result = 31 * result + (source != null ? source.hashCode() : 0);
 		return result;

@@ -32,6 +32,8 @@ import android.os.IBinder;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
 import de.ncoder.sensorsystem.SimpleContainer;
@@ -41,6 +43,7 @@ import de.ncoder.typedmap.TypedMap;
 public class ContainerService extends Service implements Container {
 	public static final Key<ContextComponent> KEY_CONTEXT = new Key<>(ContextComponent.class, "ContainerContext");
 
+	@Nonnull
 	private final Container container;
 
 	public ContainerService() {
@@ -61,6 +64,7 @@ public class ContainerService extends Service implements Container {
 		super.onDestroy();
 	}
 
+	@Nonnull
 	@Override
 	public IBinder onBind(Intent intent) {
 		return theBinder;
@@ -69,24 +73,24 @@ public class ContainerService extends Service implements Container {
 	private final Binder theBinder = new Binder();
 
 	public class Binder extends android.os.Binder implements Container {
-		public <T extends Component, V extends T> void register(Key<T> key, V component) {
+		public <T extends Component, V extends T> void register(@Nonnull Key<T> key, @Nonnull V component) {
 			container.register(key, component);
 		}
 
-		public <T extends Component> T get(Key<T> key) {
+		public <T extends Component> T get(@Nonnull Key<T> key) {
 			return container.get(key);
 		}
 
-		public void unregister(Key<?> key) {
+		public void unregister(@Nonnull Key<?> key) {
 			container.unregister(key);
 		}
 
 		@Override
-		public void unregister(Component component) {
+		public void unregister(@Nonnull Component component) {
 			container.unregister(component);
 		}
 
-		public boolean isRegistered(Key<?> key) {
+		public boolean isRegistered(@Nonnull Key<?> key) {
 			return container.isRegistered(key);
 		}
 
@@ -95,10 +99,12 @@ public class ContainerService extends Service implements Container {
 			stopSelf();
 		}
 
+		@Nonnull
 		public TypedMap<? extends Component> getData() {
 			return container.getData();
 		}
 
+		@Nonnull
 		@Override
 		public Collection<Key<? extends Component>> getKeys() {
 			return container.getKeys();
@@ -111,7 +117,7 @@ public class ContainerService extends Service implements Container {
 		}
 
 		@Override
-		public void init(Container container, Key<? extends Component> key) {
+		public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		}
 
 		@Override
@@ -124,45 +130,48 @@ public class ContainerService extends Service implements Container {
 		}
 	}
 
+	@Nonnull
 	public Container getContainer() {
 		return container;
 	}
 
 	@Override
-	public <T extends Component, V extends T> void register(Key<T> key, V component) {
+	public <T extends Component, V extends T> void register(@Nonnull Key<T> key, @Nonnull V component) {
 		container.register(key, component);
 	}
 
-	public void registerService(Key<? extends Component> key,
-	                            Class<? extends Service> component) {
+	public void registerService(@Nonnull Key<? extends Component> key,
+	                            @Nonnull Class<? extends Service> component) {
 		ServiceToComponentBridge.startService(this, this.getClass(), key, component);
 	}
 
 	@Override
-	public void unregister(Key<?> key) {
+	public void unregister(@Nonnull Key<?> key) {
 		container.unregister(key);
 	}
 
 	@Override
-	public void unregister(Component component) {
+	public void unregister(@Nonnull Component component) {
 		container.unregister(component);
 	}
 
 	@Override
-	public <T extends Component> T get(Key<T> key) {
+	public <T extends Component> T get(@Nonnull Key<T> key) {
 		return container.get(key);
 	}
 
 	@Override
-	public boolean isRegistered(Key<?> key) {
+	public boolean isRegistered(@Nonnull Key<?> key) {
 		return container.isRegistered(key);
 	}
 
+	@Nonnull
 	@Override
 	public TypedMap<? extends Component> getData() {
 		return container.getData();
 	}
 
+	@Nonnull
 	@Override
 	public Collection<Key<? extends Component>> getKeys() {
 		return container.getKeys();

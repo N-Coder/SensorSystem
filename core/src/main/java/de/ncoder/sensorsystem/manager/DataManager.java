@@ -31,6 +31,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.DependantComponent;
@@ -40,8 +42,10 @@ import de.ncoder.sensorsystem.events.event.SimpleFutureDoneEvent;
 import de.ncoder.typedmap.Key;
 
 public abstract class DataManager extends AbstractComponent implements DependantComponent {
-	protected ReadWriteLock lock = new ReentrantReadWriteLock();
+	@Nonnull
+	protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+	@Nonnull
 	public Lock getReadLock() {
 		return lock.readLock();
 	}
@@ -50,6 +54,7 @@ public abstract class DataManager extends AbstractComponent implements Dependant
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
@@ -58,20 +63,23 @@ public abstract class DataManager extends AbstractComponent implements Dependant
 		return dependencies;
 	}
 
+	@Nonnull
 	protected <T> FutureCallback<T> defaultCallback() {
 		return new FutureCallback<T>() {
 			@Override
-			public void onDone(FutureTask<T> task) {
+			public void onDone(@Nonnull FutureTask<T> task) {
 				publish(new SimpleFutureDoneEvent(task, getKey()));
 			}
 		};
 	}
 
-	protected <T> FutureTask<T> execute(final Callable<T> callable) {
+	@Nonnull
+	protected <T> FutureTask<T> execute(@Nonnull final Callable<T> callable) {
 		return execute(callable, this.<T>defaultCallback());
 	}
 
-	protected <T> FutureTask<T> execute(final Callable<T> callable, final FutureCallback<T> callback) {
+	@Nonnull
+	protected <T> FutureTask<T> execute(@Nonnull final Callable<T> callable, @Nonnull final FutureCallback<T> callback) {
 		FutureTask<T> futureTask = new FutureTask<T>(callable) {
 			@Override
 			public void run() {

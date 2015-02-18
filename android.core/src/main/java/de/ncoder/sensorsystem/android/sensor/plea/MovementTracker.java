@@ -2,6 +2,8 @@ package de.ncoder.sensorsystem.android.sensor.plea;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.sensor.LinearAccelerationSensor;
 import de.ncoder.sensorsystem.events.EventListener;
@@ -23,7 +25,7 @@ public class MovementTracker extends AbstractComponent implements EventListener,
 	private int eventCount;
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		getOtherComponent(EventManager.KEY).subscribe(this);
 	}
@@ -137,6 +139,7 @@ public class MovementTracker extends AbstractComponent implements EventListener,
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {

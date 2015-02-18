@@ -24,6 +24,8 @@
 
 package de.ncoder.sensorsystem.manager.accuracy;
 
+import javax.annotation.Nullable;
+
 public abstract class AccuracyRange<V, T> {
 	private T additional;
 
@@ -33,7 +35,7 @@ public abstract class AccuracyRange<V, T> {
 
 	public abstract V scale(int accuracy);
 
-	public V scale(AccuracyManager accuracySource) {
+	public V scale(@Nullable AccuracyManager accuracySource) {
 		if (accuracySource == null) {
 			return defaut();
 		} else {

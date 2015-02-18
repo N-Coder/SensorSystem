@@ -25,7 +25,10 @@
 package de.ncoder.sensorsystem.manager;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
+
+import javax.annotation.Nonnull;
 
 import de.ncoder.sensorsystem.AbstractComponent;
 import de.ncoder.sensorsystem.Component;
@@ -35,6 +38,7 @@ import de.ncoder.typedmap.Key;
 public class ThreadPoolManager extends AbstractComponent implements Executor {
 	public static final Key<ThreadPoolManager> KEY = new Key<>(ThreadPoolManager.class);
 
+	@Nonnull
 	private final ExecutorService executor;
 
 	public ThreadPoolManager() {
@@ -43,24 +47,27 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 				new SynchronousQueue<Runnable>()));
 	}
 
-	public ThreadPoolManager(ExecutorService executor) {
-		this.executor = executor;
+	public ThreadPoolManager(@Nonnull ExecutorService executor) {
+		this.executor = Objects.requireNonNull(executor, "executor");
 	}
 
 	@Override
-	public void execute(Runnable command) {
+	public void execute(@Nonnull Runnable command) {
 		executor.execute(command);
 	}
 
-	public <T> Future<T> submit(Callable<T> task) {
+	@Nonnull
+	public <T> Future<T> submit(@Nonnull Callable<T> task) {
 		return executor.submit(task);
 	}
 
-	public <T> Future<T> submit(Runnable task, T result) {
+	@Nonnull
+	public <T> Future<T> submit(@Nonnull Runnable task, T result) {
 		return executor.submit(task, result);
 	}
 
-	public Future<?> submit(Runnable task) {
+	@Nonnull
+	public Future<?> submit(@Nonnull Runnable task) {
 		return executor.submit(task);
 	}
 
@@ -76,7 +83,7 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 		return super.isActive() && !executor.isShutdown();
 	}
 
-	public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+	public boolean awaitTermination(long timeout, @Nonnull TimeUnit unit) throws InterruptedException {
 		return executor.awaitTermination(timeout, unit);
 	}
 
@@ -84,11 +91,13 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 		return executor.isTerminated();
 	}
 
-	public Runnable awakeWrapper(Runnable runnable) {
+	@Nonnull
+	public Runnable awakeWrapper(@Nonnull Runnable runnable) {
 		return runnable;
 	}
 
-	public <T> Callable<T> awakeWrapper(Callable<T> callable) {
+	@Nonnull
+	public <T> Callable<T> awakeWrapper(@Nonnull Callable<T> callable) {
 		return callable;
 	}
 }

@@ -26,6 +26,9 @@ package de.ncoder.sensorsystem;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 public interface PrivilegedComponent extends Component {
+	@Nonnull
 	public Set<String> requiredPermissions();
 }

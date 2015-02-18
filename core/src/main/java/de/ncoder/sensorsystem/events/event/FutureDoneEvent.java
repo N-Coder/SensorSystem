@@ -27,12 +27,18 @@ package de.ncoder.sensorsystem.events.event;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public interface FutureDoneEvent<Result> extends Event {
+	@Nonnull
 	public Future<Result> getFuture();
 
+	@Nullable
 	public Result getResult() throws ExecutionException;
 
 	public boolean wasSuccess();
 
+	@Nullable
 	public Throwable getException();
 }

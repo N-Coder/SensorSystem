@@ -74,10 +74,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public int getLogEntryCount() {
 		Cursor cursor = getReadableDatabase().rawQuery(SELECT_LOG_ENTRY_COUNT, null);
-		if (cursor.moveToFirst()) {
-			return cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
-		} else {
-			return 0;
+		try {
+			if (cursor.moveToFirst()) {
+				return cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
+			} else {
+				return 0;
+			}
+		} finally {
+			cursor.close();
 		}
 	}
 }

@@ -30,6 +30,8 @@ import android.util.Log;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import de.ncoder.sensorsystem.*;
 import de.ncoder.sensorsystem.android.ContainerService;
 import de.ncoder.sensorsystem.events.EventListener;
@@ -41,11 +43,13 @@ import de.ncoder.typedmap.Key;
 public class DBLogger extends AbstractComponent implements EventListener, DependantComponent {
 	public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
 
+	@Nonnull
 	private DBHelper dbHelper;
+	@Nonnull
 	private SQLiteDatabase database;
 
 	@Override
-	public void init(Container container, Key<? extends Component> key) {
+	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
 		dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
 		database = dbHelper.getWritableDatabase();
@@ -68,7 +72,7 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 	}
 
 	@Override
-	public void handle(Event event) {
+	public void handle(@Nonnull Event event) {
 		if (event instanceof ValueChangedEvent) {
 			ContentValues values = new ContentValues();
 			values.put(DBHelper.COLUMN_SOURCE, String.valueOf(event.getSource()));
@@ -88,6 +92,7 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 
 	private static Set<Key<? extends Component>> dependencies;
 
+	@Nonnull
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
