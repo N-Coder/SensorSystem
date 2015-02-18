@@ -27,12 +27,25 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    //packagingOptions {
+    //    exclude 'META-INF/ASL2.0'
+    //    exclude 'META-INF/LICENSE'
+    //    exclude 'META-INF/NOTICE'
+    //}
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile project(":android.core")
+
+    //compile(project(":analyse")) {
+    //    exclude group: 'com.tinkerpop.blueprints'
+    //    exclude group: 'org.codehaus.jackson'
+    //}
+    //compile 'com.wu-man:blueprints-android-core:2.1.0.2'
+
 
     compile 'com.android.support:appcompat-v7:20.+'
     compile 'com.android.support:support-v13:20.+'

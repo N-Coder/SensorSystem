@@ -151,6 +151,15 @@ public class SimpleContainer implements Container, RemoteContainer {
 		return keysUnmodifiable;
 	}
 
+	private transient List<Key<? extends Component>> logUnmodifiable;
+
+	public List<Key<? extends Component>> getKeyOrder() {
+		if (logUnmodifiable == null) {
+			logUnmodifiable = Collections.unmodifiableList(log);
+		}
+		return logUnmodifiable;
+	}
+
 	public boolean isCheckingDependencies() {
 		return checkDependencies;
 	}

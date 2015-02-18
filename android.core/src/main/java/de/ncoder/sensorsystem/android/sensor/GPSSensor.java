@@ -174,7 +174,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = Utils.wrapSet(TimingManager.KEY, SystemLooper.KEY);
+			dependencies = Utils.<Key<? extends Component>>wrapSet(TimingManager.KEY, SystemLooper.KEY);
 		}
 		return dependencies;
 	}

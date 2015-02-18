@@ -92,7 +92,7 @@ public class Utils {
 		Matcher matcher = FQN.matcher(name);
 		StringBuffer bob = new StringBuffer();
 		while (matcher.find()) {
-			matcher.appendReplacement(bob, matcher.group(matcher.groupCount()));
+			matcher.appendReplacement(bob, matcher.group(matcher.groupCount()).replace("$", "\\$"));
 		}
 		matcher.appendTail(bob);
 		return bob.toString();

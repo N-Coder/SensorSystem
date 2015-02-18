@@ -1,0 +1,19 @@
+apply plugin: "java"
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile project(":core")
+    compile 'com.tinkerpop.blueprints:blueprints-core:2.1.0'
+}
+
+publishing {
+    publications {
+        remote(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+        }
+    }
+}

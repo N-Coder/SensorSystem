@@ -1,1 +1,1 @@
-include ':core', ':remote', ':android.core', ':android.app'
+include ':core', ':remote', ':android.core', ':android.app', ':analyse'
