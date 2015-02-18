@@ -55,7 +55,6 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	private String INTENT_ACTION;
 	private static final String INTENT_EXTRA_ID = "alarm-id";
 
-	@Nullable
 	private AlarmManager alarmManager;
 
 	private final AtomicInteger counter = new AtomicInteger(0);
@@ -76,15 +75,17 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public void destroy(Key<? extends Component> key) {
 		getContext().unregisterReceiver(broadcastReceiver);
-		for (Integer id : runnables.keySet()) {
-			alarmManager.cancel(makePendingIntent(id));
+		if (alarmManager != null) {
+			for (Integer id : runnables.keySet()) {
+				alarmManager.cancel(makePendingIntent(id));
+			}
 		}
 		super.destroy(key);
 	}
 
-	@Nullable
+	@Nonnull
 	private Context getContext() {
-		return getOtherComponent(ContainerService.KEY_CONTEXT);
+		return requireOtherComponent(ContainerService.KEY_CONTEXT);
 	}
 
 	private PendingIntent makePendingIntent(int id) {
@@ -95,7 +96,7 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 		return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	}
 
-	@Nullable
+	@Nonnull
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, @Nonnull Intent intent) {
@@ -134,8 +135,8 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public Future<?> scheduleRepeatedExecution(@Nonnull Runnable runnable, long initialDelayMillis, long delayMillis) {
 		return scheduleRepeatedExecution(runnable, initialDelayMillis, delayMillis,
-				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
-				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
+				getWakeupTreshold().scale(accuracyManager()),
+				getExecutionLatency().scale(accuracyManager()));
 	}
 
 	@Nonnull
@@ -158,8 +159,12 @@ public class AndroidScheduleManager extends ScheduleManager implements Dependant
 	@Override
 	public Future<?> scheduleExecution(@Nonnull Runnable runnable, long delayMillis) {
 		return scheduleExecution(runnable, delayMillis,
-				getWakeupTreshold().scale(getOtherComponent(AccuracyManager.KEY)),
-				getExecutionLatency().scale(getOtherComponent(AccuracyManager.KEY)));
+				getWakeupTreshold().scale(accuracyManager()),
+				getExecutionLatency().scale(accuracyManager()));
+	}
+
+	private AccuracyManager accuracyManager() {
+		return getOtherComponent(AccuracyManager.KEY);
 	}
 
 	//---------------------------------CLASSES---------------------------------

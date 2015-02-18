@@ -21,13 +21,13 @@ public abstract class BroadcastSensor<T> extends CachedSensor<T> implements Depe
 	@Override
 	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
-		getOtherComponent(ContainerService.KEY_CONTEXT)
+		requireOtherComponent(ContainerService.KEY_CONTEXT)
 				.registerReceiver(receiver, getBroadcastIntentFilter());
 	}
 
 	@Override
 	public void destroy(Key<? extends Component> key) {
-		getOtherComponent(ContainerService.KEY_CONTEXT).unregisterReceiver(receiver);
+		requireOtherComponent(ContainerService.KEY_CONTEXT).unregisterReceiver(receiver);
 		super.destroy(key);
 	}
 

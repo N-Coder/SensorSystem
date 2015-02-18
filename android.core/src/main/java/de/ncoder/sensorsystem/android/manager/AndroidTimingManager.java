@@ -70,8 +70,9 @@ public class AndroidTimingManager extends TimingManager {
 		super.destroy(key);
 	}
 
+	@Nonnull
 	private Context getContext() {
-		return getOtherComponent(ContainerService.KEY_CONTEXT);
+		return requireOtherComponent(ContainerService.KEY_CONTEXT);
 	}
 
 	// ------------------------------------------------------------------------

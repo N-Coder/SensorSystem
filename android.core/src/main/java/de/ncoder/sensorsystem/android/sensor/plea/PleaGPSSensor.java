@@ -67,20 +67,23 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 		return lastGpsData;
 	}
 
+	@Nonnull
 	private Context getContext() {
-		return getOtherComponent(ContainerService.KEY_CONTEXT);
+		return requireOtherComponent(ContainerService.KEY_CONTEXT);
 	}
 
 	private LocationManager getLocationManager() {
 		return (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 	}
 
+	@Nonnull
 	private Looper getLooper() {
-		return getOtherComponent(SystemLooper.KEY).getLooper();
+		return requireOtherComponent(SystemLooper.KEY).getLooper();
 	}
 
+	@Nonnull
 	private Future<?> scheduleExecution(Runnable r, long delay, TimeUnit unit) {
-		return getOtherComponent(ScheduleManager.KEY).scheduleExecution(r, delay, unit);
+		return requireOtherComponent(ScheduleManager.KEY).scheduleExecution(r, delay, unit);
 	}
 
 	// ------------------------------------------------------------------------
@@ -166,13 +169,13 @@ public class PleaGPSSensor extends AbstractSensor<PleaGPSData> implements Depend
 			public void run() {
 				//start tracking acceleration sensor
 				Log.d(TAG, "Starting to track acceleration.");
-				getOtherComponent(KEY_TRACKER).reset();
+				requireOtherComponent(KEY_TRACKER).reset();
 				scheduleExecution(new Runnable() {
 					@Override
 					public void run() {
 						//stop tracking acceleration sensor
 						Log.d(TAG, "Stopping to track acceleration.");
-						MovementTracker tracker = getOtherComponent(KEY_TRACKER);
+						MovementTracker tracker = requireOtherComponent(KEY_TRACKER);
 						Log.v(TAG, "Number of acceleration events: " + tracker.getEventCount());
 						float[] average = tracker.getAverage();
 						double averageMSE = MovementTracker.calcMSE(average[0], average[1], average[2]);

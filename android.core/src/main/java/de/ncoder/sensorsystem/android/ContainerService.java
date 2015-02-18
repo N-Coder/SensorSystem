@@ -81,6 +81,12 @@ public class ContainerService extends Service implements Container {
 			return container.get(key);
 		}
 
+		@Nonnull
+		@Override
+		public <T extends Component> T require(@Nonnull Key<T> key) throws SimpleContainer.DependencyException {
+			return container.require(key);
+		}
+
 		public void unregister(@Nonnull Key<?> key) {
 			container.unregister(key);
 		}
@@ -158,6 +164,12 @@ public class ContainerService extends Service implements Container {
 	@Override
 	public <T extends Component> T get(@Nonnull Key<T> key) {
 		return container.get(key);
+	}
+
+	@Nonnull
+	@Override
+	public <T extends Component> T require(@Nonnull Key<T> key) throws SimpleContainer.DependencyException {
+		return container.require(key);
 	}
 
 	@Override

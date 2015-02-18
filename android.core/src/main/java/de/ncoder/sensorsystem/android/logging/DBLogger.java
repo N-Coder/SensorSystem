@@ -43,22 +43,15 @@ import de.ncoder.typedmap.Key;
 public class DBLogger extends AbstractComponent implements EventListener, DependantComponent {
 	public static final Key<DBLogger> KEY = new Key<>(DBLogger.class);
 
-	@Nonnull
 	private DBHelper dbHelper;
-	@Nonnull
 	private SQLiteDatabase database;
 
 	@Override
 	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
-		dbHelper = new DBHelper(getOtherComponent(ContainerService.KEY_CONTEXT));
+		dbHelper = new DBHelper(requireOtherComponent(ContainerService.KEY_CONTEXT));
 		database = dbHelper.getWritableDatabase();
-		EventManager eventManager = getOtherComponent(EventManager.KEY);
-		if (eventManager != null) {
-			eventManager.subscribe(this);
-		} else {
-			Log.w(getClass().getSimpleName(), "DBLogger makes no sense if EventManger is not available");
-		}
+		requireOtherComponent(EventManager.KEY).subscribe(this);
 	}
 
 	@Override
@@ -67,7 +60,9 @@ public class DBLogger extends AbstractComponent implements EventListener, Depend
 		if (eventManager != null) {
 			eventManager.unsubscribe(this);
 		}
-		dbHelper.close();
+		if (dbHelper != null) {
+			dbHelper.close();
+		}
 		super.destroy(key);
 	}
 

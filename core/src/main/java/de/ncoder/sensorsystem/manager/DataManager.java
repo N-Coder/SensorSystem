@@ -96,7 +96,7 @@ public abstract class DataManager extends AbstractComponent implements Dependant
 				callback.onDone(this);
 			}
 		};
-		getOtherComponent(ThreadPoolManager.KEY).execute(futureTask);
+		requireOtherComponent(ThreadPoolManager.KEY).execute(futureTask);
 		return futureTask;
 	}
 }

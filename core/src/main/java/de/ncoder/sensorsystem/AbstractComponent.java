@@ -28,6 +28,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import de.ncoder.sensorsystem.events.EventManager;
 import de.ncoder.sensorsystem.events.event.Event;
@@ -40,6 +41,7 @@ public class AbstractComponent implements Component {
 	private Key<? extends Component> key;
 
 	@Override
+	@OverridingMethodsMustInvokeSuper
 	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		if (this.container != null || this.key != null) {
 			throw new IllegalStateException("Component " + getClass().getSimpleName() + " can't be shared!");
@@ -49,6 +51,7 @@ public class AbstractComponent implements Component {
 	}
 
 	@Override
+	@OverridingMethodsMustInvokeSuper
 	public void destroy(@Nullable Key<? extends Component> key) {
 		assert this.key == null || key == this.key;
 		container = null;
@@ -77,6 +80,15 @@ public class AbstractComponent implements Component {
 		} else {
 			return null;
 		}
+	}
+
+	@Nonnull
+	protected <T extends Component> T requireOtherComponent(@Nonnull Key<T> key) {
+		T component = getOtherComponent(key);
+		if (component == null) {
+			throw new SimpleContainer.DependencyException(getKey(), this, key);
+		}
+		return component;
 	}
 
 	protected void publish(@Nonnull Event event) {

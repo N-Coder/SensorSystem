@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import de.ncoder.sensorsystem.Component;
 import de.ncoder.sensorsystem.Container;
@@ -44,7 +43,6 @@ import de.ncoder.typedmap.Key;
 public class AndroidThreadPoolManager extends ThreadPoolManager implements DependantComponent {
 	private static final String WAKELOCK_TAG = AndroidThreadPoolManager.class.getName() + ".WAKE_LOCK";
 
-	@Nullable
 	private PowerManager.WakeLock wakelock;
 
 	public AndroidThreadPoolManager() {
@@ -60,7 +58,7 @@ public class AndroidThreadPoolManager extends ThreadPoolManager implements Depen
 	@Override
 	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
-		PowerManager pm = (PowerManager) getOtherComponent(ContainerService.KEY_CONTEXT).getSystemService(Context.POWER_SERVICE);
+		PowerManager pm = (PowerManager) requireOtherComponent(ContainerService.KEY_CONTEXT).getSystemService(Context.POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
 	}
 

@@ -65,13 +65,13 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Override
 	public void init(@Nonnull Container container, @Nonnull Key<? extends Component> key) {
 		super.init(container, key);
-		looper = getOtherComponent(SystemLooper.KEY).getLooper();
+		looper = requireOtherComponent(SystemLooper.KEY).getLooper();
 		locationManager.addGpsStatusListener(gpsStatusListener);
 		scheduleGPSUpdate();
 	}
 
 	private void scheduleGPSUpdate() {
-		scheduled = getOtherComponent(TimingManager.KEY).scheduleExecution(new Runnable() {
+		scheduled = requireOtherComponent(TimingManager.KEY).scheduleExecution(new Runnable() {
 			@Override
 			public void run() {
 				locationManager.requestSingleUpdate(getGpsCriteria(), locationListener, looper);
@@ -177,7 +177,7 @@ public class GPSSensor extends AbstractSensor<Location> implements DependantComp
 	@Override
 	public Set<Key<? extends Component>> dependencies() {
 		if (dependencies == null) {
-			dependencies = Utils.<Key<? extends Component>>wrapSet(TimingManager.KEY, SystemLooper.KEY);
+			dependencies = Utils.wrapSet(TimingManager.KEY, SystemLooper.KEY);
 		}
 		return dependencies;
 	}

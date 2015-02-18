@@ -42,6 +42,9 @@ public interface Container {
 	@Nullable
 	<T extends Component> T get(@Nonnull Key<T> key);
 
+	@Nonnull
+	<T extends Component> T require(@Nonnull Key<T> key) throws SimpleContainer.DependencyException;
+
 	boolean isRegistered(@Nonnull Key<?> key);
 
 	@Nonnull

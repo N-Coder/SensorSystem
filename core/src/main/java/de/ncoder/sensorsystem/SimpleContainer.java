@@ -131,6 +131,16 @@ public class SimpleContainer implements Container, RemoteContainer {
 		return components.get(key);
 	}
 
+	@Nonnull
+	@Override
+	public <T extends Component> T require(@Nonnull Key<T> key) throws DependencyException {
+		T component = get(key);
+		if (component == null) {
+			throw new DependencyException(key);
+		}
+		return component;
+	}
+
 	@SuppressWarnings("SuspiciousMethodCalls")
 	@Override
 	public boolean isRegistered(@Nonnull Key<?> key) {
@@ -217,9 +227,15 @@ public class SimpleContainer implements Container, RemoteContainer {
 	public static class DependencyException extends IllegalStateException {
 		private final Key<? extends Component> dependant, dependency;
 
+		public DependencyException(Key<? extends Component> dependency) {
+			this(null, null, dependency);
+		}
+
 		public DependencyException(Key<? extends Component> dependant, Component component, Key<? extends Component> dependency) {
-			super("Component " + (component != null ? component + " " : "")
-					+ "for key " + dependant + " is missing dependency " + dependency);
+			super("Component "
+					+ (component != null ? component + " " : "")
+					+ (dependant != null ? "for key " + dependant + " " : "")
+					+ "is missing dependency " + dependency);
 			this.dependant = dependant;
 			this.dependency = dependency;
 		}
