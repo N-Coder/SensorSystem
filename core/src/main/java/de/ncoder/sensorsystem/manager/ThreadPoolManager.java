@@ -34,6 +34,8 @@ import de.ncoder.typedmap.Key;
 public class ThreadPoolManager extends AbstractComponent implements Executor {
 	public static final Key<ThreadPoolManager> KEY = new Key<>(ThreadPoolManager.class);
 
+	protected long shutdownTimeout = 10;
+	protected TimeUnit shutdownTimeoutUnit = TimeUnit.SECONDS;
 	private final ExecutorService executor;
 
 	public ThreadPoolManager() {
@@ -65,8 +67,17 @@ public class ThreadPoolManager extends AbstractComponent implements Executor {
 
 	@Override
 	public void destroy() {
-		List<Runnable> disposed = executor.shutdownNow();
-		publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
+		executor.shutdown();
+		try {
+			executor.awaitTermination(shutdownTimeout, shutdownTimeoutUnit);
+		} catch (InterruptedException ignored) {
+		}
+		if (executor.isTerminated()) {
+			publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED));
+		} else {
+			List<Runnable> disposed = executor.shutdownNow();
+			publish(new ComponentEvent(this, ComponentEvent.Type.STOPPED, "disposed Events " + disposed));
+		}
 		super.destroy();
 	}
 
